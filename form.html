@@ -360,36 +360,38 @@ function enviar(){
 
 function salvarNoFirebase(prop){
   var btn = document.getElementById('btn-enviar');
-  // Primeiro lê o DB atual
-  fetch(FB_URL+'/'+DB_KEY+'.json')
-    .then(function(r){ return r.json(); })
-    .then(function(db){
-      if(!db||!db.lojistas){
-        throw new Error('Banco não encontrado');
-      }
-      // Encontra o lojista e adiciona a proposta
-      var ljIdx = db.lojistas.findIndex(function(l){ return l.id===prop.lj_id; });
-      if(ljIdx<0){ throw new Error('Loja não encontrada'); }
-      if(!db.lojistas[ljIdx].props) db.lojistas[ljIdx].props=[];
-      db.lojistas[ljIdx].props.push(prop);
-      // Salva o DB atualizado
-      return fetch(FB_URL+'/'+DB_KEY+'.json', {
+  btn.textContent='⏳ Enviando...';btn.disabled=true;
+
+  // Busca só a lista de lojistas (muito menor que o banco todo)
+  fetch(FB_URL+'/'+DB_KEY+'/lojistas.json')
+    .then(function(r){return r.json();})
+    .then(function(lojistas){
+      if(!lojistas) throw new Error('Banco não encontrado');
+      // Normaliza para array
+      var arr=Array.isArray(lojistas)?lojistas:Object.values(lojistas);
+      // Encontra índice do lojista
+      var ljIdx=arr.findIndex(function(l){return l&&l.id===prop.lj_id;});
+      if(ljIdx<0) throw new Error('Loja não encontrada');
+      // Conta props atuais
+      var props=arr[ljIdx].props;
+      var numProps=props?(Array.isArray(props)?props.length:Object.keys(props).length):0;
+      // Salva só a nova proposta no índice correto — operação pequena e rápida
+      return fetch(FB_URL+'/'+DB_KEY+'/lojistas/'+ljIdx+'/props/'+numProps+'.json',{
         method:'PUT',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(db)
+        body:JSON.stringify(prop)
       });
     })
     .then(function(r){
-      if(!r.ok) throw new Error('Erro ao salvar');
-      // Sucesso!
+      if(!r.ok) throw new Error('Erro '+r.status);
       document.getElementById('form-wrap').style.display='none';
       document.getElementById('tela-ok').style.display='block';
       window.scrollTo(0,0);
     })
     .catch(function(e){
       console.error(e);
-      var err = document.getElementById('err-form');
-      err.textContent = '❌ Erro ao enviar. Verifique sua conexão e tente novamente.';
+      var err=document.getElementById('err-form');
+      err.textContent='❌ Erro ao enviar. Verifique sua conexão e tente novamente.';
       err.style.display='block';
       btn.textContent='✅ Enviar solicitação';
       btn.disabled=false;
