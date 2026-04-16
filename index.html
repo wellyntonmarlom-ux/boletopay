@@ -1190,7 +1190,7 @@ carregarDB();
     </div><!-- /lj-body -->
 
     <!-- MODAL LINK -->
-    <div id="link-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:1rem">
+    <div id="link-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;padding:1rem">
       <div style="background:#fff;border-radius:16px;padding:1.5rem;max-width:480px;width:100%;max-height:90vh;overflow-y:auto">
         <div style="font-size:15px;font-weight:700;color:var(--bp);margin-bottom:1rem">📋 Enviar formulário ao cliente</div>
         <div style="background:#fff;border:2px solid var(--gr);border-radius:12px;padding:1rem;margin-bottom:10px">
@@ -1200,13 +1200,8 @@ carregarDB();
         </div>
         <div style="background:#fff;border:2px solid var(--pu);border-radius:12px;padding:1rem;margin-bottom:10px">
           <div style="font-size:13px;font-weight:700;color:var(--pu);margin-bottom:4px">📲 Cliente remoto — enviar link pelo WhatsApp</div>
-          <div style="font-size:12px;color:var(--mu);margin-bottom:10px">Gera um link. O cliente abre no celular e a proposta entra direto no sistema.</div>
-          <button class="btn" style="width:100%;justify-content:center;font-size:14px;background:#25D366" onclick="abrirWhatsApp()">💬 Enviar link pelo WhatsApp</button>
-          <div id="link-gerado-box" style="display:none;margin-top:10px;background:var(--sec);border-radius:8px;padding:10px">
-            <div style="font-size:11px;color:var(--mu);margin-bottom:4px">Link gerado:</div>
-            <div id="link-gerado-txt" style="font-size:11px;font-family:monospace;color:var(--bp);word-break:break-all"></div>
-            <a id="link-wa-direto" href="#" target="_blank" style="display:block;margin-top:8px;background:#25D366;color:#fff;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:600;text-align:center;text-decoration:none">📲 Abrir WhatsApp</a>
-          </div>
+          <div style="font-size:12px;color:var(--mu);margin-bottom:10px">Clique no botão — abre o WhatsApp com o link pronto para enviar ao cliente.</div>
+          <a id="btn-wa" href="#" target="_blank" rel="noopener" onclick="return prepararWA(this)" style="display:block;width:100%;box-sizing:border-box;padding:13px;background:#25D366;color:#fff;border-radius:11px;font-size:14px;font-weight:600;text-align:center;text-decoration:none;cursor:pointer">💬 Enviar link pelo WhatsApp</a>
           <div id="link-gerado-box" style="display:none;margin-top:10px;background:var(--sec);border-radius:8px;padding:10px">
             <div style="font-size:11px;color:var(--mu);margin-bottom:4px">Link gerado:</div>
             <div id="link-gerado-txt" style="font-size:11px;font-family:monospace;color:var(--bp);word-break:break-all"></div>
@@ -1772,7 +1767,7 @@ function salvarConfig(){
 }
 
 /* ========== LINK / FORMULÁRIO CLIENTE ========== */
-function mostrarLink(){if(!meLj)return;document.getElementById('link-modal').style.display='block';}
+function mostrarLink(){if(!meLj)return;var m=document.getElementById('link-modal');if(m){m.style.display='flex';}}
 function abrirFormCliente(){document.getElementById('link-modal').style.display='none';prepararFormCliente();go('s-form-cliente');}
 
 function _getBaseURL(){
@@ -1826,8 +1821,8 @@ function _copiarFallback(link){
   document.body.removeChild(ta);
 }
 
-function abrirWhatsApp(){
-  if(!meLj){alert('Faça login como lojista primeiro.');return;}
+function prepararWA(el){
+  if(!meLj){alert('Faça login como lojista primeiro.');return false;}
   var base=window.location.href.split('/').slice(0,-1).join('/').replace(/\/index\.html$/,'');
   var link=base+'/form.html?loja='+meLj.id+'&nome='+encodeURIComponent(meLj.nome);
   window._linkClienteGerado=link;
@@ -1836,12 +1831,12 @@ function abrirWhatsApp(){
   if(txt)txt.textContent=link;
   if(box)box.style.display='block';
   var msg='Olá! Preencha seus dados para análise de crédito na '+meLj.nome+':\n\n'+link;
-  var url='https://wa.me/?text='+encodeURIComponent(msg);
-  // Atualiza o link direto no <a> — não depende de window.open
-  var linkEl=document.getElementById('link-wa-direto');
-  if(linkEl)linkEl.href=url;
-  // Tenta abrir diretamente também
-  try{window.open(url,'_blank');}catch(e){}
+  el.href='https://wa.me/?text='+encodeURIComponent(msg);
+  return true; // deixa o link <a> abrir normalmente
+}
+function abrirWhatsApp(){
+  var el=document.getElementById('btn-wa');
+  if(el&&prepararWA(el)){el.click();}
 }
 function enviarLinkWhatsApp(){abrirWhatsApp();}
 
