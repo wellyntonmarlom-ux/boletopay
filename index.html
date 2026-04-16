@@ -145,6 +145,12 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
   .ef2{grid-template-columns:1fr}.ap-grid{grid-template-columns:1fr}
   .rc-grid{grid-template-columns:1fr}
 }
+
+.lj-sidebar{width:200px;background:#fff;border-right:1px solid var(--brd);padding:1.25rem 1rem;flex-shrink:0;display:flex;flex-direction:column;min-height:calc(100vh - 57px)}
+.lj-ni{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:9px;cursor:pointer;font-size:13px;color:var(--mu);margin-bottom:2px;transition:.15s}
+.lj-ni:hover{background:var(--sec);color:var(--txt)}
+.lj-ni.on{background:var(--pul);color:var(--pu);font-weight:600}
+.lj-body{display:flex;flex:1}
 </style>
 </head>
 <body>
@@ -491,7 +497,7 @@ carregarDB();
       <div class="ni"><span class="nic">&#8599;</span> Relatórios</div>
       <div class="sb-bot">
         <div class="sb-usr"><div class="sb-av" style="background:var(--bpl);color:var(--bp)" id="sb-av-a">AS</div><div><div style="font-size:12px;font-weight:600;color:var(--txt)" id="sb-nome-a">Analista</div><div style="font-size:10px;color:var(--mu)" id="sb-email-a"></div></div></div>
-        <div class="ni" onclick="go('s-portal')" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div>
+        <div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div>
       </div>
     </aside>
     <div class="content">
@@ -550,7 +556,7 @@ carregarDB();
       <div class="ni" onclick="go('s-fila')"><span class="nic">&#8681;</span> Fila de análise <span class="n-badge" id="nb-fila-ns">0</span></div>
       <div class="ni" onclick="go('s-respostas-an')"><span class="nic">&#8617;</span> Respostas</div>
       <div class="ni" onclick="go('s-lojistas-mgr')"><span class="nic">&#9646;</span> Lojistas</div>
-      <div class="sb-bot"><div class="ni" onclick="go('s-portal')" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
+      <div class="sb-bot"><div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
     </aside>
     <div class="content">
       <div class="ph">
@@ -583,7 +589,7 @@ carregarDB();
       <div class="ni" onclick="go('s-respostas-an')"><span class="nic">&#8617;</span> Respostas</div>
       <div class="ni" onclick="go('s-lojistas-mgr')"><span class="nic">&#9646;</span> Lojistas</div>
       <div class="ni" id="ni-func2" onclick="go('s-funcionarios')" style="display:none"><span class="nic">&#128100;</span> Funcionários</div>
-      <div class="sb-bot"><div class="ni" onclick="go('s-portal')" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
+      <div class="sb-bot"><div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
     </aside>
     <div class="content">
       <div class="ph"><div><div class="pt">Fila de análise</div><div class="ps" id="fila-sub">Propostas aguardando</div></div><button class="btn" onclick="buscarEAtualizar()" id="btn-buscar">🔄 Buscar novas</button></div>
@@ -600,7 +606,7 @@ carregarDB();
       <div class="ni" onclick="go('s-dash')"><span class="nic">&#9638;</span> Dashboard</div>
       <div class="ni on-a"><span class="nic">&#8681;</span> Analisando</div>
       <div class="ni" onclick="go('s-lojistas-mgr')"><span class="nic">&#9646;</span> Lojistas</div>
-      <div class="sb-bot"><div class="ni" onclick="go('s-portal')" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
+      <div class="sb-bot"><div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
     </aside>
     <div class="content">
       <button class="back" onclick="propAtual=null;_propAtualId=null;_iniciarPolling();go('s-fila')">&#8592; Voltar à fila</button>
@@ -733,7 +739,7 @@ carregarDB();
       <div class="ni" onclick="go('s-fila')"><span class="nic">&#8681;</span> Fila</div>
       <div class="ni on-a"><span class="nic">&#8617;</span> Respostas</div>
       <div class="ni" onclick="go('s-lojistas-mgr')"><span class="nic">&#9646;</span> Lojistas</div>
-      <div class="sb-bot"><div class="ni" onclick="go('s-portal')" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
+      <div class="sb-bot"><div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
     </aside>
     <div class="content">
       <div class="ph"><div><div class="pt">Respostas dos lojistas</div><div class="ps">Retornos sobre resultados enviados</div></div></div>
@@ -752,7 +758,7 @@ carregarDB();
       <div class="ni" onclick="go('s-respostas-an')"><span class="nic">&#8617;</span> Respostas</div>
       <div class="ni on-a"><span class="nic">&#9646;</span> Lojistas</div>
       <div class="ni" id="ni-func3" onclick="go('s-funcionarios')" style="display:none"><span class="nic">&#128100;</span> Funcionários</div>
-      <div class="sb-bot"><div class="ni" onclick="go('s-portal')" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
+      <div class="sb-bot"><div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
     </aside>
     <div class="content">
       <div class="ph"><div><div class="pt">Gestão de lojistas</div><div class="ps">Lojas de celulares e mobilidade elétrica</div></div><button class="btn" onclick="go('s-novo-lj')">+ Novo lojista</button></div>
@@ -770,7 +776,7 @@ carregarDB();
       <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BoletoPay</div><div class="sb-rl">Analista</div></div></div>
       <div class="ni" onclick="go('s-dash')"><span class="nic">&#9638;</span> Dashboard</div>
       <div class="ni on-a"><span class="nic">&#9646;</span> Lojistas</div>
-      <div class="sb-bot"><div class="ni" onclick="go('s-portal')" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
+      <div class="sb-bot"><div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
     </aside>
     <div class="content">
       <button class="back" onclick="go('s-lojistas-mgr')">&#8592; Voltar</button>
@@ -814,7 +820,7 @@ carregarDB();
       <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BoletoPay</div><div class="sb-rl">Analista</div></div></div>
       <div class="ni" onclick="go('s-dash')"><span class="nic">&#9638;</span> Dashboard</div>
       <div class="ni on-a"><span class="nic">&#9646;</span> Lojistas</div>
-      <div class="sb-bot"><div class="ni" onclick="go('s-portal')" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
+      <div class="sb-bot"><div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
     </aside>
     <div class="content">
       <button class="back" onclick="go('s-lojistas-mgr')">&#8592; Voltar a lojistas</button>
@@ -895,7 +901,7 @@ carregarDB();
       <div class="ni" onclick="go('s-fila')"><span class="nic">&#8681;</span> Fila</div>
       <div class="ni" onclick="go('s-lojistas-mgr')"><span class="nic">&#9646;</span> Lojistas</div>
       <div class="ni on-a"><span class="nic">&#128100;</span> Funcionários</div>
-      <div class="sb-bot"><div class="ni" onclick="go('s-portal')" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
+      <div class="sb-bot"><div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
     </aside>
     <div class="content">
       <div class="ph"><div><div class="pt">Funcionários / Analistas</div><div class="ps">Gerencie a equipe de análise</div></div><button class="btn" onclick="go('s-novo-func')">+ Novo funcionário</button></div>
@@ -912,7 +918,7 @@ carregarDB();
     <aside class="sidebar">
       <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BoletoPay</div><div class="sb-rl">Admin</div></div></div>
       <div class="ni on-a"><span class="nic">&#128100;</span> Funcionários</div>
-      <div class="sb-bot"><div class="ni" onclick="go('s-portal')" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
+      <div class="sb-bot"><div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
     </aside>
     <div class="content">
       <button class="back" onclick="go('s-funcionarios')">&#8592; Voltar</button>
@@ -942,78 +948,134 @@ carregarDB();
 <!-- ======== LOJISTA DASHBOARD ======== -->
 <div class="scr" id="s-lojista">
   <div class="lj-shell">
+    <!-- TOP BAR -->
     <div class="lj-top">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div id="lj-logo-top" style="width:42px;height:42px;border-radius:11px;background:var(--pul);display:flex;align-items:center;justify-content:center;overflow:hidden">
-          <span id="lj-logo-letra" style="font-size:16px;font-weight:700;color:var(--pu)">E</span>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div id="lj-logo-top" style="width:36px;height:36px;border-radius:10px;background:var(--pul);display:flex;align-items:center;justify-content:center;overflow:hidden">
+          <span id="lj-logo-letra" style="font-size:14px;font-weight:700;color:var(--pu)">E</span>
           <img id="lj-logo-img" src="" style="display:none;width:100%;height:100%;object-fit:cover"/>
         </div>
         <div><div style="font-size:13px;font-weight:700;color:var(--txt)" id="lj-top-nome">Eletro 360</div><div style="font-size:11px;color:var(--mu)">Portal lojista</div></div>
         <span class="bdg b-pu">Parceiro ativo</span>
       </div>
       <div style="display:flex;align-items:center;gap:10px">
-        <div class="nbell" onclick="go('s-lj-resultados')">&#9993;<div class="ndot" id="ndot" style="display:none"></div></div>
-        <button class="btn-ghost" onclick="go('s-portal')">Sair</button>
+        <div style="font-size:11px;color:var(--mu);display:flex;align-items:center;gap:5px"><span id="lj-live-dot" style="width:8px;height:8px;border-radius:50%;background:var(--gr);display:inline-block"></span><span id="lj-live-txt">Ao vivo</span></div>
+        <div class="nbell" onclick="goLj('lj-resultados')">&#9993;<div class="ndot" id="ndot" style="display:none"></div></div>
+        <button class="btn-ghost" onclick="sair()">Sair</button>
       </div>
     </div>
-    <div class="content">
-      <div class="ph"><div><div class="pt">Meu painel</div><div class="ps" id="lj-sub">Bem-vindo</div></div>
-        <div style="display:flex;gap:10px;align-items:center">
-          <div style="font-size:11px;color:var(--mu);display:flex;align-items:center;gap:5px"><span id="lj-live-dot" style="width:8px;height:8px;border-radius:50%;background:var(--gr);display:inline-block"></span><span id="lj-live-txt">Ao vivo</span></div>
-          <button class="btn" style="background:#7C3AED" onclick="go('s-lj-config')">&#9881; Configurações</button>
-          <button class="btn" style="background:#7C3AED" onclick="mostrarLink()">&#128279; Gerar link para cliente</button>
-        </div>
-      </div>
-      <div class="mg3">
-        <div class="mc"><div class="ml">Propostas enviadas</div><div class="mv" id="lj-tot">0</div><div class="mt" style="color:var(--mu)">Total</div></div>
-        <div class="mc"><div class="ml">Com resultado</div><div class="mv" style="color:var(--gr)" id="lj-res">0</div><div class="mt tu">Retornados</div></div>
-        <div class="mc"><div class="ml">Em análise</div><div class="mv" style="color:var(--am)" id="lj-pend">0</div><div class="mt" style="color:var(--am)">Aguardando</div></div>
-      </div>
-      <div class="mg3" style="margin-bottom:1.5rem">
-        <div class="mc" style="border-color:rgba(26,140,64,.3)"><div class="ml">Valor liberado hoje</div><div class="mv" style="color:var(--gr)" id="lj-val-hoje">R$ 0</div><div class="mt tu">Aprovações de hoje</div></div>
-        <div class="mc" style="border-color:rgba(10,132,255,.3)"><div class="ml">Valor liberado no mês</div><div class="mv" style="color:var(--bp)" id="lj-val-mes">R$ 0</div><div class="mt tu">Mês atual</div></div>
-        <div class="mc" style="border-color:rgba(91,63,184,.3)"><div class="ml">Ticket médio</div><div class="mv" style="color:var(--pu)" id="lj-ticket">R$ 0</div><div class="mt tu">Por proposta</div></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem">
-        <div class="card" style="margin:0">
-          <div class="ctit">Marcas mais solicitadas</div>
-          <div id="lj-grafico-marcas"><div style="color:var(--mu);font-size:13px">Nenhuma proposta ainda.</div></div>
-        </div>
-        <div class="card" style="margin:0">
-          <div class="ctit">Resultados das propostas</div>
-          <div id="lj-grafico-resultados"><div style="color:var(--mu);font-size:13px">Nenhuma proposta ainda.</div></div>
-        </div>
-      </div>
-      <!-- MODAL LINK -->
-      <div id="link-modal" style="display:none;background:var(--bpl);border:2px solid rgba(10,132,255,.3);border-radius:14px;padding:1.375rem;margin-bottom:1.25rem">
-        <div style="font-size:15px;font-weight:700;color:var(--bp);margin-bottom:1rem">📋 Enviar formulário ao cliente</div>
 
-        <!-- OPÇÃO 1: Cliente na loja -->
+    <!-- BODY: SIDEBAR + CONTENT -->
+    <div class="lj-body">
+      <!-- SIDEBAR -->
+      <div class="lj-sidebar">
+        <div class="lj-ni on" id="lj-ni-dash" onclick="goLj('lj-dash')"><span style="font-size:15px">📊</span> Dashboard</div>
+        <div class="lj-ni" id="lj-ni-emp" onclick="goLj('lj-emp')"><span style="font-size:15px">📋</span> Empréstimos</div>
+        <div class="lj-ni" id="lj-ni-resultados" onclick="goLj('lj-resultados')"><span style="font-size:15px">📬</span> Resultados <span class="n-badge" id="nb-lj-res" style="display:none">0</span></div>
+        <div style="margin-top:auto;padding-top:12px;border-top:1px solid var(--brd)">
+          <div class="lj-ni" onclick="go('s-lj-config')"><span style="font-size:15px">⚙️</span> Configurações</div>
+          <div class="lj-ni" onclick="mostrarLink()"><span style="font-size:15px">🔗</span> Enviar formulário</div>
+        </div>
+      </div>
+
+      <!-- CONTEÚDO -->
+      <div class="content" style="flex:1">
+
+        <!-- ===== ABA DASHBOARD ===== -->
+        <div id="lj-dash">
+          <div class="ph"><div><div class="pt">Dashboard</div><div class="ps" id="lj-sub">Bem-vindo</div></div></div>
+          <div class="mg3">
+            <div class="mc"><div class="ml">Propostas enviadas</div><div class="mv" id="lj-tot">0</div><div class="mt" style="color:var(--mu)">Total</div></div>
+            <div class="mc"><div class="ml">Com resultado</div><div class="mv" style="color:var(--gr)" id="lj-res">0</div><div class="mt tu">Retornados</div></div>
+            <div class="mc"><div class="ml">Em análise</div><div class="mv" style="color:var(--am)" id="lj-pend">0</div><div class="mt" style="color:var(--am)">Aguardando</div></div>
+          </div>
+          <div class="mg3" style="margin-bottom:1.5rem">
+            <div class="mc" style="border-color:rgba(26,140,64,.3)"><div class="ml">Valor liberado hoje</div><div class="mv" style="color:var(--gr)" id="lj-val-hoje">R$ 0</div><div class="mt tu">Aprovações de hoje</div></div>
+            <div class="mc" style="border-color:rgba(10,132,255,.3)"><div class="ml">Valor liberado no mês</div><div class="mv" style="color:var(--bp)" id="lj-val-mes">R$ 0</div><div class="mt tu">Mês atual</div></div>
+            <div class="mc" style="border-color:rgba(91,63,184,.3)"><div class="ml">Ticket médio</div><div class="mv" style="color:var(--pu)" id="lj-ticket">R$ 0</div><div class="mt tu">Por proposta</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem">
+            <div class="card" style="margin:0"><div class="ctit">Marcas mais solicitadas</div><div id="lj-grafico-marcas"><div style="color:var(--mu);font-size:13px">Nenhuma proposta ainda.</div></div></div>
+            <div class="card" style="margin:0"><div class="ctit">Resultados das propostas</div><div id="lj-grafico-resultados"><div style="color:var(--mu);font-size:13px">Nenhuma proposta ainda.</div></div></div>
+          </div>
+        </div>
+
+        <!-- ===== ABA EMPRÉSTIMOS ===== -->
+        <div id="lj-emp" style="display:none">
+          <div class="ph">
+            <div><div class="pt">Empréstimos</div><div class="ps">Todas as solicitações</div></div>
+            <button class="btn" style="background:#7C3AED" onclick="mostrarLink()">🔗 Nova solicitação</button>
+          </div>
+
+          <!-- FILTROS -->
+          <div class="card" style="margin-bottom:1.25rem;padding:1rem">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px">
+              <div>
+                <label class="fl">Buscar por nome ou CPF</label>
+                <input class="fi" id="lj-filtro-busca" placeholder="Digite nome ou CPF..." oninput="filtrarEmp()"/>
+              </div>
+              <div>
+                <label class="fl">Situação</label>
+                <select class="fsel" id="lj-filtro-status" onchange="filtrarEmp()">
+                  <option value="">Todas</option>
+                  <option value="analise">Em análise</option>
+                  <option value="aprovado">Aprovado</option>
+                  <option value="formalizacao">Em formalização</option>
+                  <option value="negado">Negado</option>
+                </select>
+              </div>
+              <div style="display:flex;align-items:flex-end">
+                <button class="btn-ghost" style="width:100%" onclick="limparFiltrosEmp()">Limpar filtros</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <span id="lj-filtro-tag-todos" class="bdg b-pu" style="cursor:pointer;padding:5px 12px" onclick="setFiltroStatus(\'\')">Todas</span>
+              <span id="lj-filtro-tag-analise" class="bdg b-am" style="cursor:pointer;padding:5px 12px" onclick="setFiltroStatus(\'analise\')">⏳ Em análise</span>
+              <span id="lj-filtro-tag-aprovado" class="bdg b-gr" style="cursor:pointer;padding:5px 12px" onclick="setFiltroStatus(\'aprovado\')">✅ Aprovado</span>
+              <span id="lj-filtro-tag-formalizacao" class="bdg b-bl" style="cursor:pointer;padding:5px 12px" onclick="setFiltroStatus(\'formalizacao\')">📝 Em formalização</span>
+              <span id="lj-filtro-tag-negado" class="bdg b-rd" style="cursor:pointer;padding:5px 12px" onclick="setFiltroStatus(\'negado\')">❌ Negado</span>
+            </div>
+          </div>
+
+          <div id="lj-emp-contador" style="font-size:12px;color:var(--mu);margin-bottom:10px"></div>
+          <div id="lj-emp-lista"></div>
+        </div>
+
+        <!-- ===== ABA RESULTADOS ===== -->
+        <div id="lj-resultados" style="display:none">
+          <div class="ph"><div><div class="pt">Resultados</div><div class="ps">Respostas dos analistas</div></div></div>
+          <div id="lj-res-list"></div>
+          <div id="lj-res-empty" style="display:none;text-align:center;padding:2.5rem;color:var(--mu);font-size:13px;background:#fff;border-radius:13px;border:1px solid var(--brd)">Nenhum resultado ainda.</div>
+        </div>
+
+      </div><!-- /content -->
+    </div><!-- /lj-body -->
+
+    <!-- MODAL LINK -->
+    <div id="link-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none;align-items:center;justify-content:center;padding:1rem">
+      <div style="background:#fff;border-radius:16px;padding:1.5rem;max-width:480px;width:100%;max-height:90vh;overflow-y:auto">
+        <div style="font-size:15px;font-weight:700;color:var(--bp);margin-bottom:1rem">📋 Enviar formulário ao cliente</div>
         <div style="background:#fff;border:2px solid var(--gr);border-radius:12px;padding:1rem;margin-bottom:10px">
           <div style="font-size:13px;font-weight:700;color:var(--gr);margin-bottom:4px">🏪 Cliente na loja — abrir agora</div>
           <div style="font-size:12px;color:var(--mu);margin-bottom:10px">O cliente preenche aqui mesmo no computador da loja.</div>
           <button class="btn gr" style="width:100%;justify-content:center;padding:12px;font-size:14px" onclick="abrirFormCliente()">📱 Abrir formulário agora</button>
         </div>
-
-        <!-- OPÇÃO 2: Link para cliente remoto -->
         <div style="background:#fff;border:2px solid var(--pu);border-radius:12px;padding:1rem;margin-bottom:10px">
           <div style="font-size:13px;font-weight:700;color:var(--pu);margin-bottom:4px">📲 Cliente remoto — enviar link pelo WhatsApp</div>
-          <div style="font-size:12px;color:var(--mu);margin-bottom:10px">Gera um link único. O cliente abre no celular, preenche os dados e a proposta entra direto no sistema.</div>
+          <div style="font-size:12px;color:var(--mu);margin-bottom:10px">Gera um link. O cliente abre no celular e a proposta entra direto no sistema.</div>
           <button class="btn" style="width:100%;justify-content:center;font-size:14px;background:#25D366" onclick="enviarLinkWhatsApp()">💬 Enviar link pelo WhatsApp</button>
           <div id="link-gerado-box" style="display:none;margin-top:10px;background:var(--sec);border-radius:8px;padding:10px">
             <div style="font-size:11px;color:var(--mu);margin-bottom:4px">Link gerado:</div>
             <div id="link-gerado-txt" style="font-size:11px;font-family:monospace;color:var(--bp);word-break:break-all"></div>
           </div>
         </div>
-
-        <button onclick="document.getElementById('link-modal').style.display='none'" style="font-size:12px;color:var(--mu);background:none;border:none;cursor:pointer;text-decoration:underline">Fechar</button>
+        <button onclick="fecharModalLink()" style="width:100%;padding:10px;background:var(--sec);border:1px solid var(--brd);border-radius:9px;cursor:pointer;font-size:13px;color:var(--mu)">Fechar</button>
       </div>
-      <div class="stl">Minhas propostas</div>
-      <div class="tbl" id="lj-tbl"><div class="th" style="grid-template-columns:2fr 1fr 1fr 1fr"><span>Cliente</span><span>Aparelho</span><span>Status</span><span>Enviado</span></div></div>
-      <div id="lj-empty" style="text-align:center;padding:2.5rem;color:var(--mu);font-size:13px;background:#fff;border-radius:13px;border:1px solid var(--brd);margin-top:1rem">Nenhuma proposta ainda. Use o link para enviar ao cliente!</div>
     </div>
+
   </div>
 </div>
+
 
 <!-- ======== LOJISTA CONFIG ======== -->
 <div class="scr" id="s-lj-config">
@@ -1354,6 +1416,14 @@ function loginAnalista(){
   if(!found){err.classList.add('on');return;}
   err.classList.remove('on');
   me=found;
+  // Salvar sessão
+  try{localStorage.setItem('bp_sessao',JSON.stringify({tipo:'analista',email:email,senha:senha}));}catch(e){}
+  _aplicarLoginAnalista();
+  go('s-dash');
+}
+
+function _aplicarLoginAnalista(){
+  if(!me)return;
   document.getElementById('sb-nome-a').textContent=me.nome;
   document.getElementById('sb-email-a').textContent=me.email;
   document.getElementById('sb-rl-a').textContent=me.role==='admin'?'Administrador':'Analista';
@@ -1361,7 +1431,6 @@ function loginAnalista(){
   document.getElementById('sb-av-a').textContent=ini;
   var niFunc=['ni-func','ni-func2','ni-func3'];
   niFunc.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display=me.role==='admin'?'flex':'none';});
-  go('s-dash');
 }
 
 function loginLojista(){
@@ -1372,8 +1441,33 @@ function loginLojista(){
   if(!found){err.classList.add('on');return;}
   err.classList.remove('on');
   meLj=found;
+  // Salvar sessão
+  try{localStorage.setItem('bp_sessao',JSON.stringify({tipo:'lojista',email:email,senha:senha}));}catch(e){}
   atualizarTopLojista();
   go('s-lojista');
+}
+
+function sair(){
+  me=null;meLj=null;
+  try{localStorage.removeItem('bp_sessao');}catch(e){}
+  go('s-portal');
+}
+
+function restaurarSessao(){
+  try{
+    var raw=localStorage.getItem('bp_sessao');
+    if(!raw)return;
+    var sessao=JSON.parse(raw);
+    if(!sessao||!sessao.tipo)return;
+    if(sessao.tipo==='analista'){
+      var found=DB.analistas.find(function(a){return a.email.toLowerCase()===sessao.email&&a.senha===sessao.senha&&a.ativo;});
+      if(found){me=found;_aplicarLoginAnalista();go('s-dash');return;}
+    } else if(sessao.tipo==='lojista'){
+      var found2=DB.lojistas.find(function(l){return l.email.toLowerCase()===sessao.email&&l.senha===sessao.senha&&l.ativo;});
+      if(found2){meLj=found2;atualizarTopLojista();go('s-lojista');return;}
+    }
+    localStorage.removeItem('bp_sessao');
+  }catch(e){}
 }
 
 function atualizarTopLojista(){
@@ -2090,19 +2184,14 @@ function renderLjDash(){
   }
 
   // Tabela
-  var tbl=document.getElementById('lj-tbl');
-  var empty=document.getElementById('lj-empty');
-  if(props.length===0){
-    if(tbl)tbl.innerHTML='<div class="th" style="grid-template-columns:2fr 1fr 1fr 1fr"><span>Cliente</span><span>Aparelho</span><span>Status</span><span>Enviado</span></div>';
-    if(empty)empty.style.display='block';return;
+  // Badge de novas notificações
+  var novosRes=props.filter(function(p){return p.resultado&&!p.lido;});
+  var nbLjRes=document.getElementById('nb-lj-res');
+  if(nbLjRes){
+    nbLjRes.textContent=novosRes.length;
+    nbLjRes.style.display=novosRes.length>0?'inline-flex':'none';
   }
-  if(empty)empty.style.display='none';
-  var rows=props.slice().reverse().map(function(p){
-    var ini=p.nome.split(' ').slice(0,2).map(function(n){return n[0]}).join('').toUpperCase();
-    var bdg=p.resultado?(p.resultado==='Negado'?'<span class="bdg b-rd">'+p.resultado+'</span>':p.resultado==='Em análise'?'<span class="bdg b-am">'+p.resultado+'</span>':'<span class="bdg b-gr">'+p.resultado+'</span>'):'<span class="bdg b-am">Aguardando</span>';
-    return '<div class="tr" style="grid-template-columns:2fr 1fr 1fr 1fr" onclick="go(\'s-lj-resultados\')"><div class="ci"><div class="av" style="background:var(--bpl);color:var(--bp)">'+ini+'</div><div><div class="cn">'+p.nome+'</div><div class="cx">'+p.modelo+'</div></div></div><span style="font-size:12px">'+p.tipo+'</span><span>'+bdg+'</span><span style="font-size:11px;color:var(--mu)">'+p.data+'</span></div>';
-  }).join('');
-  if(tbl)tbl.innerHTML='<div class="th" style="grid-template-columns:2fr 1fr 1fr 1fr"><span>Cliente</span><span>Aparelho</span><span>Status</span><span>Enviado</span></div>'+rows;
+  var ndot=document.getElementById('ndot');if(ndot)ndot.style.display=novosRes.length>0?'block':'none';
 }
 
 /* ========== RENDER RESULTADOS LOJISTA ========== */
@@ -2120,7 +2209,7 @@ function renderResultados(){
     var ini=p.nome.split(' ').slice(0,2).map(function(n){return n[0]}).join('').toUpperCase();
     var respondeu=p.resposta!=null;
     var resHtml=respondeu?renderRespostaFeita(p):renderEscolha(p);
-    return '<div class="card" style="margin-bottom:14px;border:2px solid rgba(26,140,64,.2)" id="rc-'+p.id+'"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div class="ci"><div class="av" style="background:var(--grl);color:var(--gr);width:36px;height:36px">'+ini+'</div><div><div class="cn">'+p.nome+'</div><div class="cx">Resultado em '+p.data+'</div></div></div><div style="display:flex;gap:8px">'+(respondeu?'':'<span class="ntag">NOVO</span>')+(p.resultado==='Negado'?'<span class="bdg b-rd">'+p.resultado+'</span>':'<span class="bdg b-gr">'+p.resultado+'</span>')+'</div></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:var(--sec);border-radius:10px;padding:.875rem;margin-bottom:14px"><div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Modalidade</div><div style="font-size:13px;font-weight:700">'+p.modal+'</div></div><div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Valor aprovado</div><div style="font-size:15px;font-weight:700;color:var(--gr)">'+p.valorAprov+'</div></div><div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Parcelamento</div><div style="font-size:13px;font-weight:700">'+p.parcelas+'</div></div><div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Banco</div><div style="font-size:13px;font-weight:700">'+p.banco+'</div></div></div>'+resHtml+'</div>';
+    return '<div class="card" style="margin-bottom:14px;border:2px solid rgba(26,140,64,.2)" id="rc-'+p.id+'"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div class="ci"><div class="av" style="background:var(--grl);color:var(--gr);width:36px;height:36px">'+ini+'</div><div><div class="cn">'+p.nome+'</div><div class="cx">Resultado em '+p.data+'</div></div></div><div style="display:flex;gap:8px">'+(respondeu?'':'<span class="ntag">NOVO</span>')+(p.resultado==='Negado'?'<span class="bdg b-rd">'+p.resultado+'</span>':'<span class="bdg b-gr">'+p.resultado+'</span>')+'</div></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:var(--sec);border-radius:10px;padding:.875rem;margin-bottom:14px"><div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Modalidade</div><div style="font-size:13px;font-weight:700">'+p.modal+'</div></div><div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Valor aprovado</div><div style="font-size:15px;font-weight:700;color:var(--gr)">'+p.valorAprov+'</div></div><div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Parcelamento</div><div style="font-size:13px;font-weight:700">'+p.parcelas+'</div></div><div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Banco</div><div style="font-size:13px;font-weight:700">'+p.banco+'</div></div></div>'+(p.obs_res?'<div style="background:var(--bpl);border-radius:10px;padding:.75rem 1rem;margin-bottom:14px;font-size:13px;color:#0C447C"><strong>📋 Observação do analista:</strong> '+p.obs_res+'</div>':'')+(p.resultado==='Negado'&&p.obs_res?'':'')+ resHtml+'</div>';
   }).join('');
 }
 
@@ -2270,7 +2359,118 @@ function renderDash(){
   }
 }
 
-/* ========== CONFIGURAÇÃO FIREBASE ========== */
+/* ========== NAVEGAÇÃO LOJISTA ========== */
+function goLj(aba){
+  ['lj-dash','lj-emp','lj-resultados'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.style.display='none';
+  });
+  ['lj-ni-dash','lj-ni-emp','lj-ni-resultados'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.classList.remove('on');
+  });
+  var el=document.getElementById(aba);if(el)el.style.display='block';
+  var ni=document.getElementById('lj-ni-'+aba.replace('lj-',''));if(ni)ni.classList.add('on');
+  if(aba==='lj-emp')renderEmp();
+  if(aba==='lj-resultados')renderResultados();
+  window.scrollTo(0,0);
+}
+
+function mostrarLink(){
+  if(!meLj)return;
+  var modal=document.getElementById('link-modal');
+  if(modal){modal.style.display='flex';}
+}
+function fecharModalLink(){
+  var modal=document.getElementById('link-modal');
+  if(modal){modal.style.display='none';}
+}
+
+/* ========== ABA EMPRÉSTIMOS ========== */
+var _filtroEmpBusca='';
+var _filtroEmpStatus='';
+
+function setFiltroStatus(status){
+  _filtroEmpStatus=status;
+  var sel=document.getElementById('lj-filtro-status');
+  if(sel)sel.value=status;
+  filtrarEmp();
+}
+
+function limparFiltrosEmp(){
+  _filtroEmpBusca='';_filtroEmpStatus='';
+  var busca=document.getElementById('lj-filtro-busca');if(busca)busca.value='';
+  var sel=document.getElementById('lj-filtro-status');if(sel)sel.value='';
+  filtrarEmp();
+}
+
+function filtrarEmp(){
+  var busca=document.getElementById('lj-filtro-busca');
+  _filtroEmpBusca=(busca?busca.value.trim().toLowerCase():'');
+  var sel=document.getElementById('lj-filtro-status');
+  _filtroEmpStatus=(sel?sel.value:'');
+  renderEmp();
+}
+
+function _statusEmp(p){
+  if(!p.resultado)return 'analise';
+  if(p.resultado==='Negado')return 'negado';
+  if(p.resposta==='aceitar')return 'formalizacao';
+  return 'aprovado';
+}
+
+function _badgeEmp(p){
+  var s=_statusEmp(p);
+  if(s==='analise')return '<span class="bdg b-am">⏳ Em análise</span>';
+  if(s==='negado')return '<span class="bdg b-rd">❌ Negado</span>';
+  if(s==='formalizacao')return '<span class="bdg b-bl">📝 Em formalização</span>';
+  return '<span class="bdg b-gr">✅ '+p.resultado+'</span>';
+}
+
+function renderEmp(){
+  if(!meLj)return;
+  var props=meLj.props||[];
+  // Aplicar filtros
+  var filtradas=props.filter(function(p){
+    var matchBusca=!_filtroEmpBusca||
+      (p.nome&&p.nome.toLowerCase().indexOf(_filtroEmpBusca)>-1)||
+      (p.cpf&&p.cpf.replace(/\D/g,'').indexOf(_filtroEmpBusca.replace(/\D/g,''))>-1);
+    var matchStatus=!_filtroEmpStatus||_statusEmp(p)===_filtroEmpStatus;
+    return matchBusca&&matchStatus;
+  }).reverse();
+
+  var contador=document.getElementById('lj-emp-contador');
+  if(contador)contador.textContent=filtradas.length+' de '+props.length+' solicitação(ões)';
+
+  var lista=document.getElementById('lj-emp-lista');if(!lista)return;
+  if(filtradas.length===0){
+    lista.innerHTML='<div style="text-align:center;padding:2.5rem;color:var(--mu);font-size:13px;background:#fff;border-radius:13px;border:1px solid var(--brd)">Nenhuma solicitação encontrada com esses filtros.</div>';
+    return;
+  }
+
+  lista.innerHTML=filtradas.map(function(p){
+    var ini=p.nome?p.nome.split(' ').slice(0,2).map(function(n){return n[0];}).join('').toUpperCase():'?';
+    var s=_statusEmp(p);
+    var corBorda=s==='analise'?'rgba(179,104,0,.2)':s==='negado'?'rgba(204,47,40,.2)':s==='formalizacao'?'rgba(10,132,255,.2)':'rgba(26,140,64,.2)';
+    return '<div class="card" style="margin-bottom:10px;border:2px solid '+corBorda+'">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+      +'<div class="ci">'
+      +'<div class="av" style="background:var(--bpl);color:var(--bp)">'+ini+'</div>'
+      +'<div>'
+      +'<div class="cn">'+p.nome+'</div>'
+      +'<div class="cx">CPF: '+(p.cpf||'—')+' &bull; '+p.data+'</div>'
+      +'</div></div>'
+      +_badgeEmp(p)
+      +'</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:var(--sec);border-radius:10px;padding:.75rem">'
+      +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Aparelho</div><div style="font-size:12px;font-weight:600">'+((p.marca?p.marca+' ':'')+p.modelo||'—')+'</div></div>'
+      +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Valor solicitado</div><div style="font-size:13px;font-weight:700;color:var(--bp)">'+(p.valor||'—')+'</div></div>'
+      +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Valor aprovado</div><div style="font-size:13px;font-weight:700;color:var(--gr)">'+(p.valorAprov&&p.valorAprov!=='Negado'?p.valorAprov:'—')+'</div></div>'
+      +'</div>'
+      +(p.obs_res?'<div style="margin-top:8px;background:var(--bpl);border-radius:8px;padding:8px 12px;font-size:12px;color:#0C447C"><strong>📋 Obs. analista:</strong> '+p.obs_res+'</div>':'')
+      +'</div>';
+  }).join('');
+}
+
+
 function salvarConfigFirebase(){
   var urlEl = document.getElementById('fb-dbURL');
   var url = (urlEl ? urlEl.value.trim() : '').replace(/\/+$/,'');
@@ -2529,14 +2729,13 @@ function _atualizarTelasVisiveis(){
         var ndot=document.getElementById('ndot');if(ndot)ndot.style.display='block';
       }
     }
-    var telasLj=['s-lojista','s-lj-resultados'];
+    var telasLj=['s-lojista'];
     var lojTelaVisivel=telasLj.some(function(id){
       var el=document.getElementById(id);return el&&el.classList.contains('on');
     });
     if(lojTelaVisivel){
       renderLjDash();
-      var lrEl=document.getElementById('s-lj-resultados');
-      if(lrEl&&lrEl.classList.contains('on'))renderResultados();
+      renderEmp();
     }
   }
 }
@@ -2951,7 +3150,7 @@ function go(id){
   if(id==='s-funcionarios')renderFuncionarios();
   if(id==='s-lojistas-mgr')renderLjMgr();
   if(id==='s-lojista'){renderLjDash();atualizarTopLojista();}
-  if(id==='s-lj-resultados')renderResultados();
+  if(id==='s-lj-resultados'){goLj('lj-resultados');}
   if(id==='s-respostas-an')renderRespostasAn();
 }
 
@@ -2997,8 +3196,12 @@ carregarConfigFirebaseSalva();
 renderLjMgr();
 iniciarAutoUpdate();
 setTimeout(atualizarStatusPortal, 2000);
-// Verifica se veio de link de cliente
+// Restaura sessão após DB carregar
 setTimeout(checarLinkCliente, 500);
+setTimeout(function(){
+  if(DB.analistas.length>0||DB.lojistas.length>0) restaurarSessao();
+  else setTimeout(restaurarSessao, 2000);
+}, 1000);
 
 (function(){
   var hash=window.location.hash||'';
