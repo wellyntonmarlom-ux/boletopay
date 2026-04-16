@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>BoletoPay — Sistema</title>
+<title>BOLETO PAY — Sistema de Crédito</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
 :root{
@@ -151,6 +151,10 @@ body{background:var(--bg);color:var(--txt);min-height:100vh}
 .lj-ni:hover{background:var(--sec);color:var(--txt)}
 .lj-ni.on{background:var(--pul);color:var(--pu);font-weight:600}
 .lj-body{display:flex;flex:1}
+
+.parc-btns{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.parc-btn{padding:5px 10px;font-size:11px;font-weight:600;border:1.5px solid var(--brd);border-radius:7px;cursor:pointer;background:#fff;color:var(--mu);transition:.1s}
+.parc-btn.sel{border-color:currentColor;font-weight:700}
 </style>
 </head>
 <body>
@@ -171,7 +175,7 @@ var _fbPolling = null;
 
 var DB_DEFAULT = {
   analistas:[
-    {id:1,nome:'Admin BoletoPay',email:'admin@boletopay.com.br',senha:'admin123',role:'admin',ativo:true},
+    {id:1,nome:'Admin BOLETO PAY',email:'admin@boletopay.com.br',senha:'admin123',role:'admin',ativo:true},
     {id:2,nome:'Ana Souza',email:'ana@boletopay.com.br',senha:'ana123',role:'analista',ativo:true},
     {id:3,nome:'Carlos Lima',email:'carlos@boletopay.com.br',senha:'carlos123',role:'analista',ativo:true}
   ],
@@ -238,12 +242,13 @@ function _fbEscrever(dados){
 
 /* ---- SALVAR ---- */
 function salvarDB(){
-  // Sempre salva local como backup
+  // Salva local como backup completo
   try{localStorage.setItem('boletopay_db_v1', JSON.stringify(DB));}catch(e){}
-  // Se Firebase configurado, envia para nuvem
+  // Firebase: envia direto (imagens já comprimidas no upload)
   if(_fbConectado) _fbEscrever(DB);
   _ultimoDBHash = _hashDB();
 }
+
 
 /* ---- CARREGAR ---- */
 function carregarDB(){
@@ -291,7 +296,7 @@ function _usarLocal(){
     if(raw){
       var p = JSON.parse(raw);
       if(p&&p.analistas&&p.lojistas){
-        DB=p;DB.lojistas.forEach(function(lj){if(!lj.props)lj.props=[];});
+        DB=p;DB.lojistas.forEach(function(lj){if(!lj.props)lj.props=[];lj.props.forEach(function(p){_normalizarProp(p);});});
         absorverPropostasPendentes();
         _ultimoDBHash=_hashDB();
         _fbConectado=false;_mostrarModo(false);return;
@@ -304,6 +309,22 @@ function _usarLocal(){
 }
 
 /* ---- POLLING — detecta mudanças de outros dispositivos ---- */
+/* ===== NORMALIZA DADOS DO FIREBASE (arrays viram objetos no Firebase) ===== */
+function _toArray(val){
+  if(!val)return[];
+  if(Array.isArray(val))return val;
+  return Object.keys(val).sort(function(a,b){return Number(a)-Number(b);}).map(function(k){return val[k];});
+}
+function _normalizarProp(p){
+  if(!p)return;
+  if(p.propostas){
+    p.propostas=_toArray(p.propostas);
+    p.propostas.forEach(function(pr){
+      if(pr&&pr.opcoes) pr.opcoes=_toArray(pr.opcoes);
+    });
+  }
+}
+
 function _iniciarPolling(){
   if(_fbPolling)clearInterval(_fbPolling);
   _fbPolling = setInterval(function(){
@@ -331,7 +352,10 @@ function _iniciarPolling(){
         _ultimoDBHash=hashFirebase;
         DB.lojistas=data.lojistas;
         DB.analistas=data.analistas||DB.analistas;
-        DB.lojistas.forEach(function(lj){if(!lj.props)lj.props=[];});
+        DB.lojistas.forEach(function(lj){
+          if(!lj.props)lj.props=[];
+          lj.props.forEach(function(p){_normalizarProp(p);});
+        });
         // Atualiza meLj se lojista estiver logado
         if(meLj){
           var ljAtual=DB.lojistas.find(function(l){return l.id===meLj.id;});
@@ -342,6 +366,28 @@ function _iniciarPolling(){
       }
     });
   }, 3000);
+}
+
+/* ===== NORMALIZA DADOS DO FIREBASE (arrays viram objetos no Firebase) ===== */
+function _toArray(val){
+  if(!val)return[];
+  if(Array.isArray(val))return val;
+  // Firebase converte array em objeto com chaves "0","1","2"...
+  return Object.keys(val).sort(function(a,b){return Number(a)-Number(b);}).map(function(k){return val[k];});
+}
+function _normalizarProp(p){
+  if(!p)return;
+  // Normaliza propostas
+  if(p.propostas){
+    p.propostas=_toArray(p.propostas);
+    p.propostas.forEach(function(pr){
+      if(pr&&pr.opcoes) pr.opcoes=_toArray(pr.opcoes);
+    });
+  }
+  // Normaliza docs
+  if(p.docs&&!Array.isArray(p.docs)){
+    // docs é objeto {1:{...},2:{...}} — deixa como está
+  }
 }
 
 function absorverPropostasPendentes(){
@@ -377,14 +423,14 @@ carregarDB();
     <div style="width:100%;max-width:500px">
       <div style="display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:2.75rem">
         <svg width="48" height="48" viewBox="0 0 48 48"><rect width="48" height="48" rx="14" fill="#0A84FF"/><text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" fill="#fff" font-size="20" font-weight="700" font-family="Arial">BP</text></svg>
-        <span style="font-size:26px;font-weight:700;color:#fff">BoletoPay</span>
+        <span style="font-size:26px;font-weight:700;color:#fff">BOLETO PAY</span>
       </div>
       <p style="text-align:center;font-size:14px;color:rgba(255,255,255,.4);margin-bottom:2rem">Selecione o tipo de acesso</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
         <div class="pc" onclick="go('s-login-a')">
           <div style="width:54px;height:54px;border-radius:15px;background:rgba(10,132,255,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:22px;font-weight:700;color:#60AAFF">A</div>
           <h3 style="font-size:15px;font-weight:600;color:#fff;margin-bottom:6px">Área de análise</h3>
-          <p style="font-size:12px;color:rgba(255,255,255,.4);line-height:1.5">Equipe interna BoletoPay</p>
+          <p style="font-size:12px;color:rgba(255,255,255,.4);line-height:1.5">Equipe interna BOLETO PAY</p>
           <span style="display:inline-block;font-size:10px;padding:3px 10px;border-radius:20px;margin-top:10px;background:rgba(10,132,255,.2);color:#60AAFF;font-weight:600">Analista</span>
         </div>
         <div class="pc" onclick="go('s-login-l')">
@@ -457,8 +503,8 @@ carregarDB();
       <button class="back" onclick="go('s-portal')">&#8592; Voltar</button>
       <div style="width:42px;height:42px;border-radius:12px;background:var(--bp);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:700;margin-bottom:1.25rem">BP</div>
       <h2 style="font-size:20px;font-weight:700;margin-bottom:4px">Área de análise</h2>
-      <p style="font-size:13px;color:var(--mu);margin-bottom:1.75rem">Login de analistas BoletoPay</p>
-      <div class="fld"><label class="fl">E-mail</label><input class="fi" id="la-email" type="email" placeholder="seu@boletopay.com.br"/></div>
+      <p style="font-size:13px;color:var(--mu);margin-bottom:1.75rem">Login de analistas BOLETO PAY</p>
+      <div class="fld"><label class="fl">E-mail</label><input class="fi" id="la-email" type="email" placeholder="seu@BOLETO PAY.com.br"/></div>
       <div class="fld"><label class="fl">Senha</label><input class="fi" id="la-senha" type="password" placeholder="Sua senha"/></div>
       <div class="err-msg" id="la-err">E-mail ou senha inválidos.</div>
       <button style="width:100%;padding:13px;border:none;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer;color:#fff;background:var(--bp);margin-top:8px" onclick="loginAnalista()">Entrar</button>
@@ -478,7 +524,7 @@ carregarDB();
       <div class="fld"><label class="fl">Senha</label><input class="fi" id="ll-senha" type="password" placeholder="Sua senha"/></div>
       <div class="err-msg" id="ll-err">E-mail ou senha incorretos.</div>
       <button style="width:100%;padding:13px;border:none;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer;color:#fff;background:#7C3AED;margin-top:8px" onclick="loginLojista()">Entrar no portal</button>
-      <p style="font-size:12px;color:var(--mu);text-align:center;margin-top:1.125rem">Credenciais fornecidas pela BoletoPay</p>
+      <p style="font-size:12px;color:var(--mu);text-align:center;margin-top:1.125rem">Credenciais fornecidas pela BOLETO PAY</p>
     </div>
   </div>
 </div>
@@ -487,11 +533,12 @@ carregarDB();
 <div class="scr" id="s-dash">
   <div class="shell">
     <aside class="sidebar" id="sb-analista">
-      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BoletoPay</div><div class="sb-rl" id="sb-rl-a">Analista</div></div></div>
+      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BOLETO PAY</div><div class="sb-rl" id="sb-rl-a">Analista</div></div></div>
       <div class="ni on-a" onclick="go('s-dash')"><span class="nic">&#9638;</span> Dashboard</div>
       <div class="ni" onclick="go('s-novas')"><span class="nic">🔔</span> Novas solicitações <span class="n-badge" id="nb-novas" style="display:none">0</span></div>
       <div class="ni" onclick="go('s-fila')"><span class="nic">&#8681;</span> Fila de análise <span class="n-badge" id="nb-fila">0</span></div>
       <div class="ni" onclick="go('s-respostas-an')"><span class="nic">&#8617;</span> Respostas <span class="n-badge am" id="nb-resp">0</span></div>
+      <div class="ni" onclick="go('s-finalizadas')"><span class="nic">🏁</span> Finalizadas <span class="n-badge" id="nb-fin" style="background:var(--tl);display:none">0</span></div>
       <div class="ni" onclick="go('s-lojistas-mgr')"><span class="nic">&#9646;</span> Lojistas</div>
       <div class="ni" id="ni-func" onclick="go('s-funcionarios')" style="display:none"><span class="nic">&#128100;</span> Funcionários</div>
       <div class="ni"><span class="nic">&#8599;</span> Relatórios</div>
@@ -540,8 +587,8 @@ carregarDB();
           <div id="an-grafico-valores"><div style="color:var(--mu);font-size:13px">Nenhuma proposta ainda.</div></div>
         </div>
       </div>
-      <div class="stl">Últimas propostas — todos os lojistas</div>
-      <div class="tbl"><div class="th" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr"><span>Lojista / Cliente</span><span>Aparelho</span><span>Status</span><span>Valor</span><span>Resposta</span></div><div id="d-props-list"><div style="padding:2rem;text-align:center;color:var(--mu);font-size:13px">Nenhuma proposta recebida ainda</div></div></div>
+      <div class="stl">Todas as análises — clique para ver resumo</div>
+      <div class="tbl"><div class="th" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr"><span>Lojista / Cliente</span><span>Aparelho</span><span>Status</span><span>Valor</span><span>Situação</span></div><div id="d-props-list"><div style="padding:2rem;text-align:center;color:var(--mu);font-size:13px">Nenhuma proposta recebida ainda</div></div></div>
     </div>
   </div>
 </div>
@@ -550,7 +597,7 @@ carregarDB();
 <div class="scr" id="s-novas">
   <div class="shell">
     <aside class="sidebar">
-      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BoletoPay</div><div class="sb-rl">Analista</div></div></div>
+      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BOLETO PAY</div><div class="sb-rl">Analista</div></div></div>
       <div class="ni" onclick="go('s-dash')"><span class="nic">&#9638;</span> Dashboard</div>
       <div class="ni on-a"><span class="nic">🔔</span> Novas solicitações</div>
       <div class="ni" onclick="go('s-fila')"><span class="nic">&#8681;</span> Fila de análise <span class="n-badge" id="nb-fila-ns">0</span></div>
@@ -583,7 +630,7 @@ carregarDB();
 <div class="scr" id="s-fila">
   <div class="shell">
     <aside class="sidebar">
-      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BoletoPay</div><div class="sb-rl">Analista</div></div></div>
+      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BOLETO PAY</div><div class="sb-rl">Analista</div></div></div>
       <div class="ni" onclick="go('s-dash')"><span class="nic">&#9638;</span> Dashboard</div>
       <div class="ni on-a"><span class="nic">&#8681;</span> Fila de análise</div>
       <div class="ni" onclick="go('s-respostas-an')"><span class="nic">&#8617;</span> Respostas</div>
@@ -602,7 +649,7 @@ carregarDB();
 <div class="scr" id="s-analise">
   <div class="shell">
     <aside class="sidebar">
-      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BoletoPay</div><div class="sb-rl">Analista</div></div></div>
+      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BOLETO PAY</div><div class="sb-rl">Analista</div></div></div>
       <div class="ni" onclick="go('s-dash')"><span class="nic">&#9638;</span> Dashboard</div>
       <div class="ni on-a"><span class="nic">&#8681;</span> Analisando</div>
       <div class="ni" onclick="go('s-lojistas-mgr')"><span class="nic">&#9646;</span> Lojistas</div>
@@ -678,38 +725,102 @@ carregarDB();
             <div class="dr"><span class="dk">Valor</span><span class="dv" id="an-r-valor" style="color:var(--bp)">—</span></div>
             <div class="dr"><span class="dk">Renda</span><span class="dv" id="an-r-renda" style="color:var(--gr)">—</span></div>
           </div>
-          <div class="card"><div class="ctit">Definir e enviar resultado</div>
+
+          <div class="card">
+            <div class="ctit">Definir e enviar resultado</div>
+
+            <!-- STATUS -->
             <div class="ef2" style="margin-bottom:10px">
               <div><label class="fl">Status</label>
                 <select class="fsel" id="res-status" onchange="updPrev()"><option>Aprovado</option><option>Pré-aprovado</option><option>Aprovado CLT</option><option>Aprovado parcial</option><option>Aprovado apenas android</option><option>Em análise</option><option>Negado</option></select>
               </div>
             </div>
+
+            <!-- CAMPOS APROVADO -->
             <div id="res-extras">
-            <div class="ef2" style="margin-bottom:10px">
-              <div><label class="fl">Modalidade</label>
-                <select class="fsel" id="res-modal" onchange="updPrev()"><option>CDC — Crédito direto</option><option>Crédito pessoal</option><option>Crédito CLT</option><option>Crédito consignado</option><option>Financiamento</option></select>
+
+              <div style="background:var(--grl);border:1.5px solid rgba(26,140,64,.3);border-radius:12px;padding:1rem;margin-bottom:10px">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                  <div style="font-size:12px;font-weight:700;color:var(--gr)">📋 Proposta 1 </div>
+                  
+                </div>
+                <div class="ef2">
+                  <div><label class="fl">Modalidade</label>
+                    <select class="fsel" id="res-modal"><option>CDC — Crédito direto</option><option>Crédito pessoal</option><option>Crédito CLT</option><option>Crédito consignado</option><option>Financiamento</option></select>
+                  </div>
+                  <div><label class="fl">Valor aprovado (R$)</label><input class="fi" id="res-valor" oninput="updPrev()" placeholder="Ex: 2.800"/></div>
+                  <div><label class="fl">Banco parceiro</label>
+                    <select class="fsel" id="res-banco"><option>Caixa Econômica</option><option>Itaú Unibanco</option><option>Bradesco</option><option>Santander</option><option>Nubank</option><option>Inter</option><option>BTG Pactual</option></select>
+                  </div>
+                  <div><label class="fl">Nº de parcelas</label>
+                    <input class="fi" id="res-qtd" placeholder="Ex: 24" style="font-family:monospace"/>
+                  </div>
+                  <div><label class="fl">Valor da parcela (R$)</label><input class="fi" id="res-parc" oninput="updPrev()" placeholder="Ex: 140"/></div>
+                </div>
               </div>
-              <div><label class="fl">Valor aprovado (R$)</label><input class="fi" id="res-valor" oninput="updPrev()" placeholder="Ex: 2.800"/></div>
-              <div><label class="fl">Banco parceiro</label>
-                <select class="fsel" id="res-banco" onchange="updPrev()"><option>Caixa Econômica</option><option>Itaú Unibanco</option><option>Bradesco</option><option>Santander</option><option>Nubank</option><option>Inter</option><option>BTG Pactual</option></select>
+              <div id="prop2-box" style="display:none" style="background:var(--bpl);border:1.5px solid rgba(10,132,255,.3);border-radius:12px;padding:1rem;margin-bottom:10px">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                  <div style="font-size:12px;font-weight:700;color:var(--bp)">📋 Proposta 2 <span style="font-size:10px;font-weight:400;color:var(--mu)">(opcional)</span></div>
+                  <button onclick="removerProp2()" style="font-size:11px;color:var(--rd);background:none;border:none;cursor:pointer">✕ Remover</button>
+                </div>
+                <div class="ef2">
+                  <div><label class="fl">Modalidade</label>
+                    <select class="fsel" id="res-modal2"><option>CDC — Crédito direto</option><option>Crédito pessoal</option><option>Crédito CLT</option><option>Crédito consignado</option><option>Financiamento</option></select>
+                  </div>
+                  <div><label class="fl">Valor aprovado (R$)</label><input class="fi" id="res-valor2" oninput="updPrev()" placeholder="Ex: 2.800"/></div>
+                  <div><label class="fl">Banco parceiro</label>
+                    <select class="fsel" id="res-banco2"><option>Caixa Econômica</option><option>Itaú Unibanco</option><option>Bradesco</option><option>Santander</option><option>Nubank</option><option>Inter</option><option>BTG Pactual</option></select>
+                  </div>
+                  <div><label class="fl">Nº de parcelas</label>
+                    <input class="fi" id="res-qtd2" placeholder="Ex: 24" style="font-family:monospace"/>
+                  </div>
+                  <div><label class="fl">Valor da parcela (R$)</label><input class="fi" id="res-parc2" oninput="updPrev()" placeholder="Ex: 140"/></div>
+                </div>
               </div>
-              <div><label class="fl">Parcelas (4x a 72x)</label>
-                <select class="fsel" id="res-qtd" onchange="updPrev()">
-                  <option>4x</option><option>6x</option><option>8x</option><option>10x</option><option>12x</option><option>18x</option><option selected>24x</option><option>30x</option><option>36x</option><option>42x</option><option>48x</option><option>54x</option><option>60x</option><option>66x</option><option>72x</option>
-                </select>
+              <div id="prop3-box" style="display:none" style="background:var(--pul);border:1.5px solid rgba(124,58,237,.3);border-radius:12px;padding:1rem;margin-bottom:10px">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                  <div style="font-size:12px;font-weight:700;color:var(--pu)">📋 Proposta 3 <span style="font-size:10px;font-weight:400;color:var(--mu)">(opcional)</span></div>
+                  <button onclick="removerProp3()" style="font-size:11px;color:var(--rd);background:none;border:none;cursor:pointer">✕ Remover</button>
+                </div>
+                <div class="ef2">
+                  <div><label class="fl">Modalidade</label>
+                    <select class="fsel" id="res-modal3"><option>CDC — Crédito direto</option><option>Crédito pessoal</option><option>Crédito CLT</option><option>Crédito consignado</option><option>Financiamento</option></select>
+                  </div>
+                  <div><label class="fl">Valor aprovado (R$)</label><input class="fi" id="res-valor3" oninput="updPrev()" placeholder="Ex: 2.800"/></div>
+                  <div><label class="fl">Banco parceiro</label>
+                    <select class="fsel" id="res-banco3"><option>Caixa Econômica</option><option>Itaú Unibanco</option><option>Bradesco</option><option>Santander</option><option>Nubank</option><option>Inter</option><option>BTG Pactual</option></select>
+                  </div>
+                  <div><label class="fl">Nº de parcelas</label>
+                    <input class="fi" id="res-qtd3" placeholder="Ex: 24" style="font-family:monospace"/>
+                  </div>
+                  <div><label class="fl">Valor da parcela (R$)</label><input class="fi" id="res-parc3" oninput="updPrev()" placeholder="Ex: 140"/></div>
+                </div>
               </div>
-              <div><label class="fl">Valor da parcela (R$)</label><input class="fi" id="res-parc" oninput="updPrev()" placeholder="Ex: 140"/></div>
-              <div class="ef-full"><label class="fl">Observação ao lojista</label><textarea class="fi" id="res-obs" rows="2" style="resize:none;line-height:1.5" placeholder="Orientações..."></textarea></div>
+
+              <!-- Botão adicionar proposta -->
+              <div id="btn-add-props" style="display:flex;gap:8px;margin-bottom:10px">
+                <button id="btn-add-p2" class="btn-ghost" style="font-size:12px;padding:7px 12px" onclick="adicionarProp2()">+ Proposta 2</button>
+                <button id="btn-add-p3" class="btn-ghost" style="font-size:12px;padding:7px 12px;display:none" onclick="adicionarProp3()">+ Proposta 3</button>
+              </div>
+
+              <!-- Observação geral -->
+              <div class="ef-full" style="margin-bottom:10px">
+                <label class="fl">Observação geral ao lojista</label>
+                <textarea class="fi" id="res-obs" rows="2" style="resize:none;line-height:1.5" placeholder="Orientações sobre as propostas..."></textarea>
+              </div>
+
             </div>
-            </div>
+
             <!-- Caixa Negado -->
             <div id="res-negado-box" style="display:none;background:var(--rdl);border:1.5px solid rgba(204,47,40,.25);border-radius:12px;padding:1rem 1.25rem;margin-bottom:10px">
               <div style="font-size:13px;font-weight:600;color:var(--rd);margin-bottom:4px">Proposta será marcada como Negada</div>
-              <div style="font-size:12px;color:var(--mu)">O lojista será notificado que a proposta foi negada. Nenhuma outra informação é necessária.</div>
-              <div style="margin-top:.75rem"><label class="fl">Motivo / observação ao lojista (opcional)</label><textarea class="fi" id="res-obs-neg" rows="2" style="resize:none;line-height:1.5" placeholder="Ex: score de crédito insuficiente..."></textarea></div>
+              <div style="font-size:12px;color:var(--mu)">O lojista será notificado que a proposta foi negada.</div>
+              <div style="margin-top:.75rem"><label class="fl">Motivo (opcional)</label><textarea class="fi" id="res-obs-neg" rows="2" style="resize:none;line-height:1.5" placeholder="Ex: score de crédito insuficiente..."></textarea></div>
             </div>
+
+            <!-- Preview -->
             <div class="al al-gr" id="pv-box" style="margin-bottom:10px">
-              <div style="font-size:10px;font-weight:700;color:var(--gr);margin-bottom:.5rem;text-transform:uppercase">Preview — o lojista vai receber:</div>
+              <div style="font-size:10px;font-weight:700;color:var(--gr);margin-bottom:.5rem;text-transform:uppercase">Preview — proposta 1:</div>
               <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
                 <div><div style="font-size:10px;color:var(--mu)">Status</div><div class="pv-val" style="font-size:13px;font-weight:700;color:var(--gr)" id="pv-s">Aprovado</div></div>
                 <div><div style="font-size:10px;color:var(--mu)">Valor</div><div class="pv-val" style="font-size:13px;font-weight:700;color:var(--gr)" id="pv-v">—</div></div>
@@ -719,9 +830,10 @@ carregarDB();
                 <div><div style="font-size:10px;color:var(--mu)">IMEI</div><div class="pv-val" style="font-size:11px;font-weight:600;color:var(--gr)" id="pv-i">—</div></div>
               </div>
             </div>
+
             <div style="display:flex;gap:10px;margin-top:1rem">
               <button class="btn-ghost" style="min-width:100px" onclick="propAtual=null;_propAtualId=null;_iniciarPolling();go('s-fila')">← Cancelar</button>
-              <button style="flex:1;padding:14px;background:var(--gr);color:#fff;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.01em" onclick="javascript:enviarResultado()">✅ Enviar resultado ao lojista</button>
+              <button style="flex:1;padding:14px;background:var(--gr);color:#fff;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer" onclick="javascript:enviarResultado()">✅ Enviar resultado ao lojista</button>
             </div>
           </div>
         </div>
@@ -734,10 +846,11 @@ carregarDB();
 <div class="scr" id="s-respostas-an">
   <div class="shell">
     <aside class="sidebar">
-      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BoletoPay</div><div class="sb-rl">Analista</div></div></div>
+      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BOLETO PAY</div><div class="sb-rl">Analista</div></div></div>
       <div class="ni" onclick="go('s-dash')"><span class="nic">&#9638;</span> Dashboard</div>
       <div class="ni" onclick="go('s-fila')"><span class="nic">&#8681;</span> Fila</div>
       <div class="ni on-a"><span class="nic">&#8617;</span> Respostas</div>
+      <div class="ni" onclick="go('s-finalizadas')"><span class="nic">🏁</span> Finalizadas</div>
       <div class="ni" onclick="go('s-lojistas-mgr')"><span class="nic">&#9646;</span> Lojistas</div>
       <div class="sb-bot"><div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
     </aside>
@@ -748,11 +861,33 @@ carregarDB();
   </div>
 </div>
 
+<!-- ======== FINALIZADAS ======== -->
+<div class="scr" id="s-finalizadas">
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BOLETO PAY</div><div class="sb-rl">Analista</div></div></div>
+      <div class="ni" onclick="go('s-dash')"><span class="nic">&#9638;</span> Dashboard</div>
+      <div class="ni" onclick="go('s-fila')"><span class="nic">&#8681;</span> Fila</div>
+      <div class="ni" onclick="go('s-respostas-an')"><span class="nic">&#8617;</span> Respostas</div>
+      <div class="ni on-a"><span class="nic">🏁</span> Finalizadas</div>
+      <div class="ni" onclick="go('s-lojistas-mgr')"><span class="nic">&#9646;</span> Lojistas</div>
+      <div class="sb-bot"><div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
+    </aside>
+    <div class="content">
+      <div class="ph">
+        <div><div class="pt">Contratos finalizados</div><div class="ps" id="fin-sub">Propostas aceitas e formalizadas</div></div>
+      </div>
+      <div id="fin-lista"><div style="text-align:center;padding:3rem;color:var(--mu);font-size:13px">Nenhum contrato finalizado ainda.</div></div>
+    </div>
+  </div>
+</div>
+
+
 <!-- ======== LOJISTAS MGR ======== -->
 <div class="scr" id="s-lojistas-mgr">
   <div class="shell">
     <aside class="sidebar">
-      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BoletoPay</div><div class="sb-rl">Analista</div></div></div>
+      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BOLETO PAY</div><div class="sb-rl">Analista</div></div></div>
       <div class="ni" onclick="go('s-dash')"><span class="nic">&#9638;</span> Dashboard</div>
       <div class="ni" onclick="go('s-fila')"><span class="nic">&#8681;</span> Fila</div>
       <div class="ni" onclick="go('s-respostas-an')"><span class="nic">&#8617;</span> Respostas</div>
@@ -773,7 +908,7 @@ carregarDB();
 <div class="scr" id="s-novo-lj">
   <div class="shell">
     <aside class="sidebar">
-      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BoletoPay</div><div class="sb-rl">Analista</div></div></div>
+      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BOLETO PAY</div><div class="sb-rl">Analista</div></div></div>
       <div class="ni" onclick="go('s-dash')"><span class="nic">&#9638;</span> Dashboard</div>
       <div class="ni on-a"><span class="nic">&#9646;</span> Lojistas</div>
       <div class="sb-bot"><div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
@@ -817,7 +952,7 @@ carregarDB();
 <div class="scr" id="s-edit-lj">
   <div class="shell">
     <aside class="sidebar">
-      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BoletoPay</div><div class="sb-rl">Analista</div></div></div>
+      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BOLETO PAY</div><div class="sb-rl">Analista</div></div></div>
       <div class="ni" onclick="go('s-dash')"><span class="nic">&#9638;</span> Dashboard</div>
       <div class="ni on-a"><span class="nic">&#9646;</span> Lojistas</div>
       <div class="sb-bot"><div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
@@ -896,7 +1031,7 @@ carregarDB();
 <div class="scr" id="s-funcionarios">
   <div class="shell">
     <aside class="sidebar">
-      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BoletoPay</div><div class="sb-rl">Admin</div></div></div>
+      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BOLETO PAY</div><div class="sb-rl">Admin</div></div></div>
       <div class="ni" onclick="go('s-dash')"><span class="nic">&#9638;</span> Dashboard</div>
       <div class="ni" onclick="go('s-fila')"><span class="nic">&#8681;</span> Fila</div>
       <div class="ni" onclick="go('s-lojistas-mgr')"><span class="nic">&#9646;</span> Lojistas</div>
@@ -916,7 +1051,7 @@ carregarDB();
 <div class="scr" id="s-novo-func">
   <div class="shell">
     <aside class="sidebar">
-      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BoletoPay</div><div class="sb-rl">Admin</div></div></div>
+      <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BOLETO PAY</div><div class="sb-rl">Admin</div></div></div>
       <div class="ni on-a"><span class="nic">&#128100;</span> Funcionários</div>
       <div class="sb-bot"><div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
     </aside>
@@ -930,7 +1065,7 @@ carregarDB();
           <div><label class="fl">Função</label>
             <select class="fsel" id="nf-role"><option value="analista">Analista de crédito</option><option value="supervisor">Supervisor</option></select>
           </div>
-          <div><label class="fl">E-mail de acesso *</label><input class="fi" id="nf-email" type="email" placeholder="nome@boletopay.com.br"/></div>
+          <div><label class="fl">E-mail de acesso *</label><input class="fi" id="nf-email" type="email" placeholder="nome@BOLETO PAY.com.br"/></div>
           <div><label class="fl">Senha *</label><input class="fi" id="nf-senha" type="text" placeholder="Mínimo 6 caracteres"/></div>
         </div>
         <div class="al al-bl" style="margin-bottom:1.25rem;font-size:13px;color:#0C447C">
@@ -998,6 +1133,9 @@ carregarDB();
             <div class="card" style="margin:0"><div class="ctit">Marcas mais solicitadas</div><div id="lj-grafico-marcas"><div style="color:var(--mu);font-size:13px">Nenhuma proposta ainda.</div></div></div>
             <div class="card" style="margin:0"><div class="ctit">Resultados das propostas</div><div id="lj-grafico-resultados"><div style="color:var(--mu);font-size:13px">Nenhuma proposta ainda.</div></div></div>
           </div>
+          <!-- PRODUTOS FINANCEIROS -->
+          <div class="ctit" style="margin-bottom:1rem">💳 Produtos disponíveis</div>
+          <div id="lj-produtos" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:1.5rem"></div>
         </div>
 
         <!-- ===== ABA EMPRÉSTIMOS ===== -->
@@ -1063,7 +1201,12 @@ carregarDB();
         <div style="background:#fff;border:2px solid var(--pu);border-radius:12px;padding:1rem;margin-bottom:10px">
           <div style="font-size:13px;font-weight:700;color:var(--pu);margin-bottom:4px">📲 Cliente remoto — enviar link pelo WhatsApp</div>
           <div style="font-size:12px;color:var(--mu);margin-bottom:10px">Gera um link. O cliente abre no celular e a proposta entra direto no sistema.</div>
-          <button class="btn" style="width:100%;justify-content:center;font-size:14px;background:#25D366" onclick="enviarLinkWhatsApp()">💬 Enviar link pelo WhatsApp</button>
+          <button class="btn" style="width:100%;justify-content:center;font-size:14px;background:#25D366" onclick="abrirWhatsApp()">💬 Enviar link pelo WhatsApp</button>
+          <div id="link-gerado-box" style="display:none;margin-top:10px;background:var(--sec);border-radius:8px;padding:10px">
+            <div style="font-size:11px;color:var(--mu);margin-bottom:4px">Link gerado:</div>
+            <div id="link-gerado-txt" style="font-size:11px;font-family:monospace;color:var(--bp);word-break:break-all"></div>
+            <a id="link-wa-direto" href="#" target="_blank" style="display:block;margin-top:8px;background:#25D366;color:#fff;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:600;text-align:center;text-decoration:none">📲 Abrir WhatsApp</a>
+          </div>
           <div id="link-gerado-box" style="display:none;margin-top:10px;background:var(--sec);border-radius:8px;padding:10px">
             <div style="font-size:11px;color:var(--mu);margin-bottom:4px">Link gerado:</div>
             <div id="link-gerado-txt" style="font-size:11px;font-family:monospace;color:var(--bp);word-break:break-all"></div>
@@ -1346,7 +1489,7 @@ carregarDB();
       <div id="lj-res-empty" style="text-align:center;padding:3rem;color:var(--mu);background:#fff;border-radius:13px;border:1px solid var(--brd)">
         <div style="font-size:36px;margin-bottom:12px">&#128235;</div>
         <div style="font-size:14px;font-weight:600;margin-bottom:6px">Nenhum resultado ainda</div>
-        <div style="font-size:13px">Os resultados aparecem aqui quando a BoletoPay analisar as propostas.</div>
+        <div style="font-size:13px">Os resultados aparecem aqui quando a BOLETO PAY analisar as propostas.</div>
       </div>
     </div>
   </div>
@@ -1386,12 +1529,31 @@ function handleUpload(input,num){
   var reader=new FileReader();
   reader.onload=function(e){
     var src=e.target.result;
-    uploadsData[num].imgSrc=src;
-    var key='bp_doc_tmp_'+num+'_'+Date.now();
-    try{localStorage.setItem(key,src);uploadsData[num].imgKey=key;}catch(ex){}
-    if(!isPdf&&uimg){uimg.src=src;uimg.style.display='block';}
-    else if(isPdf){
-      // Mostra preview do PDF inline usando <object>
+    // Comprime imagens antes de salvar (economiza Firebase)
+    function salvarImagem(srcFinal){
+      uploadsData[num].imgSrc=srcFinal;
+      var key='bp_doc_tmp_'+num+'_'+Date.now();
+      try{localStorage.setItem(key,srcFinal);uploadsData[num].imgKey=key;}catch(ex){}
+      if(!isPdf&&uimg){uimg.src=srcFinal;uimg.style.display='block';}
+    }
+    if(!isPdf){
+      // Comprime para max 800px e 55% qualidade
+      var canvas=document.createElement('canvas');
+      var ctx=canvas.getContext('2d');
+      var img=new Image();
+      img.onload=function(){
+        var maxW=800,w=img.width,h=img.height;
+        if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
+        canvas.width=w;canvas.height=h;
+        ctx.drawImage(img,0,0,w,h);
+        var comprimida=canvas.toDataURL('image/jpeg',0.55);
+        salvarImagem(comprimida);
+      };
+      img.onerror=function(){salvarImagem(src);}; // fallback sem compressão
+      img.src=src;
+    } else {
+      salvarImagem(src);
+      // Preview PDF
       var pdfWrap=document.getElementById('pdf-wrap-'+num);
       if(!pdfWrap){
         pdfWrap=document.createElement('div');
@@ -1408,16 +1570,64 @@ function handleUpload(input,num){
 }
 
 /* ========== LOGIN ========== */
+/* ===== SEGURANÇA ===== */
+var _tentativas={};
+var _SESSAO_EXPIRA_H=8; // horas
+
+function _hashSimples(str){
+  // Hash simples para não salvar senha em texto claro no localStorage
+  var h=0;
+  for(var i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i);h|=0;}
+  return h.toString(36);
+}
+
+function _verificarBloqueio(email){
+  var t=_tentativas[email]||{count:0,bloqueadoAte:0};
+  if(t.bloqueadoAte&&Date.now()<t.bloqueadoAte){
+    var min=Math.ceil((t.bloqueadoAte-Date.now())/60000);
+    alert('⛔ Conta temporariamente bloqueada.\nTente novamente em '+min+' minuto(s).');
+    return false;
+  }
+  return true;
+}
+
+function _registrarFalha(email){
+  var t=_tentativas[email]||{count:0,bloqueadoAte:0};
+  t.count++;
+  if(t.count>=5){
+    t.bloqueadoAte=Date.now()+10*60*1000; // 10 minutos
+    t.count=0;
+    alert('⛔ Muitas tentativas incorretas. Conta bloqueada por 10 minutos.');
+  }
+  _tentativas[email]=t;
+}
+
+function _limparTentativas(email){
+  delete _tentativas[email];
+}
+
 function loginAnalista(){
   var email=document.getElementById('la-email').value.trim().toLowerCase();
   var senha=document.getElementById('la-senha').value.trim();
   var err=document.getElementById('la-err');
+  if(!_verificarBloqueio(email))return;
   var found=DB.analistas.find(function(a){return a.email.toLowerCase()===email&&a.senha===senha&&a.ativo});
-  if(!found){err.classList.add('on');return;}
+  if(!found){
+    err.classList.add('on');
+    _registrarFalha(email);
+    return;
+  }
+  _limparTentativas(email);
   err.classList.remove('on');
   me=found;
-  // Salvar sessão
-  try{localStorage.setItem('bp_sessao',JSON.stringify({tipo:'analista',email:email,senha:senha}));}catch(e){}
+  // Salvar sessão com expiração e hash da senha (não salva senha em texto)
+  try{
+    localStorage.setItem('bp_sessao',JSON.stringify({
+      tipo:'analista',email:email,
+      sh:_hashSimples(senha), // hash simples
+      exp:Date.now()+_SESSAO_EXPIRA_H*3600*1000
+    }));
+  }catch(e){}
   _aplicarLoginAnalista();
   go('s-dash');
 }
@@ -1437,12 +1647,23 @@ function loginLojista(){
   var email=document.getElementById('ll-email').value.trim().toLowerCase();
   var senha=document.getElementById('ll-senha').value.trim();
   var err=document.getElementById('ll-err');
+  if(!_verificarBloqueio(email))return;
   var found=DB.lojistas.find(function(l){return l.email.toLowerCase()===email&&l.senha===senha&&l.ativo});
-  if(!found){err.classList.add('on');return;}
+  if(!found){
+    err.classList.add('on');
+    _registrarFalha(email);
+    return;
+  }
+  _limparTentativas(email);
   err.classList.remove('on');
   meLj=found;
-  // Salvar sessão
-  try{localStorage.setItem('bp_sessao',JSON.stringify({tipo:'lojista',email:email,senha:senha}));}catch(e){}
+  try{
+    localStorage.setItem('bp_sessao',JSON.stringify({
+      tipo:'lojista',email:email,
+      sh:_hashSimples(senha),
+      exp:Date.now()+_SESSAO_EXPIRA_H*3600*1000
+    }));
+  }catch(e){}
   atualizarTopLojista();
   go('s-lojista');
 }
@@ -1459,11 +1680,21 @@ function restaurarSessao(){
     if(!raw)return;
     var sessao=JSON.parse(raw);
     if(!sessao||!sessao.tipo)return;
+    // Verifica expiração
+    if(sessao.exp&&Date.now()>sessao.exp){
+      localStorage.removeItem('bp_sessao');
+      return;
+    }
     if(sessao.tipo==='analista'){
-      var found=DB.analistas.find(function(a){return a.email.toLowerCase()===sessao.email&&a.senha===sessao.senha&&a.ativo;});
+      // Verifica hash da senha
+      var found=DB.analistas.find(function(a){
+        return a.email.toLowerCase()===sessao.email&&_hashSimples(a.senha)===sessao.sh&&a.ativo;
+      });
       if(found){me=found;_aplicarLoginAnalista();go('s-dash');return;}
     } else if(sessao.tipo==='lojista'){
-      var found2=DB.lojistas.find(function(l){return l.email.toLowerCase()===sessao.email&&l.senha===sessao.senha&&l.ativo;});
+      var found2=DB.lojistas.find(function(l){
+        return l.email.toLowerCase()===sessao.email&&_hashSimples(l.senha)===sessao.sh&&l.ativo;
+      });
       if(found2){meLj=found2;atualizarTopLojista();go('s-lojista');return;}
     }
     localStorage.removeItem('bp_sessao');
@@ -1595,15 +1826,24 @@ function _copiarFallback(link){
   document.body.removeChild(ta);
 }
 
-function enviarLinkWhatsApp(){
-  if(!meLj)return;
-  gerarLinkCliente();
-  var link = window._linkClienteGerado;
-  if(!link)return;
-  // Mensagem curta para não bloquear WhatsApp
-  var msg = 'Olá! Preencha seus dados para análise de crédito na ' + meLj.nome + ':\n\n' + link;
-  window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(msg), '_blank');
+function abrirWhatsApp(){
+  if(!meLj){alert('Faça login como lojista primeiro.');return;}
+  var base=window.location.href.split('/').slice(0,-1).join('/').replace(/\/index\.html$/,'');
+  var link=base+'/form.html?loja='+meLj.id+'&nome='+encodeURIComponent(meLj.nome);
+  window._linkClienteGerado=link;
+  var txt=document.getElementById('link-gerado-txt');
+  var box=document.getElementById('link-gerado-box');
+  if(txt)txt.textContent=link;
+  if(box)box.style.display='block';
+  var msg='Olá! Preencha seus dados para análise de crédito na '+meLj.nome+':\n\n'+link;
+  var url='https://wa.me/?text='+encodeURIComponent(msg);
+  // Atualiza o link direto no <a> — não depende de window.open
+  var linkEl=document.getElementById('link-wa-direto');
+  if(linkEl)linkEl.href=url;
+  // Tenta abrir diretamente também
+  try{window.open(url,'_blank');}catch(e){}
 }
+function enviarLinkWhatsApp(){abrirWhatsApp();}
 
 // Verificar se veio de link de cliente e abrir formulário automaticamente
 function checarLinkCliente(){
@@ -2197,7 +2437,11 @@ function renderLjDash(){
 /* ========== RENDER RESULTADOS LOJISTA ========== */
 function renderResultados(){
   if(!meLj)return;
-  var props=meLj.props.filter(function(p){return p.resultado});
+  // Sempre busca do DB atualizado
+  var ljAtual=DB.lojistas.find(function(l){return l.id===meLj.id;});
+  if(ljAtual)meLj=ljAtual;
+  // Mostra propostas com resultado OU com múltiplas propostas enviadas
+  var props=meLj.props.filter(function(p){return p.resultado||(p.propostas&&p.propostas.length>0);});
   props.forEach(function(p){p.lido=true;});
   var ndot=document.getElementById('ndot');if(ndot)ndot.style.display='none';
   var list=document.getElementById('lj-res-list');
@@ -2209,19 +2453,121 @@ function renderResultados(){
     var ini=p.nome.split(' ').slice(0,2).map(function(n){return n[0]}).join('').toUpperCase();
     var respondeu=p.resposta!=null;
     var resHtml=respondeu?renderRespostaFeita(p):renderEscolha(p);
-    return '<div class="card" style="margin-bottom:14px;border:2px solid rgba(26,140,64,.2)" id="rc-'+p.id+'"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div class="ci"><div class="av" style="background:var(--grl);color:var(--gr);width:36px;height:36px">'+ini+'</div><div><div class="cn">'+p.nome+'</div><div class="cx">Resultado em '+p.data+'</div></div></div><div style="display:flex;gap:8px">'+(respondeu?'':'<span class="ntag">NOVO</span>')+(p.resultado==='Negado'?'<span class="bdg b-rd">'+p.resultado+'</span>':'<span class="bdg b-gr">'+p.resultado+'</span>')+'</div></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:var(--sec);border-radius:10px;padding:.875rem;margin-bottom:14px"><div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Modalidade</div><div style="font-size:13px;font-weight:700">'+p.modal+'</div></div><div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Valor aprovado</div><div style="font-size:15px;font-weight:700;color:var(--gr)">'+p.valorAprov+'</div></div><div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Parcelamento</div><div style="font-size:13px;font-weight:700">'+p.parcelas+'</div></div><div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Banco</div><div style="font-size:13px;font-weight:700">'+p.banco+'</div></div></div>'+(p.obs_res?'<div style="background:var(--bpl);border-radius:10px;padding:.75rem 1rem;margin-bottom:14px;font-size:13px;color:#0C447C"><strong>📋 Observação do analista:</strong> '+p.obs_res+'</div>':'')+(p.resultado==='Negado'&&p.obs_res?'':'')+ resHtml+'</div>';
+    // Se tem múltiplas propostas, mostra resumo diferente
+    var temMulti=p.propostas&&p.propostas.length>1;
+    var resumoBox=temMulti
+      ?'<div style="background:var(--grl);border-radius:10px;padding:.875rem;margin-bottom:14px"><div style="font-size:12px;font-weight:700;color:var(--gr);margin-bottom:8px">📋 '+(p.propostas.length)+' opções enviadas pelo analista:</div>'
+        +p.propostas.map(function(pr,i){var cores=['var(--gr)','var(--bp)','var(--pu)'];return '<div style="font-size:12px;margin-bottom:4px;color:'+cores[i]+'"><strong>Opção '+(i+1)+':</strong> <span style="background:'+cores[i]+'20;padding:1px 6px;border-radius:4px;font-size:11px">'+pr.modal+'</span> &bull; '+pr.valor+' &bull; '+pr.parcelas+' &bull; '+pr.banco+'</div>';}).join('')
+        +'</div>'
+      :'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:var(--sec);border-radius:10px;padding:.875rem;margin-bottom:14px">'
+        +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Modalidade</div><div style="font-size:13px;font-weight:700">'+(p.modal||'—')+'</div></div>'
+        +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Valor aprovado</div><div style="font-size:15px;font-weight:700;color:var(--gr)">'+(p.valorAprov||'—')+'</div></div>'
+        +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Parcelamento</div><div style="font-size:13px;font-weight:700">'+(p.parcelas||'—')+'</div></div>'
+        +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Banco</div><div style="font-size:13px;font-weight:700">'+(p.banco||'—')+'</div></div>'
+        +'</div>';
+    var bordaCor=p.resultado==='Negado'?'rgba(204,47,40,.2)':'rgba(26,140,64,.2)';
+    return '<div class="card" style="margin-bottom:14px;border:2px solid '+bordaCor+'" id="rc-'+p.id+'">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
+      +'<div class="ci"><div class="av" style="background:var(--grl);color:var(--gr);width:36px;height:36px">'+ini+'</div>'
+      +'<div><div class="cn">'+p.nome+'</div><div class="cx">Resultado em '+p.data+'</div></div></div>'
+      +'<div style="display:flex;gap:8px">'+(respondeu?'':'<span class="ntag">NOVO</span>')
+      +(p.resultado==='Negado'?'<span class="bdg b-rd">'+p.resultado+'</span>':temMulti?'<span class="bdg b-bp">'+p.propostas.length+' opções</span>':'<span class="bdg b-gr">'+(p.resultado||'')+'</span>')
+      +'</div></div>'
+      +resumoBox
+      +(p.obs_res?'<div style="background:var(--bpl);border-radius:10px;padding:.75rem 1rem;margin-bottom:14px;font-size:13px;color:#0C447C"><strong>📋 Observação:</strong> '+p.obs_res+'</div>':'')
+      +resHtml+'</div>';
   }).join('');
+  salvarDB(); // salva lido=true
 }
 
 function renderEscolha(p){
-  return '<div id="ec-'+p.id+'" style="border-top:1px solid var(--brd);padding-top:14px"><p style="font-size:13px;font-weight:600;margin-bottom:1rem">O cliente aceitou este resultado?</p><div class="rc-grid"><div class="rc-c" onclick="responderRes(\''+p.id+'\',\'aceitar\')"><div style="font-size:22px;margin-bottom:6px">&#10003;</div><div style="font-size:13px;font-weight:600;color:var(--gr)">Sim — cliente aceitou</div><div style="font-size:11px;color:var(--mu);margin-top:3px">Finalizar e confirmar crédito</div></div><div class="rc-c" onclick="responderRes(\''+p.id+'\',\'nova-simulacao\')"><div style="font-size:22px;margin-bottom:6px">&#8617;</div><div style="font-size:13px;font-weight:600;color:var(--am)">Pedir nova simulação</div><div style="font-size:11px;color:var(--mu);margin-top:3px">Solicitar análise com outros valores</div></div></div><div id="ns-form-'+p.id+'" style="display:none;margin-top:1rem;background:var(--aml);border-radius:12px;padding:1.125rem"><p style="font-size:12px;font-weight:600;color:var(--am);margin-bottom:.75rem">Descreva o que o cliente deseja (ex: quer um valor maior, parcelas menores):</p><textarea class="fi" id="ns-msg-'+p.id+'" rows="3" style="resize:none;line-height:1.5;background:#fff;margin-bottom:10px" placeholder="Ex: cliente quer R$ 2.000 em vez de R$ 1.200, pois precisa cobrir o valor total do aparelho..."></textarea><div style="display:flex;gap:10px"><button class="btn-ghost" onclick="document.getElementById(\'ns-form-'+p.id+'\').style.display=\'none\'">Cancelar</button><button class="btn am" style="flex:1;justify-content:center" onclick="enviarNovaSim(\''+p.id+'\')">Enviar pedido de nova simulação &rarr;</button></div></div></div>';
+  // Negado
+  if(p.resultado==='Negado'){
+    return '<div style="border-top:1px solid var(--brd);padding-top:14px">'
+      +'<div style="background:var(--rdl);border-radius:10px;padding:.875rem 1rem;font-size:13px;color:var(--rd)">'
+      +'<strong>❌ Proposta negada pela política de crédito.</strong><br>'
+      +'<span style="font-size:12px;color:var(--mu);margin-top:4px;display:block">'+(p.obs_res||'Infelizmente não foi possível aprovar esta proposta.')+'</span></div>'
+      +'<div style="display:flex;gap:10px;margin-top:10px">'
+      +'<button class="btn rd" style="flex:1;justify-content:center;font-size:12px" onclick="responderRes(\''+p.id+'\',\'nova-simulacao\')">🔄 Solicitar nova análise</button></div>'
+      +'<div id="ns-form-'+p.id+'" style="display:none;margin-top:1rem;background:var(--aml);border-radius:12px;padding:1.125rem">'
+      +'<textarea class="fi" id="ns-msg-'+p.id+'" rows="3" style="resize:none;line-height:1.5;background:#fff;margin-bottom:10px" placeholder="Descreva o que o cliente quer tentar..."></textarea>'
+      +'<div style="display:flex;gap:10px"><button class="btn-ghost" onclick="document.getElementById(\'ns-form-'+p.id+'\').style.display=\'none\'">Cancelar</button>'
+      +'<button class="btn am" style="flex:1;justify-content:center" onclick="enviarNovaSim(\''+p.id+'\')">Enviar →</button></div></div></div>';
+  }
+
+  var props=p.propostas&&p.propostas.length>0?_toArray(p.propostas):null;
+  var cores=['var(--gr)','var(--bp)','var(--pu)'];
+  var fundos=['var(--grl)','var(--bpl)','var(--pul)'];
+
+  if(props&&props.length>0){
+    var titulo=props.length>1?'O analista enviou '+props.length+' propostas. Clique na que o cliente preferir:':'Clique para confirmar a proposta:';
+    return '<div id="ec-'+p.id+'" style="border-top:1px solid var(--brd);padding-top:14px">'
+      +'<p style="font-size:13px;font-weight:600;margin-bottom:12px">'+titulo+'</p>'
+      +'<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px">'
+      +props.map(function(pr,i){
+        var cor=cores[i]||cores[0];var fundo=fundos[i]||fundos[0];
+        return '<div id="opt-'+p.id+'-'+i+'" style="background:'+fundo+';border:2px solid '+cor+'30;border-radius:12px;padding:1rem;cursor:pointer;transition:.15s" onclick="escolherProposta(\''+p.id+'\','+i+')">'
+          +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+          +'<div>'
+          +'<div style="font-size:13px;font-weight:700;color:'+cor+'">📋 Proposta '+(i+1)+'</div>'
+          +'<div style="font-size:11px;background:'+cor+'20;color:'+cor+';padding:2px 8px;border-radius:4px;display:inline-block;margin-top:3px">'+pr.modal+'</div>'
+          +'</div>'
+          +'<div style="width:22px;height:22px;border-radius:50%;border:2px solid '+cor+';display:flex;align-items:center;justify-content:center" id="radio-'+p.id+'-'+i+'"></div>'
+          +'</div>'
+          +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">'
+          +'<div><div style="font-size:10px;color:var(--mu)">Valor</div><div style="font-size:15px;font-weight:700;color:'+cor+'">'+pr.valor+'</div></div>'
+          +'<div><div style="font-size:10px;color:var(--mu)">Parcelas</div><div style="font-size:13px;font-weight:700">'+pr.parcelas+'</div></div>'
+          +'<div><div style="font-size:10px;color:var(--mu)">Banco</div><div style="font-size:12px;font-weight:600">'+pr.banco+'</div></div>'
+          +'</div></div>';
+      }).join('')
+      +'</div>'
+      +'<button id="btn-confirmar-'+p.id+'" class="btn gr" style="width:100%;justify-content:center;display:none;font-size:14px;font-weight:700;padding:13px" onclick="confirmarPropostaEscolhida(\''+p.id+'\')">✅ Confirmar proposta escolhida</button>'
+      +'<button class="btn-ghost" style="width:100%;margin-top:8px;font-size:12px" onclick="responderRes(\''+p.id+'\',\'nova-simulacao\')">🔄 Pedir nova simulação</button>'
+      +'<div id="ns-form-'+p.id+'" style="display:none;margin-top:1rem;background:var(--aml);border-radius:12px;padding:1.125rem">'
+      +'<textarea class="fi" id="ns-msg-'+p.id+'" rows="2" style="resize:none;background:#fff;margin-bottom:10px" placeholder="Descreva o que o cliente quer..."></textarea>'
+      +'<div style="display:flex;gap:10px"><button class="btn-ghost" onclick="document.getElementById(\'ns-form-'+p.id+'\').style.display=\'none\'">Cancelar</button>'
+      +'<button class="btn am" style="flex:1;justify-content:center" onclick="enviarNovaSim(\''+p.id+'\')">Enviar →</button></div></div>'
+      +'</div>';
+  }
+
+  // Proposta única
+  return '<div id="ec-'+p.id+'" style="border-top:1px solid var(--brd);padding-top:14px"><p style="font-size:13px;font-weight:600;margin-bottom:1rem">O cliente aceitou este resultado?</p><div class="rc-grid"><div class="rc-c" onclick="responderRes(\''+p.id+'\',\'aceitar\')"><div style="font-size:22px;margin-bottom:6px">✓</div><div style="font-size:13px;font-weight:600;color:var(--gr)">Sim — cliente aceitou</div></div><div class="rc-c" onclick="responderRes(\''+p.id+'\',\'nova-simulacao\')"><div style="font-size:22px;margin-bottom:6px">↩</div><div style="font-size:13px;font-weight:600;color:var(--am)">Pedir nova simulação</div></div></div><div id="ns-form-'+p.id+'" style="display:none;margin-top:1rem;background:var(--aml);border-radius:12px;padding:1.125rem"><textarea class="fi" id="ns-msg-'+p.id+'" rows="3" style="resize:none;line-height:1.5;background:#fff;margin-bottom:10px"></textarea><div style="display:flex;gap:10px"><button class="btn-ghost" onclick="document.getElementById(\'ns-form-'+p.id+'\').style.display=\'none\'">Cancelar</button><button class="btn am" style="flex:1;justify-content:center" onclick="enviarNovaSim(\''+p.id+'\')">Enviar →</button></div></div></div>';
+}
+
+function escolherProposta(propId,idx){
+  var p=encontrarProp(propId);if(!p||!p.propostas)return;
+  var props=_toArray(p.propostas);
+  var cores=['var(--gr)','var(--bp)','var(--pu)'];
+  props.forEach(function(pr,i){
+    var opt=document.getElementById('opt-'+propId+'-'+i);
+    var radio=document.getElementById('radio-'+propId+'-'+i);
+    if(opt)opt.style.opacity=i===idx?'1':'0.6';
+    if(radio)radio.innerHTML=i===idx?'<div style="width:12px;height:12px;border-radius:50%;background:'+(cores[i]||cores[0])+'"></div>':'';
+  });
+  p.propostaEscolhida=idx;
+  var btn=document.getElementById('btn-confirmar-'+propId);
+  if(btn)btn.style.display='flex';
+}
+
+function confirmarPropostaEscolhida(propId){
+  var p=encontrarProp(propId);if(!p)return;
+  var idx=p.propostaEscolhida;
+  if(idx===null||idx===undefined){alert('Selecione uma das propostas primeiro.');return;}
+  var props=_toArray(p.propostas);
+  var escolhida=props[idx];if(!escolhida)return;
+  p.valorAprov=escolhida.valor;p.parcelas=escolhida.parcelas;p.banco=escolhida.banco;p.modal=escolhida.modal;
+  p.resposta='aceitar';
+  salvarDB();_atualizarTelasVisiveis();
+  var ec=document.getElementById('ec-'+propId);
+  if(ec)ec.innerHTML='<div class="al al-gr" style="margin-top:14px"><strong style="color:var(--gr)">✅ Proposta '+(idx+1)+' confirmada!</strong><br><span style="font-size:12px">'+escolhida.valor+' &bull; '+escolhida.parcelas+' &bull; '+escolhida.banco+'</span></div>';
+  alert('✅ Proposta '+(idx+1)+' confirmada! Crédito em formalização.');
 }
 
 function renderRespostaFeita(p){
   if(p.resposta==='aceitar')
     return '<div class="al al-gr"><strong style="color:var(--gr)">&#10003; Cliente aceitou o crédito.</strong> Crédito confirmado!</div>';
   if(p.resposta==='nova-simulacao')
-    return '<div class="al al-am"><strong style="color:var(--am)">&#8617; Pedido de nova simulação enviado à BoletoPay.</strong><br><span style="font-size:12px">Mensagem: '+p.msg_ns+'</span></div>';
+    return '<div class="al al-am"><strong style="color:var(--am)">&#8617; Pedido de nova simulação enviado à BOLETO PAY.</strong><br><span style="font-size:12px">Mensagem: '+p.msg_ns+'</span></div>';
   return '';
 }
 
@@ -2249,7 +2595,7 @@ function enviarNovaSim(propId){
   var prop=encontrarProp(propId);
   if(prop){prop.resposta='nova-simulacao';prop.msg_ns=msg;salvarDB();_atualizarTelasVisiveis();}
   var ec=document.getElementById('ec-'+propId);
-  if(ec)ec.innerHTML='<div class="al al-am" style="margin-top:14px"><strong style="color:var(--am)">&#8617; Pedido enviado à BoletoPay.</strong><br><span style="font-size:12px">Mensagem: '+msg+'</span></div>';
+  if(ec)ec.innerHTML='<div class="al al-am" style="margin-top:14px"><strong style="color:var(--am)">&#8617; Pedido enviado à BOLETO PAY.</strong><br><span style="font-size:12px">Mensagem: '+msg+'</span></div>';
   alert('Pedido de nova simulação enviado!');
 }
 
@@ -2348,18 +2694,231 @@ function renderDash(){
   // Lista de props
   var pList=document.getElementById('d-props-list');
   if(pList){
-    if(todasProps.length===0){pList.innerHTML='<div style="padding:2rem;text-align:center;color:var(--mu);font-size:13px">Nenhuma proposta recebida ainda</div>';return;}
-    var rows=todasProps.slice().reverse().slice(0,10).map(function(p){
-      var ini=p.nome.split(' ').slice(0,2).map(function(n){return n[0]}).join('').toUpperCase();
-      var bdg=p.resultado?(p.resultado==='Negado'?'<span class="bdg b-rd">'+p.resultado+'</span>':p.resultado==='Em análise'?'<span class="bdg b-am">'+p.resultado+'</span>':'<span class="bdg b-gr">'+p.resultado+'</span>'):'<span class="bdg b-am">Aguardando</span>';
-      var resp=p.resposta==='nova-simulacao'?'<span class="bdg b-am">Nova sim.</span>':p.resposta==='aceitar'?'<span class="bdg b-gr">Aceito</span>':'—';
-      return '<div class="tr" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr" onclick="abrirAnalise('+p.id+')"><div class="ci"><div class="av" style="background:var(--bpl);color:var(--bp)">'+ini+'</div><div><div class="cn" style="color:var(--pu)">'+p.lj_nome+'</div><div class="cx" style="font-size:12px;color:var(--txt);font-weight:500">'+p.nome+'</div></div></div><span style="font-size:11px">'+p.modelo+'</span><span>'+bdg+'</span><span style="font-weight:600">'+p.valor+'</span><span>'+resp+'</span></div>';
-    }).join('');
-    pList.innerHTML=rows;
+    if(todasProps.length===0){pList.innerHTML='<div style="padding:2rem;text-align:center;color:var(--mu);font-size:13px">Nenhuma proposta recebida ainda</div>';}
+    else{
+      var rows=todasProps.slice().reverse().map(function(p){
+        var ini=p.nome.split(' ').slice(0,2).map(function(n){return n[0]}).join('').toUpperCase();
+        var bdg=p.finalizado?'<span class="bdg b-tl">🏁 Finalizado</span>':
+          p.resultado?(p.resultado==='Negado'?'<span class="bdg b-rd">'+p.resultado+'</span>':
+          p.resultado==='Em análise'?'<span class="bdg b-am">'+p.resultado+'</span>':
+          '<span class="bdg b-gr">'+p.resultado+'</span>'):'<span class="bdg b-am">Aguardando</span>';
+        var sit=p.finalizado?'<span class="bdg b-tl">Pago</span>':
+          p.resposta==='aceitar'?'<span class="bdg b-gr">Aceito</span>':
+          p.resposta==='nova-simulacao'?'<span class="bdg b-am">Nova sim.</span>':'—';
+        return '<div class="tr" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr;cursor:pointer" onclick="abrirResumoAnalise('+p.id+')">'
+          +'<div class="ci"><div class="av" style="background:var(--bpl);color:var(--bp)">'+ini+'</div>'
+          +'<div><div class="cn" style="color:var(--pu)">'+p.lj_nome+'</div>'
+          +'<div class="cx" style="font-size:12px;color:var(--txt);font-weight:500">'+p.nome+'</div></div></div>'
+          +'<span style="font-size:11px">'+p.modelo+'</span><span>'+bdg+'</span>'
+          +'<span style="font-weight:600">'+p.valor+'</span><span>'+sit+'</span></div>';
+      }).join('');
+      pList.innerHTML=rows;
+    }
+    // Atualiza badge finalizadas
+    var fins=todasProps.filter(function(p){return p.finalizado;});
+    var nbFin=document.getElementById('nb-fin');
+    if(nbFin){nbFin.textContent=fins.length;nbFin.style.display=fins.length>0?'inline-flex':'none';}
   }
 }
 
-/* ========== NAVEGAÇÃO LOJISTA ========== */
+/* ===== MÚLTIPLAS PROPOSTAS ===== */
+function adicionarProp2(){
+  var b=document.getElementById('prop2-box');if(b)b.style.display='block';
+  var btn2=document.getElementById('btn-add-p2');if(btn2)btn2.style.display='none';
+  var btn3=document.getElementById('btn-add-p3');if(btn3)btn3.style.display='inline-flex';
+}
+function adicionarProp3(){
+  var b=document.getElementById('prop3-box');if(b)b.style.display='block';
+  var btn3=document.getElementById('btn-add-p3');if(btn3)btn3.style.display='none';
+}
+function removerProp2(){
+  var b=document.getElementById('prop2-box');if(b)b.style.display='none';
+  var b3=document.getElementById('prop3-box');if(b3)b3.style.display='none';
+  var btn2=document.getElementById('btn-add-p2');if(btn2)btn2.style.display='inline-flex';
+  var btn3=document.getElementById('btn-add-p3');if(btn3)btn3.style.display='none';
+  ['res-valor2','res-parc2','res-qtd2','res-valor3','res-parc3','res-qtd3'].forEach(function(id){
+    var e=document.getElementById(id);if(e)e.value='';
+  });
+}
+function removerProp3(){
+  var b=document.getElementById('prop3-box');if(b)b.style.display='none';
+  var btn3=document.getElementById('btn-add-p3');if(btn3)btn3.style.display='inline-flex';
+  ['res-valor3','res-parc3','res-qtd3'].forEach(function(id){
+    var e=document.getElementById(id);if(e)e.value='';
+  });
+}
+
+function _getProp(suf){
+  var gv=function(id){var e=document.getElementById(id);return e?e.value.trim():'';};
+  var qtd=gv('res-qtd'+suf).replace(/x$/i,'');
+  var parc=gv('res-parc'+suf);
+  return {
+    modal:gv('res-modal'+suf),
+    valor:gv('res-valor'+suf),
+    banco:gv('res-banco'+suf),
+    qtd:qtd?qtd+'x':'—',
+    parc:parc||'—'
+  };
+}
+
+
+function abrirResumoAnalise(propId){
+  var p=encontrarProp(propId);if(!p)return;
+  var ini=p.nome?p.nome.split(' ').slice(0,2).map(function(n){return n[0];}).join('').toUpperCase():'?';
+  var s=p.finalizado?'Finalizado':p.resultado||'Aguardando';
+  var corS=p.finalizado?'var(--tl)':p.resultado==='Negado'?'var(--rd)':p.resultado?'var(--gr)':'var(--am)';
+
+  var ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto';
+  var box=document.createElement('div');
+  box.style.cssText='background:#fff;border-radius:16px;width:100%;max-width:600px;margin:auto;overflow:hidden';
+
+  // Parcelamento escolhido
+  var escolhida=p.propostas&&p.propostaEscolhida!==undefined&&p.propostaEscolhida!==null?p.propostas[p.propostaEscolhida]:null;
+  var parcelamentoBox=escolhida
+    ?'<div style="background:var(--grl);border-radius:10px;padding:.875rem;margin-bottom:10px">'
+     +'<div style="font-size:11px;font-weight:700;color:var(--gr);text-transform:uppercase;margin-bottom:6px">✅ Parcelamento aceito pelo cliente</div>'
+     +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;font-size:12px">'
+     +'<div><div style="color:var(--mu);font-size:10px">Tipo</div><strong style="color:var(--gr)">'+escolhida.modal+'</strong></div>'
+     +'<div><div style="color:var(--mu);font-size:10px">Valor</div><strong style="color:var(--gr)">'+escolhida.valor+'</strong></div>'
+     +'<div><div style="color:var(--mu);font-size:10px">Parcelas</div><strong>'+escolhida.parcelas+'</strong></div>'
+     +'<div><div style="color:var(--mu);font-size:10px">Banco</div><strong>'+escolhida.banco+'</strong></div>'
+     +'</div></div>'
+    :p.resultado&&p.resultado!=='Negado'&&p.valorAprov
+    ?'<div style="background:var(--grl);border-radius:10px;padding:.875rem;margin-bottom:10px">'
+     +'<div style="font-size:11px;font-weight:700;color:var(--gr);text-transform:uppercase;margin-bottom:6px">Resultado enviado</div>'
+     +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:12px">'
+     +'<div><div style="color:var(--mu);font-size:10px">Valor</div><strong style="color:var(--gr)">'+(p.valorAprov||'—')+'</strong></div>'
+     +'<div><div style="color:var(--mu);font-size:10px">Parcelas</div><strong>'+(p.parcelas||'—')+'</strong></div>'
+     +'<div><div style="color:var(--mu);font-size:10px">Banco</div><strong>'+(p.banco||'—')+'</strong></div>'
+     +'</div></div>'
+    :p.resultado==='Negado'
+    ?'<div style="background:var(--rdl);border-radius:10px;padding:.875rem;margin-bottom:10px;font-size:13px;color:var(--rd)"><strong>❌ Negado pela política de crédito</strong>'+(p.obs_res?'<br><span style="font-size:12px">'+p.obs_res+'</span>':'')+'</div>'
+    :'';
+
+  box.innerHTML=
+    '<div style="background:var(--sec);padding:1.25rem 1.5rem;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between">'
+    +'<div class="ci"><div class="av" style="background:var(--bpl);color:var(--bp);width:40px;height:40px">'+ini+'</div>'
+    +'<div><div style="font-size:15px;font-weight:700">'+p.nome+'</div>'
+    +'<div style="font-size:12px;color:var(--mu)">'+p.lj_nome+' &bull; '+p.data+'</div></div></div>'
+    +'<div style="display:flex;gap:8px;align-items:center">'
+    +'<span style="font-size:12px;font-weight:700;color:'+corS+'">'+s+'</span>'
+    +(p.finalizado?'<span style="font-size:11px;color:var(--mu)">'+p.data_finalizacao+'</span>':'')
+    +'<button onclick="this.closest(\'[data-ov]\').remove()" style="background:var(--sec);border:1px solid var(--brd);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:12px">✕</button>'
+    +'</div></div>'
+
+    +'<div style="padding:1.25rem 1.5rem">'
+
+    // Status resumo
+    +parcelamentoBox
+
+    // Dados do cliente e aparelho em grid
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">'
+
+    +'<div style="background:var(--sec);border-radius:10px;padding:.875rem">'
+    +'<div style="font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;margin-bottom:8px">Dados pessoais</div>'
+    +[['Nome',p.nome],['CPF',p.cpf],['WhatsApp',p.tel||'—'],['Renda',p.renda],['Vínculo',p.vinc||'—'],['Negativado',p.neg||'—']].map(function(r){
+      return '<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid var(--brd)">'
+        +'<span style="color:var(--mu)">'+r[0]+'</span><span style="font-weight:600">'+r[1]+'</span></div>';
+    }).join('')
+    +'</div>'
+
+    +'<div style="background:var(--sec);border-radius:10px;padding:.875rem">'
+    +'<div style="font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;margin-bottom:8px">Aparelho</div>'
+    +[['Modelo',(p.marca?p.marca+' ':'')+p.modelo],['IMEI',p.imei1||'—'],['Valor',p.valor],['Tipo',p.tipo||'—'],['Cor',p.cor||'—']].map(function(r){
+      return '<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid var(--brd)">'
+        +'<span style="color:var(--mu)">'+r[0]+'</span><span style="font-weight:600">'+r[1]+'</span></div>';
+    }).join('')
+    +'</div></div>'
+
+    // Ações
+    +'<div style="display:flex;gap:10px">'
+    +(!p.resultado?'<button class="btn" style="flex:1;justify-content:center" onclick="this.closest(\'[data-ov]\').remove();abrirAnalise('+p.id+')">Analisar →</button>':'')
+    +(p.resposta==='aceitar'&&!p.finalizado?'<button class="btn gr" style="flex:1;justify-content:center" onclick="this.closest(\'[data-ov]\').remove();finalizarProposta('+p.id+')">🏁 Finalizar contrato</button>':'')
+    +(p.finalizado?'<div style="flex:1;text-align:center;font-size:13px;color:var(--tl);font-weight:600">🏁 Contrato finalizado em '+p.data_finalizacao+'</div>':'')
+    +'</div></div>';
+
+  box.setAttribute('data-ov','1');
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+  ov.onclick=function(e){if(e.target===ov)document.body.removeChild(ov);};
+}
+
+/* ===== FINALIZADAS ===== */
+function renderFinalizadas(){
+  var lista=document.getElementById('fin-lista');if(!lista)return;
+  var todasProps=[];
+  DB.lojistas.forEach(function(l){l.props.forEach(function(p){todasProps.push(p);});});
+  var fins=todasProps.filter(function(p){return p.finalizado;}).slice().reverse();
+
+  var sub=document.getElementById('fin-sub');
+  if(sub)sub.textContent=fins.length+' contrato(s) finalizado(s)';
+
+  // Badge na sidebar
+  var nbFin=document.getElementById('nb-fin');
+  if(nbFin){nbFin.textContent=fins.length;nbFin.style.display=fins.length>0?'inline-flex':'none';}
+
+  if(fins.length===0){
+    lista.innerHTML='<div style="text-align:center;padding:3rem;color:var(--mu);font-size:13px;background:#fff;border-radius:13px;border:1px solid var(--brd)">Nenhum contrato finalizado ainda.</div>';
+    return;
+  }
+
+  lista.innerHTML=fins.map(function(p){
+    var ini=p.nome?p.nome.split(' ').slice(0,2).map(function(n){return n[0];}).join('').toUpperCase():'?';
+    var escolhida=p.propostas&&p.propostaEscolhida!==undefined?p.propostas[p.propostaEscolhida]:null;
+    var val=escolhida?escolhida.valor:p.valorAprov;
+    var parc=escolhida?escolhida.parcelas:p.parcelas;
+    var banco=escolhida?escolhida.banco:p.banco;
+    var modal=escolhida?escolhida.modal:p.modal;
+    return '<div class="card" style="margin-bottom:12px;border:2px solid rgba(15,110,86,.25);cursor:pointer" onclick="abrirResumoAnalise('+p.id+')">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'
+      +'<div class="ci"><div class="av" style="background:#E8FBF5;color:#0F6E56;width:38px;height:38px">'+ini+'</div>'
+      +'<div><div class="cn" style="color:var(--pu)">'+p.lj_nome+'</div>'
+      +'<div class="cx">'+p.nome+' &bull; Finalizado em '+p.data_finalizacao+'</div></div></div>'
+      +'<span class="bdg" style="background:#E8FBF5;color:#0F6E56">🏁 Finalizado</span>'
+      +'</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:#E8FBF5;border-radius:10px;padding:.75rem">'
+      +'<div><div style="font-size:10px;color:var(--mu)">Tipo de crédito</div><div style="font-size:12px;font-weight:700;color:#0F6E56">'+(modal||'—')+'</div></div>'
+      +'<div><div style="font-size:10px;color:var(--mu)">Valor liberado</div><div style="font-size:14px;font-weight:700;color:#0F6E56">'+(val||'—')+'</div></div>'
+      +'<div><div style="font-size:10px;color:var(--mu)">Parcelamento</div><div style="font-size:12px;font-weight:600">'+(parc||'—')+'</div></div>'
+      +'<div><div style="font-size:10px;color:var(--mu)">Banco</div><div style="font-size:12px;font-weight:600">'+(banco||'—')+'</div></div>'
+      +'</div>'
+      +'<div style="margin-top:8px;font-size:11px;color:var(--mu)">Aparelho: '+p.modelo+' &bull; IMEI: '+(p.imei1||'—')+' &bull; Clique para ver resumo completo</div>'
+      +'</div>';
+  }).join('');
+}
+
+
+function adicionarProp2(){
+  var b=document.getElementById('prop2-box');if(b)b.style.display='block';
+  var btn2=document.getElementById('btn-add-p2');if(btn2)btn2.style.display='none';
+  var btn3=document.getElementById('btn-add-p3');if(btn3)btn3.style.display='inline-flex';
+}
+function adicionarProp3(){
+  var b=document.getElementById('prop3-box');if(b)b.style.display='block';
+  var btn3=document.getElementById('btn-add-p3');if(btn3)btn3.style.display='none';
+}
+function removerProp2(){
+  var b=document.getElementById('prop2-box');if(b)b.style.display='none';
+  var b3=document.getElementById('prop3-box');if(b3)b3.style.display='none';
+  var btn2=document.getElementById('btn-add-p2');if(btn2)btn2.style.display='inline-flex';
+  var btn3=document.getElementById('btn-add-p3');if(btn3)btn3.style.display='none';
+  ['res-valor2','res-parc2'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+}
+function removerProp3(){
+  var b=document.getElementById('prop3-box');if(b)b.style.display='none';
+  var btn3=document.getElementById('btn-add-p3');if(btn3)btn3.style.display='inline-flex';
+  ['res-valor3','res-parc3'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+}
+function _getProp(n){
+  var gv=function(id){var e=document.getElementById(id);return e?e.value.trim():'';};
+  return {
+    modal:gv('res-modal'+n),valor:gv('res-valor'+n),
+    banco:gv('res-banco'+n),qtd:gv('res-qtd'+n),parc:gv('res-parc'+n)
+  };
+}
+
+
 function goLj(aba){
   ['lj-dash','lj-emp','lj-resultados'].forEach(function(id){
     var el=document.getElementById(id);if(el)el.style.display='none';
@@ -2408,6 +2967,25 @@ function filtrarEmp(){
   var sel=document.getElementById('lj-filtro-status');
   _filtroEmpStatus=(sel?sel.value:'');
   renderEmp();
+  // Se busca tem pelo menos 3 chars e encontrou exatamente 1 resultado, abre direto
+  if(_filtroEmpBusca.length>=3&&meLj){
+    var props=meLj.props||[];
+    var encontradas=props.filter(function(p){
+      return (p.nome&&p.nome.toLowerCase().indexOf(_filtroEmpBusca)>-1)||
+             (p.cpf&&p.cpf.replace(/\D/g,'').indexOf(_filtroEmpBusca.replace(/\D/g,''))>-1);
+    });
+    if(encontradas.length===1){
+      // Destaca visualmente — rola até o card
+      setTimeout(function(){
+        var cards=document.querySelectorAll('#lj-emp-lista .card');
+        if(cards.length===1){
+          cards[0].style.border='2px solid var(--bp)';
+          cards[0].style.boxShadow='0 0 0 3px rgba(10,132,255,.15)';
+          cards[0].scrollIntoView({behavior:'smooth',block:'center'});
+        }
+      },100);
+    }
+  }
 }
 
 function _statusEmp(p){
@@ -2450,7 +3028,10 @@ function renderEmp(){
     var ini=p.nome?p.nome.split(' ').slice(0,2).map(function(n){return n[0];}).join('').toUpperCase():'?';
     var s=_statusEmp(p);
     var corBorda=s==='analise'?'rgba(179,104,0,.2)':s==='negado'?'rgba(204,47,40,.2)':s==='formalizacao'?'rgba(10,132,255,.2)':'rgba(26,140,64,.2)';
-    return '<div class="card" style="margin-bottom:10px;border:2px solid '+corBorda+'">'
+    return '<div class="card" style="margin-bottom:10px;border:2px solid '+corBorda+';cursor:pointer;transition:.15s" '
+      +'onmouseover="this.style.opacity=\'0.85\'" '
+      +'onmouseout="this.style.opacity=\'1\'" '
+      +'onclick="abrirDetalheProposta('+p.id+')">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
       +'<div class="ci">'
       +'<div class="av" style="background:var(--bpl);color:var(--bp)">'+ini+'</div>'
@@ -2458,19 +3039,388 @@ function renderEmp(){
       +'<div class="cn">'+p.nome+'</div>'
       +'<div class="cx">CPF: '+(p.cpf||'—')+' &bull; '+p.data+'</div>'
       +'</div></div>'
-      +_badgeEmp(p)
+      +'<div style="display:flex;align-items:center;gap:8px">'+_badgeEmp(p)+'<span style="font-size:11px;color:var(--mu)">Ver detalhes →</span></div>'
       +'</div>'
       +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:var(--sec);border-radius:10px;padding:.75rem">'
       +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Aparelho</div><div style="font-size:12px;font-weight:600">'+((p.marca?p.marca+' ':'')+p.modelo||'—')+'</div></div>'
       +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Valor solicitado</div><div style="font-size:13px;font-weight:700;color:var(--bp)">'+(p.valor||'—')+'</div></div>'
       +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Valor aprovado</div><div style="font-size:13px;font-weight:700;color:var(--gr)">'+(p.valorAprov&&p.valorAprov!=='Negado'?p.valorAprov:'—')+'</div></div>'
       +'</div>'
-      +(p.obs_res?'<div style="margin-top:8px;background:var(--bpl);border-radius:8px;padding:8px 12px;font-size:12px;color:#0C447C"><strong>📋 Obs. analista:</strong> '+p.obs_res+'</div>':'')
-      +'</div>';
+      +(p.correcao_pendente?'<div style="margin-top:8px;background:var(--aml);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--am)">⚠️ <strong>Correção solicitada</strong> — clique para corrigir</div>':'')+
+      '</div>';
   }).join('');
 }
 
 
+/* ===== DETALHE COMPLETO DA PROPOSTA (LOJISTA) ===== */
+function abrirDetalheProposta(propId){
+  var prop=encontrarProp(propId);if(!prop)return;
+  var s=_statusEmp(prop);
+  var corStatus=s==='analise'?'var(--am)':s==='negado'?'var(--rd)':s==='formalizacao'?'var(--bp)':'var(--gr)';
+  var ini=prop.nome?prop.nome.split(' ').slice(0,2).map(function(n){return n[0];}).join('').toUpperCase():'?';
+
+  // Monta histórico de movimentações
+  var historico=[];
+  historico.push({icone:'📋',cor:'var(--bp)',texto:'Solicitação enviada',data:prop.data,detalhe:'Aparelho: '+prop.modelo+' &bull; Valor: '+prop.valor});
+  if(prop.correcao_msg){historico.push({icone:'⚠️',cor:'var(--am)',texto:'Correção solicitada pelo analista',data:prop.correcao_data||'',detalhe:prop.correcao_msg});}
+  if(prop.correcao_resolvida){historico.push({icone:'✏️',cor:'var(--bp)',texto:'Dados corrigidos pelo lojista',data:'',detalhe:'Proposta atualizada e enviada para reanálise'});}
+  if(prop.resultado){
+    var textoRes=prop.resultado==='Negado'?'Proposta negada':'Resultado recebido: '+prop.resultado;
+    historico.push({icone:prop.resultado==='Negado'?'❌':'✅',cor:prop.resultado==='Negado'?'var(--rd)':'var(--gr)',texto:textoRes,data:'',detalhe:prop.resultado==='Negado'?'Negado pela política de crédito':(prop.valorAprov+' &bull; '+prop.parcelas+' &bull; '+prop.banco)});
+  }
+  if(prop.obs_res){historico.push({icone:'💬',cor:'var(--bp)',texto:'Observação do analista',data:'',detalhe:prop.obs_res});}
+  if(prop.msg_ns){historico.push({icone:'🔄',cor:'var(--am)',texto:'Nova simulação solicitada',data:'',detalhe:prop.msg_ns});}
+  if(prop.resposta==='aceitar'){historico.push({icone:'🏁',cor:'var(--tl)',texto:'Cliente aceitou — em formalização',data:'',detalhe:'Crédito confirmado'});}
+
+  var ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto';
+
+  var box=document.createElement('div');
+  box.style.cssText='background:var(--bg);border-radius:16px;width:100%;max-width:620px;margin:auto;overflow:hidden';
+
+  // Header
+  var headerHTML='<div style="background:#fff;padding:1.25rem 1.5rem;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between">'
+    +'<div class="ci"><div class="av" style="background:var(--bpl);color:var(--bp);width:40px;height:40px">'+ini+'</div>'
+    +'<div><div style="font-size:15px;font-weight:700">'+prop.nome+'</div>'
+    +'<div style="font-size:12px;color:var(--mu)">CPF: '+prop.cpf+' &bull; Enviado em '+prop.data+'</div></div></div>'
+    +'<div style="display:flex;align-items:center;gap:10px">'+_badgeEmp(prop)
+    +'<button onclick="this.closest(\'[data-modal]\').remove()" style="background:var(--sec);border:1px solid var(--brd);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px">✕ Fechar</button>'
+    +'</div></div>';
+
+  // Dados do cliente
+  var dadosHTML='<div style="background:#fff;margin:10px;border-radius:12px;padding:1rem">'
+    +'<div class="ctit">Dados do cliente</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
+    +[['WhatsApp',prop.tel],['E-mail',prop.email||'—'],['Nascimento',prop.nasc||'—'],['Renda',prop.renda],['Vínculo',prop.vinc||'—'],['Negativado',prop.neg||'—']].map(function(r){
+      return '<div class="dr"><span class="dk">'+r[0]+'</span><span class="dv" style="font-size:12px">'+r[1]+'</span></div>';
+    }).join('')
+    +'</div></div>';
+
+  // Aparelho
+  var apHTML='<div style="background:#fff;margin:0 10px 10px;border-radius:12px;padding:1rem">'
+    +'<div class="ctit">Aparelho solicitado</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:var(--sec);border-radius:10px;padding:.75rem">'
+    +'<div><div style="font-size:10px;color:var(--mu)">Aparelho</div><div style="font-size:13px;font-weight:700">'+(prop.marca?prop.marca+' ':'')+prop.modelo+'</div></div>'
+    +'<div><div style="font-size:10px;color:var(--mu)">Valor</div><div style="font-size:13px;font-weight:700;color:var(--bp)">'+prop.valor+'</div></div>'
+    +'<div><div style="font-size:10px;color:var(--mu)">IMEI</div><div style="font-size:11px;font-family:monospace;color:var(--mu)">'+(prop.imei1||'—').substring(0,15)+'</div></div>'
+    +'</div></div>';
+
+  // Resultado se tiver
+  var resultHTML='';
+  if(prop.resultado){
+    var negado=prop.resultado==='Negado';
+    resultHTML='<div style="background:#fff;margin:0 10px 10px;border-radius:12px;padding:1rem">'
+      +'<div class="ctit">Resultado da análise</div>'
+      +(negado
+        ?'<div style="background:var(--rdl);border-radius:10px;padding:.875rem;font-size:13px;color:var(--rd)"><strong>❌ Proposta negada pela política de crédito</strong>'+(prop.obs_res?'<br><span style="font-size:12px">'+prop.obs_res+'</span>':'')+'</div>'
+        :'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:var(--grl);border-radius:10px;padding:.875rem">'
+        +'<div><div style="font-size:10px;color:var(--mu)">Valor aprovado</div><div style="font-size:15px;font-weight:700;color:var(--gr)">'+prop.valorAprov+'</div></div>'
+        +'<div><div style="font-size:10px;color:var(--mu)">Parcelas</div><div style="font-size:13px;font-weight:700">'+prop.parcelas+'</div></div>'
+        +'<div><div style="font-size:10px;color:var(--mu)">Banco</div><div style="font-size:13px;font-weight:700">'+prop.banco+'</div></div>'
+        +'</div>'+(prop.obs_res?'<div style="background:var(--bpl);border-radius:8px;padding:8px 12px;margin-top:8px;font-size:12px;color:#0C447C">💬 <strong>Observação:</strong> '+prop.obs_res+'</div>':''))
+      +'</div>';
+  }
+
+  // Histórico de movimentações
+  var histHTML='<div style="background:#fff;margin:0 10px 10px;border-radius:12px;padding:1rem">'
+    +'<div class="ctit">Histórico de movimentações</div>'
+    +'<div style="position:relative;padding-left:24px">'
+    +'<div style="position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--brd)"></div>'
+    +historico.map(function(h,i){
+      return '<div style="position:relative;margin-bottom:16px">'
+        +'<div style="position:absolute;left:-20px;top:2px;width:14px;height:14px;border-radius:50%;background:'+h.cor+';display:flex;align-items:center;justify-content:center;font-size:8px">'+h.icone+'</div>'
+        +'<div style="font-size:13px;font-weight:600;color:var(--txt)">'+h.texto+'</div>'
+        +(h.data?'<div style="font-size:11px;color:var(--mu)">'+h.data+'</div>':'')
+        +(h.detalhe?'<div style="font-size:12px;color:var(--mu);margin-top:2px">'+h.detalhe+'</div>':'')
+        +'</div>';
+    }).join('')
+    +'</div></div>';
+
+  // Ofertas de crédito disponíveis
+  var ofertasHTML='<div style="background:#fff;margin:0 10px 10px;border-radius:12px;padding:1rem">'
+    +'<div class="ctit">💳 Ofertas de crédito disponíveis</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
+    +_produtosFinanceiros.filter(function(p){return p.temBotao;}).map(function(p){
+      return '<div style="background:'+p.corFundo+';border:1px solid '+p.cor+'40;border-radius:10px;padding:.75rem">'
+        +'<div style="font-size:11px;font-weight:700;color:'+p.cor+';margin-bottom:3px">'+p.icone+' '+p.titulo+'</div>'
+        +'<div style="font-size:10px;color:var(--mu)">'+p.condicoes.join(' &bull; ')+'</div>'
+        +(p.destaque?'<div style="margin-top:4px;font-size:10px;font-weight:600;color:'+p.cor+'">⭐ '+p.destaque+'</div>':'')
+        +'</div>';
+    }).join('')
+    +'</div></div>';
+
+  // Botão de ação se tiver correção pendente
+  var acaoHTML='';
+  if(prop.correcao_pendente){
+    acaoHTML='<div style="padding:0 10px 10px">'
+      +'<button onclick="document.querySelector(\'[data-modal]\').remove();abrirCorrecao('+prop.id+')" '
+      +'style="width:100%;padding:13px;background:var(--am);color:#fff;border:none;border-radius:11px;font-size:14px;font-weight:700;cursor:pointer">'
+      +'✏️ Corrigir dados solicitados pelo analista</button></div>';
+  }
+
+  box.setAttribute('data-modal','1');
+  box.innerHTML=headerHTML+dadosHTML+apHTML+resultHTML+histHTML+ofertasHTML+acaoHTML;
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+  ov.onclick=function(e){if(e.target===ov)document.body.removeChild(ov);};
+}
+
+
+function abrirCorrecao(propId){
+  var prop=encontrarProp(propId);if(!prop)return;
+  var msg=prop.correcao_msg||'';
+
+  var ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto';
+
+  var box=document.createElement('div');
+  box.style.cssText='background:#fff;border-radius:16px;width:100%;max-width:600px;margin:auto';
+
+  box.innerHTML=
+    '<div style="padding:1.25rem 1.5rem;border-bottom:1px solid #E5E7EB">'
+    +'<div style="font-size:16px;font-weight:700;margin-bottom:6px">✏️ Corrigir dados da proposta</div>'
+    +'<div style="font-size:12px;color:#B36800;background:#FFF8E8;border-radius:8px;padding:8px 12px">⚠️ Analista solicitou: <strong>'+msg+'</strong></div>'
+    +'</div>'
+    // TABS
+    +'<div style="display:flex;border-bottom:1px solid #E5E7EB;padding:0 1.5rem">'
+    +'<div class="corr-tab on" onclick="corrTab(this,\'ct1\')" style="padding:10px 14px;font-size:12px;font-weight:600;color:#0A84FF;border-bottom:2px solid #0A84FF;cursor:pointer">Dados pessoais</div>'
+    +'<div class="corr-tab" onclick="corrTab(this,\'ct2\')" style="padding:10px 14px;font-size:12px;color:#6B7280;border-bottom:2px solid transparent;cursor:pointer">Financeiro</div>'
+    +'<div class="corr-tab" onclick="corrTab(this,\'ct3\')" style="padding:10px 14px;font-size:12px;color:#6B7280;border-bottom:2px solid transparent;cursor:pointer">Aparelho</div>'
+    +'<div class="corr-tab" onclick="corrTab(this,\'ct4\')" style="padding:10px 14px;font-size:12px;color:#6B7280;border-bottom:2px solid transparent;cursor:pointer">Documentos</div>'
+    +'</div>'
+
+    // ABA 1 — DADOS PESSOAIS
+    +'<div id="ct1" style="padding:1.25rem 1.5rem">'
+    +_corrCampo('nome','Nome completo',prop.nome)
+    +_corrCampo('cpf','CPF',prop.cpf)
+    +_corrCampo('rg','RG',prop.rg||'')
+    +_corrCampo('nasc','Nascimento',prop.nasc||'','date')
+    +_corrCampo('mae','Nome da mãe',prop.mae||'')
+    +_corrCampo('tel','WhatsApp',prop.tel||'')
+    +_corrCampo('email','E-mail',prop.email||'')
+    +_corrCampo('cep','CEP',prop.cep||'')
+    +_corrCampo('end','Endereço completo',prop.end||'')
+    +'</div>'
+
+    // ABA 2 — FINANCEIRO
+    +'<div id="ct2" style="display:none;padding:1.25rem 1.5rem">'
+    +_corrCampo('renda','Renda mensal (R$)',(prop.renda||'').replace('R$ ',''))
+    +_corrCampo('prof','Profissão',prop.prof||'')
+    +_corrSelect('vinc','Vínculo empregatício',['CLT registrado','Autônomo','MEI/PJ','Servidor público','Aposentado'],prop.vinc)
+    +_corrSelect('tempo','Tempo no emprego',['Menos de 6 meses','6 meses a 1 ano','1 a 2 anos','2 a 5 anos','Mais de 5 anos'],prop.tempo)
+    +_corrSelect('neg','Negativado?',['Não, nome limpo','Sim','Não sei'],prop.neg)
+    +'</div>'
+
+    // ABA 3 — APARELHO
+    +'<div id="ct3" style="display:none;padding:1.25rem 1.5rem">'
+    +_corrCampo('marca','Marca',prop.marca||'')
+    +_corrCampo('modelo','Modelo',prop.modelo||'')
+    +_corrCampo('cor','Cor',prop.cor||'')
+    +_corrCampo('valor','Valor (R$)',(prop.valor||'').replace('R$ ',''))
+    +_corrCampo('imei1','IMEI 1',prop.imei1||'')
+    +_corrCampo('imei2','IMEI 2',prop.imei2||'')
+    +'</div>'
+
+    // ABA 4 — DOCUMENTOS
+    +'<div id="ct4" style="display:none;padding:1.25rem 1.5rem">'
+    +'<div style="font-size:12px;color:#6B7280;margin-bottom:1rem">Substitua os documentos que precisam ser corrigidos. Clique na foto para tirar uma nova ou selecionar do celular.</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+    // Doc 1 - RG Frente
+    +'<div>'
+    +'<div style="font-size:12px;font-weight:600;margin-bottom:6px">'+(prop.docs&&prop.docs[1]&&prop.docs[1].done?'✅':'❌')+' RG/CNH — Frente</div>'
+    +'<div id="uz-corr-1" style="border:2px dashed #E5E7EB;border-radius:10px;padding:.875rem;text-align:center;cursor:pointer;position:relative;background:#F9FAFB;min-height:80px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px">'
+    +'<input type="file" accept="image/*,application/pdf" capture="environment" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%" onchange="corrUpload(this,1)"/>'
+    +'<div id="uz-corr-ic-1" style="font-size:22px">📷</div>'
+    +'<div id="uz-corr-tt-1" style="font-size:11px;color:#6B7280">Toque para substituir</div>'
+    +'<img id="uz-corr-img-1" style="display:none;max-width:100%;max-height:70px;border-radius:6px;object-fit:cover"/>'
+    +'</div></div>'
+    // Doc 2 - RG Verso
+    +'<div>'
+    +'<div style="font-size:12px;font-weight:600;margin-bottom:6px">'+(prop.docs&&prop.docs[2]&&prop.docs[2].done?'✅':'❌')+' RG/CNH — Verso</div>'
+    +'<div id="uz-corr-2" style="border:2px dashed #E5E7EB;border-radius:10px;padding:.875rem;text-align:center;cursor:pointer;position:relative;background:#F9FAFB;min-height:80px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px">'
+    +'<input type="file" accept="image/*,application/pdf" capture="environment" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%" onchange="corrUpload(this,2)"/>'
+    +'<div id="uz-corr-ic-2" style="font-size:22px">📷</div>'
+    +'<div id="uz-corr-tt-2" style="font-size:11px;color:#6B7280">Toque para substituir</div>'
+    +'<img id="uz-corr-img-2" style="display:none;max-width:100%;max-height:70px;border-radius:6px;object-fit:cover"/>'
+    +'</div></div>'
+    // Doc 3 - Comprovante renda
+    +'<div>'
+    +'<div style="font-size:12px;font-weight:600;margin-bottom:6px">'+(prop.docs&&prop.docs[3]&&prop.docs[3].done?'✅':'❌')+' Comprovante de renda</div>'
+    +'<div id="uz-corr-3" style="border:2px dashed #E5E7EB;border-radius:10px;padding:.875rem;text-align:center;cursor:pointer;position:relative;background:#F9FAFB;min-height:80px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px">'
+    +'<input type="file" accept="image/*,application/pdf" capture="environment" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%" onchange="corrUpload(this,3)"/>'
+    +'<div id="uz-corr-ic-3" style="font-size:22px">📄</div>'
+    +'<div id="uz-corr-tt-3" style="font-size:11px;color:#6B7280">Toque para substituir</div>'
+    +'<img id="uz-corr-img-3" style="display:none;max-width:100%;max-height:70px;border-radius:6px;object-fit:cover"/>'
+    +'</div></div>'
+    // Doc 4 - Comprovante residência
+    +'<div>'
+    +'<div style="font-size:12px;font-weight:600;margin-bottom:6px">'+(prop.docs&&prop.docs[4]&&prop.docs[4].done?'✅':'❌')+' Comprovante de residência</div>'
+    +'<div id="uz-corr-4" style="border:2px dashed #E5E7EB;border-radius:10px;padding:.875rem;text-align:center;cursor:pointer;position:relative;background:#F9FAFB;min-height:80px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px">'
+    +'<input type="file" accept="image/*,application/pdf" capture="environment" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%" onchange="corrUpload(this,4)"/>'
+    +'<div id="uz-corr-ic-4" style="font-size:22px">🏠</div>'
+    +'<div id="uz-corr-tt-4" style="font-size:11px;color:#6B7280">Toque para substituir</div>'
+    +'<img id="uz-corr-img-4" style="display:none;max-width:100%;max-height:70px;border-radius:6px;object-fit:cover"/>'
+    +'</div></div>'
+    +'</div></div>'
+
+    // BOTÕES
+    +'<div style="display:flex;gap:10px;padding:1rem 1.5rem;border-top:1px solid #E5E7EB">'
+    +'<button id="btn-corr-cancel" style="flex:1;padding:12px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:9px;cursor:pointer;font-size:13px">Cancelar</button>'
+    +'<button id="btn-corr-salvar" style="flex:2;padding:12px;background:#1A8C40;color:#fff;border:none;border-radius:9px;cursor:pointer;font-size:14px;font-weight:700">✅ Salvar correção</button>'
+    +'</div>';
+
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+
+  _corrDocs={};
+  document.getElementById('btn-corr-cancel').onclick=function(){_corrDocs={};document.body.removeChild(ov);};
+  ov.onclick=function(e){if(e.target===ov){_corrDocs={};document.body.removeChild(ov);}};
+
+  document.getElementById('btn-corr-salvar').onclick=function(){
+    var gv2=function(id){var el=document.getElementById('corr-'+id);return el?el.value.trim():'';};
+    prop.nome=gv2('nome')||prop.nome;
+    prop.cpf=gv2('cpf')||prop.cpf;
+    prop.rg=gv2('rg');prop.nasc=gv2('nasc');prop.mae=gv2('mae');
+    prop.tel=gv2('tel');prop.email=gv2('email');prop.cep=gv2('cep');prop.end=gv2('end');
+    if(gv2('renda'))prop.renda='R$ '+gv2('renda');
+    prop.prof=gv2('prof');prop.vinc=gv2('vinc');prop.tempo=gv2('tempo');prop.neg=gv2('neg');
+    prop.marca=gv2('marca');prop.modelo=gv2('modelo')||prop.modelo;prop.cor=gv2('cor');
+    if(gv2('valor'))prop.valor='R$ '+gv2('valor');
+    prop.imei1=gv2('imei1')||prop.imei1;prop.imei2=gv2('imei2');
+    // Atualiza documentos que foram substituídos
+    if(!prop.docs)prop.docs={};
+    [1,2,3,4].forEach(function(n){
+      if(_corrDocs[n]&&_corrDocs[n].done){
+        prop.docs[n]={name:_corrDocs[n].name,type:_corrDocs[n].type,done:true,b64:_corrDocs[n].b64||null};
+      }
+    });
+    prop.correcao_pendente=false;prop.correcao_resolvida=true;
+    _corrDocs={};
+    salvarDB();_atualizarTelasVisiveis();
+    document.body.removeChild(ov);
+    alert('✅ Dados e documentos corrigidos! O analista será notificado.');
+    renderEmp();
+  };
+}
+
+var _corrDocs={};
+
+function corrUpload(inp,n){
+  var f=inp.files[0];if(!f)return;
+  var uz=document.getElementById('uz-corr-'+n);
+  var ic=document.getElementById('uz-corr-ic-'+n);
+  var tt=document.getElementById('uz-corr-tt-'+n);
+  var img=document.getElementById('uz-corr-img-'+n);
+  if(uz){uz.style.borderColor='#1A8C40';uz.style.background='#E8FFF0';}
+  if(ic)ic.textContent='✅';
+  if(tt)tt.textContent=f.name.length>20?f.name.substring(0,20)+'...':f.name;
+  var r=new FileReader();
+  r.onload=function(e){
+    _corrDocs[n]={name:f.name,type:f.type,done:true,b64:e.target.result};
+    if(f.type.startsWith('image/')&&img){img.src=e.target.result;img.style.display='block';}
+  };
+  r.readAsDataURL(f);
+}
+
+
+function _corrCampo(id,label,val,type){
+  return '<div style="margin-bottom:10px">'
+    +'<label style="font-size:12px;color:#6B7280;display:block;margin-bottom:4px;font-weight:500">'+label+'</label>'
+    +'<input id="corr-'+id+'" type="'+(type||'text')+'" value="'+(val||'')+'" style="width:100%;padding:10px 12px;border:1.5px solid #E5E7EB;border-radius:9px;font-size:13px;outline:none;box-sizing:border-box"/>'
+    +'</div>';
+}
+
+function _corrSelect(id,label,opcoes,valAtual){
+  return '<div style="margin-bottom:10px">'
+    +'<label style="font-size:12px;color:#6B7280;display:block;margin-bottom:4px;font-weight:500">'+label+'</label>'
+    +'<select id="corr-'+id+'" style="width:100%;padding:10px 12px;border:1.5px solid #E5E7EB;border-radius:9px;font-size:13px;outline:none;background:#fff;box-sizing:border-box">'
+    +opcoes.map(function(o){return '<option value="'+o+'"'+(o===valAtual?' selected':'')+'>'+o+'</option>';}).join('')
+    +'</select></div>';
+}
+
+function corrTab(el,abaId){
+  document.querySelectorAll('.corr-tab').forEach(function(t){
+    t.style.color='#6B7280';t.style.borderBottom='2px solid transparent';t.style.fontWeight='500';
+  });
+  el.style.color='#0A84FF';el.style.borderBottom='2px solid #0A84FF';el.style.fontWeight='600';
+  ['ct1','ct2','ct3','ct4'].forEach(function(id){
+    var e=document.getElementById(id);if(e)e.style.display='none';
+  });
+  var aba=document.getElementById(abaId);if(aba)aba.style.display='block';
+}
+
+/* ===== CARDS DE PRODUTOS FINANCEIROS ===== */
+var _produtosFinanceiros=[
+  {
+    titulo:'Crédito CLT',banco:'Banco 1',
+    cor:'#0A84FF',corFundo:'#E8F4FF',
+    icone:'💼',
+    requisitos:['Maior de 20 anos','Mínimo 6 meses de registro em carteira','Aprova negativado'],
+    condicoes:['Até R$ 25.000','Até 72 parcelas'],
+    destaque:'Aprovação facilitada',
+    temBotao:true
+  },
+  {
+    titulo:'Boleto para iPhone',banco:'Banco 2',
+    cor:'#1A8C40',corFundo:'#E8FFF0',
+    icone:'📱',
+    requisitos:['Nome limpo','Maior de 21 anos','Score acima de 550'],
+    condicoes:['Até R$ 10.000','Até 12 parcelas'],
+    destaque:'Aprovação facilitada',
+    temBotao:true
+  },
+  {
+    titulo:'iPhone / Android / JBL / Moto Elétrica / Computadores / Videogame no Boleto',
+    banco:'Banco 3',
+    cor:'#7C3AED',corFundo:'#F0EDFF',
+    icone:'🛍️',
+    requisitos:['Nome limpo'],
+    condicoes:['Até R$ 15.000','Até 24 parcelas','Pode exigir entrada'],
+    destaque:'Android pode aprovar negativado',
+    temBotao:true
+  },
+  {
+    titulo:'Boleto para Telefones em Geral',banco:'Banco 4',
+    cor:'#B36800',corFundo:'#FFF8E8',
+    icone:'📞',
+    requisitos:['Nome limpo','Maior de 24 anos'],
+    condicoes:['Até R$ 3.500','Até 36 parcelas'],
+    destaque:'Aprovação facilitada',
+    temBotao:true
+  },
+  {
+    titulo:'Crédito para CNPJ',banco:'BOLETO PAY',
+    cor:'#0F6E56',corFundo:'#E8FBF5',
+    icone:'🏪',
+    requisitos:['CNPJ ativo','Mínimo 2 anos de empresa','Sem restrições'],
+    condicoes:['Até R$ 90.000','Até 72 parcelas'],
+    destaque:'Fácil aprovação',
+    temBotao:false
+  }
+];
+
+function renderProdutos(){
+  var el=document.getElementById('lj-produtos');if(!el)return;
+  el.innerHTML=_produtosFinanceiros.map(function(p){
+    var reqs=p.requisitos.length?'<div style="margin-bottom:8px"><div style="font-size:10px;font-weight:700;color:'+p.cor+';text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">Requisitos</div>'+p.requisitos.map(function(r){return '<div style="font-size:12px;color:var(--mu);display:flex;align-items:flex-start;gap:5px;margin-bottom:2px"><span style="color:'+p.cor+'">•</span>'+r+'</div>';}).join('')+'</div>':'';
+    var conds='<div><div style="font-size:10px;font-weight:700;color:'+p.cor+';text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">Condições</div>'+p.condicoes.map(function(c){return '<div style="font-size:12px;color:var(--mu);display:flex;align-items:flex-start;gap:5px;margin-bottom:2px"><span style="color:'+p.cor+'">✓</span>'+c+'</div>';}).join('')+'</div>';
+    var destaque=p.destaque?'<div style="margin-top:10px;background:'+p.cor+';color:#fff;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;display:inline-block">⭐ '+p.destaque+'</div>':'';
+    return '<div style="background:'+p.corFundo+';border:1.5px solid '+p.cor+'40;border-radius:14px;padding:1.125rem;display:flex;flex-direction:column">'
+      +'<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">'
+      +'<div style="font-size:24px;flex-shrink:0">'+p.icone+'</div>'
+      +'<div><div style="font-size:13px;font-weight:700;color:'+p.cor+';line-height:1.3">'+p.titulo+'</div>'
+      +'<div style="font-size:11px;color:var(--mu);margin-top:2px">'+p.banco+'</div></div>'
+      +'</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1">'
+      +reqs+conds
+      +'</div>'
+      +destaque
+      +(p.temBotao?'<button onclick="mostrarLink()" style="margin-top:12px;width:100%;padding:9px;background:'+p.cor+';color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer">Solicitar →</button>':'')
+      +'</div>';
+  }).join('');
+}
+
+/* ========== CONFIGURAÇÃO FIREBASE ========== */
 function salvarConfigFirebase(){
   var urlEl = document.getElementById('fb-dbURL');
   var url = (urlEl ? urlEl.value.trim() : '').replace(/\/+$/,'');
@@ -2736,6 +3686,11 @@ function _atualizarTelasVisiveis(){
     if(lojTelaVisivel){
       renderLjDash();
       renderEmp();
+      // Atualiza resultados se a aba estiver visível
+      var ljRes=document.getElementById('lj-resultados');
+      if(ljRes&&ljRes.style.display!=='none') renderResultados();
+      var ljEmp=document.getElementById('lj-emp');
+      if(ljEmp&&ljEmp.style.display!=='none') renderEmp();
     }
   }
 }
@@ -2784,9 +3739,30 @@ function renderFila(){
   if(naFila.length===0){list.innerHTML='<div style="text-align:center;padding:3rem;color:var(--mu)"><div style="font-size:36px;margin-bottom:12px">&#10003;</div><div style="font-size:14px;font-weight:600">Fila limpa!</div></div>';return;}
   list.innerHTML=naFila.map(function(p){
     var ini=p.nome.split(' ').slice(0,2).map(function(n){return n[0]}).join('').toUpperCase();
-    var d1=p.docs&&p.docs[1]&&p.docs[1].done;var d2=p.docs&&p.docs[2]&&p.docs[2].done;var d3=p.docs&&p.docs[3]&&p.docs[3].done;var d4=p.docs&&p.docs[4]&&p.docs[4].done;
+    var d1=p.docs&&p.docs[1]&&p.docs[1].done;var d2=p.docs&&p.docs[2]&&p.docs[2].done;var d3=p.docs&&p.docs[3]&&p.docs[3].done;
     var docStatus=d1&&d2&&d3?'<span class="bdg b-gr">Completo</span>':(d1||d2||d3)?'<span class="bdg b-am">Parcial</span>':'<span class="bdg b-rd">Sem docs</span>';
-    return '<div class="acard"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><div class="ci"><div class="av" style="background:var(--bpl);color:var(--bp)">'+ini+'</div><div><div class="cn" style="color:var(--pu)">'+p.lj_nome+'</div><div class="cx" style="font-size:12px;color:var(--txt);font-weight:500">'+p.nome+' &bull; '+p.data+'</div></div></div><div style="display:flex;gap:8px"><span class="ntag">NOVO</span><span class="bdg b-am">Aguardando</span></div></div><div class="acard-meta"><div><div class="am-l">Aparelho</div><div class="am-v" style="font-size:12px">'+p.modelo+'</div></div><div><div class="am-l">IMEI 1</div><div class="am-v" style="font-family:monospace;font-size:11px">'+p.imei1.substring(0,12)+'</div></div><div><div class="am-l">Renda</div><div class="am-v" style="color:var(--gr)">'+p.renda+'</div></div><div><div class="am-l">Docs</div><div class="am-v">'+docStatus+'</div></div></div><div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--mu)"><span>'+p.vinc+' &bull; '+p.neg+' &bull; Valor: '+p.valor+(p.obs_ap?' &bull; <strong style="color:var(--am)">Obs: '+p.obs_ap+'</strong>':'')+'</span><button class="btn" style="font-size:11px;padding:7px 14px" onclick="abrirAnalise('+p.id+')">Analisar &rarr;</button></div></div>';
+    var correcaoBox=p.correcao_pendente?'<div style="background:var(--aml);border-radius:8px;padding:8px 12px;margin-top:8px;font-size:12px;color:var(--am)">⚠️ <strong>Correção solicitada:</strong> '+p.correcao_msg+' <button onclick="correcaoResolvida('+p.id+')" style="margin-left:8px;font-size:11px;background:var(--am);color:#fff;border:none;border-radius:6px;padding:3px 8px;cursor:pointer">Marcar resolvida</button></div>':'';
+    var sugestaoBox=(p._sugestaoValor)?'<div style="background:var(--bpl);border-radius:8px;padding:8px 12px;margin-top:8px;font-size:12px;color:var(--bp)">💡 <strong>Nova simulação sugerida:</strong> Valor: '+p._sugestaoValor+(p._sugestaoParcela?' &bull; Parcelas: '+p._sugestaoParcela:'')+'</div>':'';
+    return '<div class="acard">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'
+      +'<div class="ci"><div class="av" style="background:var(--bpl);color:var(--bp)">'+ini+'</div>'
+      +'<div><div class="cn" style="color:var(--pu)">'+p.lj_nome+'</div>'
+      +'<div class="cx" style="font-size:12px;color:var(--txt);font-weight:500">'+p.nome+' &bull; '+p.data+'</div></div></div>'
+      +'<div style="display:flex;gap:8px">'+(p.correcao_pendente?'<span class="bdg b-am">⚠️ Correção</span>':'<span class="ntag">NOVO</span>')+'<span class="bdg b-am">Aguardando</span></div></div>'
+      +'<div class="acard-meta">'
+      +'<div><div class="am-l">Aparelho</div><div class="am-v" style="font-size:12px">'+p.modelo+'</div></div>'
+      +'<div><div class="am-l">IMEI</div><div class="am-v" style="font-family:monospace;font-size:11px">'+(p.imei1||'—').substring(0,12)+'</div></div>'
+      +'<div><div class="am-l">Renda</div><div class="am-v" style="color:var(--gr)">'+p.renda+'</div></div>'
+      +'<div><div class="am-l">Docs</div><div class="am-v">'+docStatus+'</div></div>'
+      +'</div>'
+      +correcaoBox+sugestaoBox
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-size:12px;color:var(--mu)">'
+      +'<span>'+p.vinc+' &bull; '+p.neg+' &bull; Valor: '+p.valor+(p.obs_ap?' &bull; <strong style="color:var(--am)">Obs: '+p.obs_ap+'</strong>':'')+'</span>'
+      +'<div style="display:flex;gap:8px">'
+      +'<button class="btn-ghost" style="font-size:11px;padding:6px 12px" onclick="solicitarCorrecao('+p.id+')">✏️ Pedir correção</button>'
+      +'<button class="btn" style="font-size:11px;padding:7px 14px" onclick="abrirAnalise('+p.id+')">Analisar →</button>'
+      +'</div></div>'
+      +'</div>';
   }).join('');
 }
 
@@ -2931,50 +3907,62 @@ function updPrev(){
 }
 
 function enviarResultado(){
-  var status=document.getElementById('res-status').value;
+  var status=document.getElementById('res-status')?document.getElementById('res-status').value:'Aprovado';
   var negado=status==='Negado';
   var emAnalise=status==='Em análise';
-  var modal=negado||emAnalise?'—':document.getElementById('res-modal').value;
-  var valor=(document.getElementById('res-valor')||{}).value||'';valor=valor.trim();
-  var banco=negado||emAnalise?'—':document.getElementById('res-banco').value;
-  var qtd=negado||emAnalise?'—':document.getElementById('res-qtd').value;
-  var parc=(document.getElementById('res-parc')||{}).value||'';parc=parc.trim();
   var obsNeg=document.getElementById('res-obs-neg');
   var obs=negado?(obsNeg?obsNeg.value.trim():''):((document.getElementById('res-obs')||{}).value||'').trim();
-  if(!negado&&!emAnalise&&(!valor||!parc)){alert('Informe o valor aprovado e o valor da parcela.');return;}
-  if(!propAtual){alert('Erro: proposta não encontrada. Volte à fila e abra a proposta novamente.');return;}
 
-  // Rebusca a proposta no DB pelo ID para garantir que é o objeto atual
-  var propId = propAtual.id;
-  var propNoBD = null;
-  DB.lojistas.forEach(function(l){
-    var p = l.props.find(function(x){return x.id===propId;});
-    if(p) propNoBD = p;
-  });
-  if(!propNoBD){
-    // Se não encontrou no DB, usa propAtual mesmo
-    propNoBD = propAtual;
+  if(!propAtual){
+    alert('Erro: proposta não encontrada.\n\nVolte à fila, clique em "Analisar" e tente novamente.');
+    go('s-fila');return;
   }
+
+  var p1=_getProp('');
+  if(!negado&&!emAnalise&&!p1.valor){alert('Preencha o valor aprovado na Proposta 1.');return;}
+
+  var p2box=document.getElementById('prop2-box');
+  var temP2=p2box&&p2box.style.display!=='none';
+  var p2=temP2?_getProp('2'):null;
+  var p3box=document.getElementById('prop3-box');
+  var temP3=p3box&&p3box.style.display!=='none';
+  var p3=temP3?_getProp('3'):null;
+
+  // Rebusca no DB pelo ID
+  var propId=propAtual.id;
+  var propNoBD=null;
+  DB.lojistas.forEach(function(l){
+    var found=l.props.find(function(x){return x.id===propId;});
+    if(found)propNoBD=found;
+  });
+  if(!propNoBD)propNoBD=propAtual;
 
   propNoBD.resultado=status;
-  propNoBD.modal=modal;
-  propNoBD.valorAprov=negado?'Negado':emAnalise?'Em análise':'R$ '+valor;
-  propNoBD.banco=banco;
-  propNoBD.parcelas=negado||emAnalise?'—':qtd+' x R$ '+parc;
+  propNoBD.modal=negado||emAnalise?'—':p1.modal;
+  propNoBD.banco=negado||emAnalise?'—':p1.banco;
+  propNoBD.valorAprov=negado?'Negado':emAnalise?'Em análise':'R$ '+p1.valor;
+  propNoBD.parcelas=negado||emAnalise?'—':p1.qtd+' x R$ '+p1.parc;
   propNoBD.obs_res=obs;
-  propAtual=propNoBD;
+  propNoBD.propostaEscolhida=null;
 
-  salvarDB();
-  if(meLj){
-    var ljAtual=DB.lojistas.find(function(l){return l.id===meLj.id;});
-    if(ljAtual)meLj=ljAtual;
-    var ndot=document.getElementById('ndot');if(ndot)ndot.style.display='block';
+  // Monta propostas simples
+  propNoBD.propostas=[];
+  function montarProp(px,num){
+    if(!px||!px.valor)return null;
+    return {num:num,modal:px.modal,valor:'R$ '+px.valor,banco:px.banco,
+      qtd:px.qtd,parc:px.parc,
+      parcelas:px.qtd+' x R$ '+px.parc};
   }
+  var mp1=montarProp(p1,1);if(mp1)propNoBD.propostas.push(mp1);
+  var mp2=montarProp(p2,2);if(mp2)propNoBD.propostas.push(mp2);
+  var mp3=montarProp(p3,3);if(mp3)propNoBD.propostas.push(mp3);
+
+  propAtual=propNoBD;
+  salvarDB();
   _atualizarTelasVisiveis();
-  alert('✅ Resultado "'+status+'" enviado ao lojista "'+propNoBD.lj_nome+'"!');
-  propAtual=null;
-  _propAtualId=null;
-  // Retoma o polling
+  var nProps=propNoBD.propostas?propNoBD.propostas.length:1;
+  alert('✅ Resultado "'+status+'" enviado'+(nProps>1?' com '+nProps+' propostas':'')+' para "'+propNoBD.lj_nome+'"!');
+  propAtual=null;_propAtualId=null;
   _iniciarPolling();
   renderDash();
   go('s-fila');
@@ -2985,20 +3973,152 @@ function renderRespostasAn(){
   var list=document.getElementById('an-respostas-list');if(!list)return;
   var todasProps=[];
   DB.lojistas.forEach(function(l){l.props.forEach(function(p){todasProps.push(p);});});
-  var respostas=todasProps.filter(function(p){return p.resposta==='nova-simulacao'&&p.resultado});
+
+  // Mostra: nova simulação pendente + propostas aceitas aguardando finalização
+  var respostas=todasProps.filter(function(p){
+    return (p.resposta==='nova-simulacao'&&p.resultado)||(p.resposta==='aceitar'&&p.propostaEscolhida!==undefined&&p.propostaEscolhida!==null);
+  });
   var nb=document.getElementById('nb-resp');if(nb)nb.textContent=respostas.length;
   if(respostas.length===0){list.innerHTML='<div style="text-align:center;padding:3rem;color:var(--mu);font-size:13px">Nenhuma resposta pendente</div>';return;}
+
   list.innerHTML=respostas.map(function(p){
     var ini=p.nome.split(' ').slice(0,2).map(function(n){return n[0]}).join('').toUpperCase();
-    return '<div class="card" style="margin-bottom:14px;border:2px solid rgba(179,104,0,.2)"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div class="ci"><div class="av" style="background:var(--aml);color:var(--am);width:36px;height:36px">'+ini+'</div><div><div class="cn" style="color:var(--pu)">'+p.lj_nome+'</div><div class="cx" style="font-size:12px;color:var(--txt);font-weight:500">'+p.nome+' &bull; Nova simulação solicitada</div></div></div><div style="display:flex;gap:8px"><span class="ntag">NOVA SIM.</span><span class="bdg b-am">Renegociar</span></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px"><div style="background:var(--sec);border-radius:10px;padding:.875rem"><div style="font-size:10px;color:var(--mu);font-weight:600;margin-bottom:.5rem;text-transform:uppercase">Resultado enviado</div><div class="dr"><span class="dk">Status</span><span class="dv">'+(p.resultado==='Negado'?'<span class="bdg b-rd">'+p.resultado+'</span>':'<span class="bdg b-gr">'+p.resultado+'</span>')+'</span></div><div class="dr"><span class="dk">Valor</span><span class="dv" style="color:var(--gr)">'+p.valorAprov+'</span></div><div class="dr"><span class="dk">Parcelas</span><span class="dv">'+p.parcelas+'</span></div></div><div style="background:var(--aml);border-radius:10px;padding:.875rem"><div style="font-size:10px;color:var(--am);font-weight:600;margin-bottom:.5rem;text-transform:uppercase">Pedido do lojista</div><div style="font-size:13px;color:var(--am)">'+p.msg_ns+'</div></div></div><div style="display:flex;gap:10px"><button class="btn gr" style="flex:1;justify-content:center" onclick="aceitarNovaSim('+p.id+')">&#10003; Aceitar — reanalisar proposta</button><button class="btn rd" style="flex:1;justify-content:center" onclick="manterResultado('+p.id+')">&#10007; Manter resultado original</button></div></div>';
+
+    // --- PROPOSTA ACEITA: cliente escolheu parcelamento ---
+    if(p.resposta==='aceitar'&&p.propostaEscolhida!==undefined&&p.propostaEscolhida!==null){
+      var escolhida=p.propostas?p.propostas[p.propostaEscolhida]:null;
+      return '<div class="card" style="margin-bottom:14px;border:2px solid rgba(26,140,64,.3)">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
+        +'<div class="ci"><div class="av" style="background:var(--grl);color:var(--gr);width:36px;height:36px">'+ini+'</div>'
+        +'<div><div class="cn" style="color:var(--pu)">'+p.lj_nome+'</div>'
+        +'<div class="cx" style="font-size:12px;color:var(--txt);font-weight:500">'+p.nome+' &bull; Cliente aceitou!</div></div></div>'
+        +'<div style="display:flex;gap:8px"><span class="ntag" style="background:var(--gr)">✅ ACEITO</span><span class="bdg b-gr">Finalizar</span></div></div>'
+        // Resumo do cliente
+        +'<div style="background:var(--sec);border-radius:10px;padding:.875rem;margin-bottom:12px">'
+        +'<div style="font-size:10px;color:var(--mu);font-weight:700;text-transform:uppercase;margin-bottom:8px">Dados do cliente</div>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:12px">'
+        +'<div><span style="color:var(--mu)">CPF</span><br><strong>'+p.cpf+'</strong></div>'
+        +'<div><span style="color:var(--mu)">Renda</span><br><strong style="color:var(--gr)">'+p.renda+'</strong></div>'
+        +'<div><span style="color:var(--mu)">Vínculo</span><br><strong>'+p.vinc+'</strong></div>'
+        +'</div></div>'
+        // Parcelamento escolhido
+        +(escolhida
+          ?'<div style="background:var(--grl);border:2px solid rgba(26,140,64,.3);border-radius:12px;padding:1rem;margin-bottom:12px">'
+           +'<div style="font-size:11px;font-weight:700;color:var(--gr);text-transform:uppercase;margin-bottom:8px">✅ Parcelamento escolhido pelo cliente</div>'
+           +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">'
+           +'<div><div style="font-size:10px;color:var(--mu)">Tipo de crédito</div><div style="font-size:12px;font-weight:700;color:var(--gr)">'+escolhida.modal+'</div></div>'
+           +'<div><div style="font-size:10px;color:var(--mu)">Valor</div><div style="font-size:14px;font-weight:700;color:var(--gr)">'+escolhida.valor+'</div></div>'
+           +'<div><div style="font-size:10px;color:var(--mu)">Parcelas</div><div style="font-size:13px;font-weight:700">'+escolhida.parcelas+'</div></div>'
+           +'<div><div style="font-size:10px;color:var(--mu)">Banco</div><div style="font-size:12px;font-weight:700">'+escolhida.banco+'</div></div>'
+           +'</div></div>'
+          :'<div style="background:var(--grl);border-radius:10px;padding:.875rem;margin-bottom:12px">'
+           +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">'
+           +'<div><div style="font-size:10px;color:var(--mu)">Valor</div><div style="font-size:14px;font-weight:700;color:var(--gr)">'+p.valorAprov+'</div></div>'
+           +'<div><div style="font-size:10px;color:var(--mu)">Parcelas</div><div style="font-size:13px;font-weight:700">'+p.parcelas+'</div></div>'
+           +'<div><div style="font-size:10px;color:var(--mu)">Banco</div><div style="font-size:12px;font-weight:700">'+p.banco+'</div></div>'
+           +'</div></div>')
+        +'<div style="display:flex;gap:10px">'
+        +'<button class="btn" style="flex:1;justify-content:center" onclick="verResumoCompleto('+p.id+')">👁️ Ver proposta completa</button>'
+        +'<button class="btn gr" style="flex:1;justify-content:center" onclick="finalizarProposta('+p.id+')">🏁 Finalizar contrato</button>'
+        +'</div></div>';
+    }
+
+    // --- NOVA SIMULAÇÃO SOLICITADA ---
+    return '<div class="card" style="margin-bottom:14px;border:2px solid rgba(179,104,0,.2)">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
+      +'<div class="ci"><div class="av" style="background:var(--aml);color:var(--am);width:36px;height:36px">'+ini+'</div>'
+      +'<div><div class="cn" style="color:var(--pu)">'+p.lj_nome+'</div>'
+      +'<div class="cx" style="font-size:12px;color:var(--txt);font-weight:500">'+p.nome+' &bull; Nova simulação solicitada</div></div></div>'
+      +'<div style="display:flex;gap:8px"><span class="ntag">NOVA SIM.</span><span class="bdg b-am">Renegociar</span></div></div>'
+      // Resumo do cliente
+      +'<div style="background:var(--sec);border-radius:10px;padding:.875rem;margin-bottom:10px">'
+      +'<div style="font-size:10px;color:var(--mu);font-weight:700;text-transform:uppercase;margin-bottom:8px">Dados do cliente</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:12px">'
+      +'<div><span style="color:var(--mu)">CPF</span><br><strong>'+p.cpf+'</strong></div>'
+      +'<div><span style="color:var(--mu)">Renda</span><br><strong style="color:var(--gr)">'+p.renda+'</strong></div>'
+      +'<div><span style="color:var(--mu)">Negativado</span><br><strong>'+p.neg+'</strong></div>'
+      +'</div></div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">'
+      +'<div style="background:var(--sec);border-radius:10px;padding:.875rem"><div style="font-size:10px;color:var(--mu);font-weight:600;margin-bottom:.5rem;text-transform:uppercase">Resultado enviado</div>'
+      +'<div class="dr"><span class="dk">Status</span><span class="dv">'+(p.resultado==='Negado'?'<span class="bdg b-rd">'+p.resultado+'</span>':'<span class="bdg b-gr">'+p.resultado+'</span>')+'</span></div>'
+      +'<div class="dr"><span class="dk">Valor</span><span class="dv" style="color:var(--gr)">'+p.valorAprov+'</span></div>'
+      +'<div class="dr"><span class="dk">Parcelas</span><span class="dv">'+p.parcelas+'</span></div></div>'
+      +'<div style="background:var(--aml);border-radius:10px;padding:.875rem"><div style="font-size:10px;color:var(--am);font-weight:600;margin-bottom:.5rem;text-transform:uppercase">Pedido do lojista</div>'
+      +'<div style="font-size:13px;color:var(--am)">'+p.msg_ns+'</div></div></div>'
+      +'<div style="display:flex;gap:10px">'
+      +'<button class="btn" style="flex:1;justify-content:center;background:var(--bp)" onclick="verResumoCompleto('+p.id+')">👁️ Ver proposta completa</button>'
+      +'<button class="btn gr" style="flex:1;justify-content:center" onclick="aceitarNovaSim('+p.id+')">✓ Reanalisar proposta</button>'
+      +'<button class="btn rd" style="flex:1;justify-content:center" onclick="manterResultado('+p.id+')">✗ Manter resultado</button>'
+      +'</div></div>';
   }).join('');
+}
+
+// Modal com resumo completo da proposta para o analista
+function verResumoCompleto(propId){
+  var p=encontrarProp(propId);if(!p)return;
+  var ini=p.nome?p.nome.split(' ').slice(0,2).map(function(n){return n[0];}).join('').toUpperCase():'?';
+  var ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto';
+  var box=document.createElement('div');
+  box.style.cssText='background:#fff;border-radius:16px;width:100%;max-width:580px;margin:auto;overflow:hidden';
+  box.innerHTML=
+    '<div style="background:var(--bpl);padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between">'
+    +'<div class="ci"><div class="av" style="background:var(--bp);color:#fff;width:40px;height:40px">'+ini+'</div>'
+    +'<div><div style="font-size:15px;font-weight:700">'+p.nome+'</div>'
+    +'<div style="font-size:12px;color:var(--mu)">'+p.lj_nome+' &bull; '+p.data+'</div></div></div>'
+    +'<button onclick="this.closest(\'.modal-resumo\').remove()" style="background:var(--sec);border:1px solid var(--brd);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px">✕ Fechar</button>'
+    +'</div>'
+    +'<div style="padding:1.25rem 1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:12px">'
+    +'<div class="card" style="margin:0"><div class="ctit">Dados pessoais</div>'
+    +[['CPF',p.cpf],['RG',p.rg||'—'],['Nascimento',p.nasc||'—'],['Mãe',p.mae||'—'],['WhatsApp',p.tel||'—'],['E-mail',p.email||'—'],['CEP',p.cep||'—'],['Endereço',p.end||'—']].map(function(r){return '<div class="dr"><span class="dk">'+r[0]+'</span><span class="dv" style="font-size:11px">'+r[1]+'</span></div>';}).join('')
+    +'</div>'
+    +'<div>'
+    +'<div class="card" style="margin:0 0 10px"><div class="ctit">Financeiro</div>'
+    +[['Renda',p.renda],['Profissão',p.prof||'—'],['Vínculo',p.vinc||'—'],['Tempo',p.tempo||'—'],['Negativado',p.neg||'—']].map(function(r){return '<div class="dr"><span class="dk">'+r[0]+'</span><span class="dv" style="font-size:11px">'+r[1]+'</span></div>';}).join('')
+    +'</div>'
+    +'<div class="card" style="margin:0"><div class="ctit">Aparelho</div>'
+    +[['Modelo',(p.marca?p.marca+' ':'')+p.modelo],['IMEI 1',p.imei1||'—'],['IMEI 2',p.imei2||'—'],['Valor',p.valor],['Tipo',p.tipo||'—']].map(function(r){return '<div class="dr"><span class="dk">'+r[0]+'</span><span class="dv" style="font-size:11px">'+r[1]+'</span></div>';}).join('')
+    +'</div></div></div>'
+    +(p.obs_ap?'<div style="padding:0 1.5rem 1.25rem"><div style="background:var(--aml);border-radius:10px;padding:.75rem;font-size:13px;color:var(--am)"><strong>Obs. cliente:</strong> '+p.obs_ap+'</div></div>':'')
+    +'<div style="padding:0 1.5rem 1.25rem;text-align:right"><button class="btn" onclick="this.closest(\'.modal-resumo\').remove();abrirAnalise('+p.id+')" style="font-size:13px">Analisar esta proposta →</button></div>';
+  box.classList.add('modal-resumo');
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+  ov.onclick=function(e){if(e.target===ov)document.body.removeChild(ov);};
+}
+
+function finalizarProposta(propId){
+  var p=encontrarProp(propId);if(!p)return;
+  var escolhida=p.propostas?p.propostas[p.propostaEscolhida]:null;
+  var detalhes=escolhida?(escolhida.valor+' — '+escolhida.parcelas+' — '+escolhida.banco):(p.valorAprov+' — '+p.parcelas+' — '+p.banco);
+  if(confirm('Confirmar finalização do contrato?\n\nCliente: '+p.nome+'\nParcelamento: '+detalhes+'\n\nIsso marca a proposta como finalizada.')){
+    p.finalizado=true;p.data_finalizacao=new Date().toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    salvarDB();_atualizarTelasVisiveis();
+    alert('🏁 Contrato finalizado com sucesso!');
+    renderRespostasAn();renderDash();
+  }
 }
 
 function aceitarNovaSim(id){
   var prop=encontrarProp(id);
-  if(prop){prop.resultado=null;prop.resposta=null;prop.modal=null;prop.valorAprov=null;prop.banco=null;prop.parcelas=null;salvarDB();_atualizarTelasVisiveis();}
-  alert('Proposta voltou para a fila de análise!');
-  renderRespostasAn();renderDash();go('s-fila');
+  if(!prop)return;
+  // Mostra campo para digitar novo resultado antes de reanalisar
+  var novoValor=prompt('Nova simulação solicitada pelo lojista:\n"'+prop.msg_ns+'"\n\nDigite o novo VALOR APROVADO (R$) para esta proposta:\n(deixe em branco para voltar à fila sem valor pré-definido)');
+  if(novoValor===null)return; // cancelou
+  novoValor=novoValor.trim();
+  var novaParcela=novoValor?prompt('Quantas parcelas? (ex: 24x R$ 120)'):null;
+  prop.resultado=null;prop.resposta=null;prop.obs_res='';
+  if(novoValor){
+    prop._sugestaoValor='R$ '+novoValor;
+    prop._sugestaoParcela=novaParcela||'';
+  }
+  salvarDB();_atualizarTelasVisiveis();
+  alert('✅ Proposta voltou para a fila!\nVá até a fila e clique em "Analisar" para enviar o novo resultado.');
+  renderRespostasAn();renderDash();
+  // Abre direto na proposta para reanalisar
+  _propAtualId=id;
+  if(_fbPolling){clearInterval(_fbPolling);_fbPolling=null;}
+  abrirAnalise(id);
 }
 
 function manterResultado(id){
@@ -3006,6 +4126,27 @@ function manterResultado(id){
   if(prop){prop.resposta='mantido';salvarDB();_atualizarTelasVisiveis();}
   alert('Resultado original mantido. Lojista será notificado.');
   renderRespostasAn();
+}
+
+/* ===== SOLICITAR CORREÇÃO DE DADOS AO LOJISTA ===== */
+function solicitarCorrecao(propId){
+  var prop=encontrarProp(propId);if(!prop)return;
+  var campos=prompt('Quais dados precisam ser corrigidos?\n(ex: CPF incorreto, foto do documento borrada, renda não comprovada)');
+  if(!campos||!campos.trim()){return;}
+  prop.correcao_pendente=true;
+  prop.correcao_msg=campos.trim();
+  prop.correcao_data=new Date().toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+  salvarDB();_atualizarTelasVisiveis();
+  alert('✅ Solicitação de correção enviada ao lojista!');
+  renderFila();renderNovas();
+}
+
+function correcaoResolvida(propId){
+  var prop=encontrarProp(propId);if(!prop)return;
+  prop.correcao_pendente=false;prop.correcao_resolvida=true;
+  salvarDB();_atualizarTelasVisiveis();
+  alert('✅ Correção marcada como resolvida!');
+  renderFila();
 }
 
 /* ========== LOJISTAS MGR ========== */
@@ -3149,9 +4290,10 @@ function go(id){
   if(id==='s-novas')renderNovas();
   if(id==='s-funcionarios')renderFuncionarios();
   if(id==='s-lojistas-mgr')renderLjMgr();
-  if(id==='s-lojista'){renderLjDash();atualizarTopLojista();}
+  if(id==='s-lojista'){renderLjDash();atualizarTopLojista();renderProdutos();}
   if(id==='s-lj-resultados'){goLj('lj-resultados');}
   if(id==='s-respostas-an')renderRespostasAn();
+  if(id==='s-finalizadas')renderFinalizadas();
 }
 
 function verDoc(src,titulo,isPdf){
