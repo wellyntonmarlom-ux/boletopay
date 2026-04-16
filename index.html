@@ -713,9 +713,9 @@ carregarDB();
                 <div><div style="font-size:10px;color:var(--mu)">IMEI</div><div class="pv-val" style="font-size:11px;font-weight:600;color:var(--gr)" id="pv-i">—</div></div>
               </div>
             </div>
-            <div style="display:flex;gap:10px">
-              <button class="btn-ghost" onclick="propAtual=null;_propAtualId=null;_iniciarPolling();go('s-fila')">Cancelar</button>
-              <button class="btn-send" style="flex:1" onclick="enviarResultado()">Enviar resultado ao lojista &rarr;</button>
+            <div style="display:flex;gap:10px;margin-top:1rem">
+              <button class="btn-ghost" style="min-width:100px" onclick="propAtual=null;_propAtualId=null;_iniciarPolling();go('s-fila')">← Cancelar</button>
+              <button style="flex:1;padding:14px;background:var(--gr);color:#fff;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.01em" onclick="javascript:enviarResultado()">✅ Enviar resultado ao lojista</button>
             </div>
           </div>
         </div>
