@@ -603,7 +603,7 @@ carregarDB();
       <div class="sb-bot"><div class="ni" onclick="go('s-portal')" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
     </aside>
     <div class="content">
-      <button class="back" onclick="go('s-fila')">&#8592; Voltar à fila</button>
+      <button class="back" onclick="propAtual=null;_propAtualId=null;_iniciarPolling();go('s-fila')">&#8592; Voltar à fila</button>
       <div class="tabs" id="an-tabs">
         <div class="tab on" onclick="inits(this,'an-dados')">Dados do cliente</div>
         <div class="tab" onclick="inits(this,'an-aparelho')">Aparelho / IMEI</div>
@@ -714,7 +714,7 @@ carregarDB();
               </div>
             </div>
             <div style="display:flex;gap:10px">
-              <button class="btn-ghost" onclick="go('s-fila')">Cancelar</button>
+              <button class="btn-ghost" onclick="propAtual=null;_propAtualId=null;_iniciarPolling();go('s-fila')">Cancelar</button>
               <button class="btn-send" style="flex:1" onclick="enviarResultado()">Enviar resultado ao lojista &rarr;</button>
             </div>
           </div>
@@ -2593,6 +2593,8 @@ function renderFila(){
 
 /* ========== ABRIR ANÁLISE ========== */
 var propAtual=null;
+var _propAtualId=null;
+
 function abrirAnalise(id){
   var found=null;
   DB.lojistas.forEach(function(l){
@@ -2601,6 +2603,9 @@ function abrirAnalise(id){
   });
   if(!found){alert('Proposta não encontrada.');return;}
   propAtual=found;
+  _propAtualId=id;
+  // Pausa o polling para não perder a referência durante a análise
+  if(_fbPolling){clearInterval(_fbPolling);_fbPolling=null;}
 
   function sv(elId,v){var el=document.getElementById(elId);if(el)el.textContent=v||'—';}
 
@@ -2736,16 +2741,30 @@ function enviarResultado(){
   var qtd=negado||emAnalise?'—':document.getElementById('res-qtd').value;
   var parc=(document.getElementById('res-parc')||{}).value||'';parc=parc.trim();
   var obsNeg=document.getElementById('res-obs-neg');
-  var obs=negado?(obsNeg?obsNeg.value.trim():''):(document.getElementById('res-obs').value.trim());
-  // Só exige valor e parcela se for aprovado
+  var obs=negado?(obsNeg?obsNeg.value.trim():''):((document.getElementById('res-obs')||{}).value||'').trim();
   if(!negado&&!emAnalise&&(!valor||!parc)){alert('Informe o valor aprovado e o valor da parcela.');return;}
-  if(!propAtual){alert('Erro: proposta não encontrada.');return;}
-  propAtual.resultado=status;
-  propAtual.modal=modal;
-  propAtual.valorAprov=negado?'Negado':emAnalise?'Em análise':'R$ '+valor;
-  propAtual.banco=banco;
-  propAtual.parcelas=negado||emAnalise?'—':qtd+' x R$ '+parc;
-  propAtual.obs_res=obs;
+  if(!propAtual){alert('Erro: proposta não encontrada. Volte à fila e abra a proposta novamente.');return;}
+
+  // Rebusca a proposta no DB pelo ID para garantir que é o objeto atual
+  var propId = propAtual.id;
+  var propNoBD = null;
+  DB.lojistas.forEach(function(l){
+    var p = l.props.find(function(x){return x.id===propId;});
+    if(p) propNoBD = p;
+  });
+  if(!propNoBD){
+    // Se não encontrou no DB, usa propAtual mesmo
+    propNoBD = propAtual;
+  }
+
+  propNoBD.resultado=status;
+  propNoBD.modal=modal;
+  propNoBD.valorAprov=negado?'Negado':emAnalise?'Em análise':'R$ '+valor;
+  propNoBD.banco=banco;
+  propNoBD.parcelas=negado||emAnalise?'—':qtd+' x R$ '+parc;
+  propNoBD.obs_res=obs;
+  propAtual=propNoBD;
+
   salvarDB();
   if(meLj){
     var ljAtual=DB.lojistas.find(function(l){return l.id===meLj.id;});
@@ -2753,7 +2772,11 @@ function enviarResultado(){
     var ndot=document.getElementById('ndot');if(ndot)ndot.style.display='block';
   }
   _atualizarTelasVisiveis();
-  alert('✅ Resultado "'+status+'" enviado ao lojista "'+propAtual.lj_nome+'"!');
+  alert('✅ Resultado "'+status+'" enviado ao lojista "'+propNoBD.lj_nome+'"!');
+  propAtual=null;
+  _propAtualId=null;
+  // Retoma o polling
+  _iniciarPolling();
   renderDash();
   go('s-fila');
 }
