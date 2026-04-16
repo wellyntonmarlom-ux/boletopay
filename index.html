@@ -974,12 +974,32 @@ carregarDB();
       </div>
       <!-- MODAL LINK -->
       <div id="link-modal" style="display:none;background:var(--bpl);border:2px solid rgba(10,132,255,.3);border-radius:14px;padding:1.375rem;margin-bottom:1.25rem">
-        <div style="font-size:15px;font-weight:700;color:var(--bp);margin-bottom:1rem">Enviar formulário ao cliente</div>
+        <div style="font-size:15px;font-weight:700;color:var(--bp);margin-bottom:1rem">📋 Enviar formulário ao cliente</div>
+
+        <!-- OPÇÃO 1: Cliente na loja -->
         <div style="background:#fff;border:2px solid var(--gr);border-radius:12px;padding:1rem;margin-bottom:10px">
-          <div style="font-size:13px;font-weight:700;color:var(--gr);margin-bottom:4px">✅ Cliente na loja — abrir agora</div>
-          <div style="font-size:12px;color:var(--mu);margin-bottom:10px">O cliente preenche no seu computador/celular aqui mesmo. Dados entram direto no sistema.</div>
+          <div style="font-size:13px;font-weight:700;color:var(--gr);margin-bottom:4px">🏪 Cliente na loja — abrir agora</div>
+          <div style="font-size:12px;color:var(--mu);margin-bottom:10px">O cliente preenche aqui mesmo no computador da loja.</div>
           <button class="btn gr" style="width:100%;justify-content:center;padding:12px;font-size:14px" onclick="abrirFormCliente()">📱 Abrir formulário agora</button>
         </div>
+
+        <!-- OPÇÃO 2: Link para cliente remoto -->
+        <div style="background:#fff;border:2px solid var(--pu);border-radius:12px;padding:1rem;margin-bottom:10px">
+          <div style="font-size:13px;font-weight:700;color:var(--pu);margin-bottom:4px">📲 Cliente remoto — enviar link pelo WhatsApp</div>
+          <div style="font-size:12px;color:var(--mu);margin-bottom:10px">Gera um link único. O cliente abre no celular, preenche os dados e a proposta entra direto no sistema.</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn pu" style="flex:1;justify-content:center;font-size:13px" onclick="gerarLinkCliente()">🔗 Gerar link</button>
+            <button class="btn" style="flex:1;justify-content:center;font-size:13px;background:#25D366" onclick="enviarLinkWhatsApp()">💬 Enviar WhatsApp</button>
+          </div>
+          <div id="link-gerado-box" style="display:none;margin-top:10px;background:var(--sec);border-radius:8px;padding:10px">
+            <div style="font-size:11px;color:var(--mu);margin-bottom:4px">Link gerado — copie e envie ao cliente:</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div id="link-gerado-txt" style="font-size:11px;font-family:monospace;color:var(--bp);word-break:break-all;flex:1"></div>
+              <button onclick="copiarLink()" style="background:var(--bp);color:#fff;border:none;border-radius:6px;padding:6px 10px;font-size:11px;cursor:pointer;white-space:nowrap">📋 Copiar</button>
+            </div>
+          </div>
+        </div>
+
         <button onclick="document.getElementById('link-modal').style.display='none'" style="font-size:12px;color:var(--mu);background:none;border:none;cursor:pointer;text-decoration:underline">Fechar</button>
       </div>
       <div class="stl">Minhas propostas</div>
@@ -1424,6 +1444,77 @@ function salvarConfig(){
 function mostrarLink(){if(!meLj)return;document.getElementById('link-modal').style.display='block';}
 function abrirFormCliente(){document.getElementById('link-modal').style.display='none';prepararFormCliente();go('s-form-cliente');}
 
+function _getBaseURL(){
+  // Pega a URL base do site atual
+  return window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
+}
+
+function gerarLinkCliente(){
+  if(!meLj)return;
+  var base = window.location.href.split('/').slice(0,-1).join('/');
+  if(base.indexOf('github.io')>-1 || base.indexOf('netlify')>-1){
+    // Remove index.html se estiver no final
+    base = base.replace(/\/index\.html$/,'');
+  }
+  var link = base + '/form.html?loja=' + meLj.id + '&nome=' + encodeURIComponent(meLj.nome);
+  var box = document.getElementById('link-gerado-box');
+  var txt = document.getElementById('link-gerado-txt');
+  if(box) box.style.display='block';
+  if(txt) txt.textContent = link;
+  window._linkClienteGerado = link;
+}
+
+function copiarLink(){
+  var link = window._linkClienteGerado || document.getElementById('link-gerado-txt').textContent;
+  if(!link)return;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(link).then(function(){alert('✅ Link copiado! Cole no WhatsApp para o cliente.');});
+  } else {
+    var ta=document.createElement('textarea');ta.value=link;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    alert('✅ Link copiado!');
+  }
+}
+
+function enviarLinkWhatsApp(){
+  if(!meLj)return;
+  gerarLinkCliente();
+  var link = window._linkClienteGerado;
+  if(!link)return;
+  // Mensagem curta para não bloquear WhatsApp
+  var msg = 'Olá! Preencha seus dados para análise de crédito na ' + meLj.nome + ':\n\n' + link;
+  window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(msg), '_blank');
+}
+
+// Verificar se veio de link de cliente e abrir formulário automaticamente
+function checarLinkCliente(){
+  var params = new URLSearchParams(window.location.search);
+  if(params.get('form') === '1'){
+    var lojaId = parseInt(params.get('loja'));
+    var lojaNome = decodeURIComponent(params.get('nome') || '');
+    if(lojaId){
+      // Aguarda DB carregar e abre formulário
+      var tentativas = 0;
+      var intervalo = setInterval(function(){
+        tentativas++;
+        var lj = DB.lojistas.find(function(l){return l.id===lojaId;});
+        if(lj || tentativas > 20){
+          clearInterval(intervalo);
+          if(lj){ meLj=lj; } else {
+            // Cria objeto mínimo para o formulário funcionar
+            meLj = {id:lojaId, nome:lojaNome, props:[]};
+          }
+          // Esconde tudo e abre só o formulário
+          document.querySelectorAll('.scr').forEach(function(s){s.classList.remove('on');});
+          prepararFormCliente();
+          var fc = document.getElementById('s-form-cliente');
+          if(fc) fc.classList.add('on');
+          window.scrollTo(0,0);
+        }
+      }, 300);
+    }
+  }
+}
+
 function baixarFormulario(){
   if(!meLj)return;
   var id=meLj.id;
@@ -1664,6 +1755,29 @@ function prepararFormCliente(){
     fcScr.querySelectorAll('.tp').forEach(function(p){p.classList.remove('on')});
     var p1=document.getElementById('fc-p1');if(p1)p1.classList.add('on');
   }
+}
+
+// Navega entre abas do formulário do cliente
+function inits(tabEl, painelId){
+  var fcScr=document.getElementById('s-form-cliente');
+  if(!fcScr)return;
+  fcScr.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
+  fcScr.querySelectorAll('.tp').forEach(function(p){p.classList.remove('on');});
+  if(tabEl)tabEl.classList.add('on');
+  var painel=document.getElementById(painelId);
+  if(painel)painel.classList.add('on');
+  window.scrollTo(0,0);
+}
+
+// Avança para próxima aba do formulário
+function avanca(painelId, tabIdx, scrId){
+  var fcScr=document.getElementById(scrId||'s-form-cliente');
+  if(!fcScr)return;
+  fcScr.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('on',i===tabIdx);});
+  fcScr.querySelectorAll('.tp').forEach(function(p){p.classList.remove('on');});
+  var painel=document.getElementById(painelId);
+  if(painel)painel.classList.add('on');
+  window.scrollTo(0,0);
 }
 
 // Detecta hash na URL e abre formulário do cliente
@@ -2589,30 +2703,31 @@ function updPrev(){
 function enviarResultado(){
   var status=document.getElementById('res-status').value;
   var negado=status==='Negado';
-  var modal=negado?'—':document.getElementById('res-modal').value;
-  var valor=negado?'—':(document.getElementById('res-valor').value.trim());
-  var banco=negado?'—':document.getElementById('res-banco').value;
-  var qtd=negado?'—':document.getElementById('res-qtd').value;
-  var parc=negado?'—':(document.getElementById('res-parc').value.trim());
+  var emAnalise=status==='Em análise';
+  var modal=negado||emAnalise?'—':document.getElementById('res-modal').value;
+  var valor=(document.getElementById('res-valor')||{}).value||'';valor=valor.trim();
+  var banco=negado||emAnalise?'—':document.getElementById('res-banco').value;
+  var qtd=negado||emAnalise?'—':document.getElementById('res-qtd').value;
+  var parc=(document.getElementById('res-parc')||{}).value||'';parc=parc.trim();
   var obsNeg=document.getElementById('res-obs-neg');
   var obs=negado?(obsNeg?obsNeg.value.trim():''):(document.getElementById('res-obs').value.trim());
-  if(!negado&&(!valor||!parc)){alert('Informe o valor aprovado e o valor da parcela.');return;}
+  // Só exige valor e parcela se for aprovado
+  if(!negado&&!emAnalise&&(!valor||!parc)){alert('Informe o valor aprovado e o valor da parcela.');return;}
   if(!propAtual){alert('Erro: proposta não encontrada.');return;}
   propAtual.resultado=status;
-  propAtual.modal=negado?'—':modal;
-  propAtual.valorAprov=negado?'Negado':'R$ '+valor;
-  propAtual.banco=negado?'—':banco;
-  propAtual.parcelas=negado?'—':qtd+' R$ '+parc;
+  propAtual.modal=modal;
+  propAtual.valorAprov=negado?'Negado':emAnalise?'Em análise':'R$ '+valor;
+  propAtual.banco=banco;
+  propAtual.parcelas=negado||emAnalise?'—':qtd+' x R$ '+parc;
   propAtual.obs_res=obs;
   salvarDB();
-  // Atualiza lojista instantaneamente (mesma sessão)
   if(meLj){
     var ljAtual=DB.lojistas.find(function(l){return l.id===meLj.id;});
     if(ljAtual)meLj=ljAtual;
     var ndot=document.getElementById('ndot');if(ndot)ndot.style.display='block';
   }
   _atualizarTelasVisiveis();
-  alert('Resultado "'+status+'" enviado ao lojista "'+propAtual.lj_nome+'"!');
+  alert('✅ Resultado "'+status+'" enviado ao lojista "'+propAtual.lj_nome+'"!');
   renderDash();
   go('s-fila');
 }
@@ -2832,8 +2947,9 @@ function verDoc(src,titulo,isPdf){
 carregarConfigFirebaseSalva();
 renderLjMgr();
 iniciarAutoUpdate();
-// Atualiza status do portal após 2s (tempo do Firebase inicializar)
 setTimeout(atualizarStatusPortal, 2000);
+// Verifica se veio de link de cliente
+setTimeout(checarLinkCliente, 500);
 
 (function(){
   var hash=window.location.hash||'';
