@@ -301,29 +301,41 @@ function _usarLocal(){
 function _iniciarPolling(){
   if(_fbPolling)clearInterval(_fbPolling);
   _fbPolling = setInterval(function(){
-    if(!_fbConectado||!_fbURL){
-      // Modo local: usa evento storage
-      return;
-    }
+    if(!_fbConectado||!_fbURL) return;
     _fbLer(function(data){
       if(!data||!data.lojistas)return;
+      // Calcula hash dos dados do Firebase
       var partes=[];
       data.lojistas.forEach(function(l){
         (l.props||[]).forEach(function(p){
           partes.push(p.id+'|'+(p.resultado||'')+'|'+(p.resposta||''));
         });
       });
-      var novoHash=partes.join(',');
-      if(novoHash!==_ultimoDBHash){
-        _ultimoDBHash=novoHash;
+      var hashFirebase=partes.join(',');
+      // Calcula hash dos dados locais atuais
+      var partesLocais=[];
+      DB.lojistas.forEach(function(l){
+        (l.props||[]).forEach(function(p){
+          partesLocais.push(p.id+'|'+(p.resultado||'')+'|'+(p.resposta||''));
+        });
+      });
+      var hashLocal=partesLocais.join(',');
+      // Só atualiza se Firebase tiver dados diferentes dos locais
+      if(hashFirebase!==hashLocal){
+        _ultimoDBHash=hashFirebase;
         DB.lojistas=data.lojistas;
         DB.analistas=data.analistas||DB.analistas;
         DB.lojistas.forEach(function(lj){if(!lj.props)lj.props=[];});
+        // Atualiza meLj se lojista estiver logado
+        if(meLj){
+          var ljAtual=DB.lojistas.find(function(l){return l.id===meLj.id;});
+          if(ljAtual)meLj=ljAtual;
+        }
         absorverPropostasPendentes();
         _atualizarTelasVisiveis();
       }
     });
-  }, 3000); // polling a cada 3 segundos
+  }, 3000);
 }
 
 function absorverPropostasPendentes(){
@@ -1465,14 +1477,34 @@ function gerarLinkCliente(){
 }
 
 function copiarLink(){
-  var link = window._linkClienteGerado || document.getElementById('link-gerado-txt').textContent;
-  if(!link)return;
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(link).then(function(){alert('✅ Link copiado! Cole no WhatsApp para o cliente.');});
+  var link = window._linkClienteGerado || (document.getElementById('link-gerado-txt')||{}).textContent || '';
+  if(!link){alert('Gere o link primeiro.');return;}
+  // Tenta clipboard API primeiro
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(link).then(function(){
+      alert('✅ Link copiado!\n\nCole no WhatsApp para o cliente:\n'+link);
+    }).catch(function(){
+      _copiarFallback(link);
+    });
   } else {
-    var ta=document.createElement('textarea');ta.value=link;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
-    alert('✅ Link copiado!');
+    _copiarFallback(link);
   }
+}
+function _copiarFallback(link){
+  // Fallback para browsers antigos e mobile
+  var ta=document.createElement('textarea');
+  ta.value=link;
+  ta.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px';
+  document.body.appendChild(ta);
+  ta.focus();ta.select();
+  try{
+    document.execCommand('copy');
+    alert('✅ Link copiado!\n\nCole no WhatsApp para o cliente:\n'+link);
+  }catch(e){
+    // Se tudo falhar, mostra o link para copiar manualmente
+    prompt('Copie o link abaixo (Ctrl+C ou segure para copiar):', link);
+  }
+  document.body.removeChild(ta);
 }
 
 function enviarLinkWhatsApp(){
