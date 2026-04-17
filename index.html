@@ -198,7 +198,7 @@ function _mostrarModo(online){
   }
   if(online){
     el.style.background='#E8FFF0';el.style.color='#1A8C40';
-    el.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#1A8C40;display:inline-block;animation:pulse 2s infinite"></span> Firebase Online';
+    el.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#1A8C40;display:inline-block;animation:pulse 2s infinite"></span> Online';
   } else {
     el.style.background='#FFF8E8';el.style.color='#B36800';
     el.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#B36800;display:inline-block"></span> Modo local';
@@ -206,7 +206,7 @@ function _mostrarModo(online){
   // Atualiza portal
   var pe = document.getElementById('fb-status-portal');
   if(pe){
-    pe.textContent = online ? '🔥 Firebase conectado — sincronização em tempo real' : '⚠️ Modo local — configure o Firebase para usar em múltiplos dispositivos';
+    pe.textContent = '';
     pe.style.color  = online ? 'rgba(76,175,80,.9)' : 'rgba(255,149,0,.8)';
   }
 }
@@ -441,8 +441,7 @@ carregarDB();
         </div>
       </div>
       <div style="text-align:center;margin-top:1.5rem">
-        <button onclick="go('s-firebase-cfg')" style="background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.5);font-size:12px;padding:7px 16px;border-radius:8px;cursor:pointer">⚙️ Configurar Firebase</button>
-        <div id="fb-status-portal" style="font-size:11px;margin-top:8px;color:rgba(255,255,255,.3)">Verificando conexão...</div>
+        <div id="fb-status-portal" style="font-size:11px;margin-top:8px;color:rgba(255,255,255,.15)"></div>
       </div>
     </div>
   </div>
@@ -3512,13 +3511,13 @@ function atualizarStatusPortal(){
   var pe = document.getElementById('fb-status-portal');
   if(!pe) return;
   if(_fbConectado){
-    pe.textContent = '🔥 Firebase conectado — sincronização em tempo real';
+    pe.textContent = '';
     pe.style.color  = 'rgba(76,175,80,.9)';
   } else if(_fbURL){
-    pe.textContent = '🔄 Conectando ao Firebase...';
+    pe.textContent = '';
     pe.style.color  = 'rgba(255,149,0,.8)';
   } else {
-    pe.textContent = '⚠️ Configure o Firebase para usar em múltiplos dispositivos';
+    pe.textContent = '';
     pe.style.color  = 'rgba(255,149,0,.7)';
   }
 }
