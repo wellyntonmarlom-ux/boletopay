@@ -548,7 +548,7 @@ carregarDB();
       </div>
     </aside>
     <div class="content">
-      <div class="ph"><div><div class="pt">Dashboard</div><div class="ps" id="dash-data">14 de abril de 2026</div></div><button class="btn" onclick="go('s-fila')">&#8681; Ver fila</button></div>
+      <div class="ph"><div><div class="pt">Dashboard</div><div class="ps" id="dash-data"></div></div><button class="btn" onclick="go('s-fila')">&#8681; Ver fila</button></div>
       <div class="mg4">
         <div class="mc" style="border-color:rgba(10,132,255,.3)"><div class="ml">Aprovado hoje</div><div class="mv" style="color:var(--bp)" id="d-aprov">R$ 0</div><div class="mt tu" id="d-aprov-t">Aguardando</div></div>
         <div class="mc" style="border-color:rgba(26,140,64,.3)"><div class="ml">Taxa aprovação</div><div class="mv" style="color:var(--gr)" id="d-taxa">0%</div><div class="mt tu">Meta: 70%</div></div>
@@ -2635,6 +2635,12 @@ function encontrarProp(id){
 
 /* ========== DASHBOARD ANALISTA ========== */
 function renderDash(){
+  // Atualiza data sempre com o dia atual
+  var agora=new Date();
+  var dataHoje=agora.toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'});
+  var dashData=document.getElementById('dash-data');
+  if(dashData)dashData.textContent=dataHoje;
+
   var todasProps=[];
   DB.lojistas.forEach(function(l){l.props.forEach(function(p){todasProps.push(p);});});
   var naFila=todasProps.filter(function(p){return!p.resultado});
@@ -2655,9 +2661,11 @@ function renderDash(){
   var dAprov=document.getElementById('d-aprov');
   if(dAprov)dAprov.textContent=totalAprov>0?'R$ '+totalAprov.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}):'R$ 0';
 
-  // Valor hoje
-  var hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
-  var aprovHoje=aprovadas.filter(function(p){return p.data&&p.data.indexOf(hoje)===0});
+  // Valor HOJE — usa dia/mês atual dinâmico
+  var diaHoje=String(agora.getDate()).padStart(2,'0');
+  var mesHoje=String(agora.getMonth()+1).padStart(2,'0');
+  var hojeStr=diaHoje+'/'+mesHoje; // formato dd/mm
+  var aprovHoje=aprovadas.filter(function(p){return p.data&&p.data.startsWith(hojeStr)});
   var valHoje=aprovHoje.reduce(function(s,p){var v=parseFloat((p.valorAprov||p.valor||'').replace(/[^\d,.]/g,'').replace(',','.'));return s+(isNaN(v)?0:v);},0);
   var dAprovT=document.getElementById('d-aprov-t');
   if(dAprovT)dAprovT.textContent=valHoje>0?'R$ '+valHoje.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0})+' hoje':'Aguardando';
@@ -2697,9 +2705,8 @@ function renderDash(){
     }
   }
 
-  // Gráfico de valores — analista
-  var mesAtual=new Date().toLocaleDateString('pt-BR',{month:'2-digit',year:'numeric'}).split('/');
-  var mesStr='/'+mesAtual[0]+'/'+mesAtual[1];
+  // Gráfico de valores — mês atual dinâmico
+  var mesStr='/'+mesHoje+'/'+agora.getFullYear();
   var aprovMes=aprovadas.filter(function(p){return p.data&&p.data.indexOf(mesStr)>0});
   var valMes=aprovMes.reduce(function(s,p){var v=parseFloat((p.valorAprov||p.valor||'').replace(/[^\d,.]/g,'').replace(',','.'));return s+(isNaN(v)?0:v);},0);
   var comValor=todasProps.filter(function(p){var v=parseFloat((p.valor||'').replace(/[^\d,.]/g,'').replace(',','.'));return !isNaN(v)&&v>0;});
