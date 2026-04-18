@@ -536,6 +536,7 @@ carregarDB();
       <div class="ni on-a" onclick="go('s-dash')"><span class="nic">&#9638;</span> Dashboard</div>
       <div class="ni" onclick="go('s-novas')"><span class="nic">🔔</span> Novas solicitações <span class="n-badge" id="nb-novas" style="display:none">0</span></div>
       <div class="ni" onclick="go('s-fila')"><span class="nic">&#8681;</span> Fila de análise <span class="n-badge" id="nb-fila">0</span></div>
+      <div class="ni" onclick="go('s-an-emprestimos')"><span class="nic">📋</span> Empréstimos</div>
       <div class="ni" onclick="go('s-respostas-an')"><span class="nic">&#8617;</span> Respostas <span class="n-badge am" id="nb-resp">0</span></div>
       <div class="ni" onclick="go('s-finalizadas')"><span class="nic">🏁</span> Finalizadas <span class="n-badge" id="nb-fin" style="background:var(--tl);display:none">0</span></div>
       <div class="ni" onclick="go('s-lojistas-mgr')"><span class="nic">&#9646;</span> Lojistas</div>
@@ -593,12 +594,41 @@ carregarDB();
 </div>
 
 <!-- ======== NOVAS SOLICITAÇÕES ======== -->
-<div class="scr" id="s-novas">
+<!-- ======== EMPRÉSTIMOS ANALISTA ======== -->
+<div class="scr" id="s-an-emprestimos">
   <div class="shell">
     <aside class="sidebar">
       <div class="sb-logo"><div class="sb-mark" style="background:var(--bp)">BP</div><div><div class="sb-nm">BOLETO PAY</div><div class="sb-rl">Analista</div></div></div>
       <div class="ni" onclick="go('s-dash')"><span class="nic">&#9638;</span> Dashboard</div>
-      <div class="ni on-a"><span class="nic">🔔</span> Novas solicitações</div>
+      <div class="ni" onclick="go('s-novas')"><span class="nic">🔔</span> Novas solicitações</div>
+      <div class="ni" onclick="go('s-fila')"><span class="nic">&#8681;</span> Fila de análise</div>
+      <div class="ni on-a"><span class="nic">📋</span> Empréstimos</div>
+      <div class="ni" onclick="go('s-respostas-an')"><span class="nic">&#8617;</span> Respostas</div>
+      <div class="ni" onclick="go('s-finalizadas')"><span class="nic">🏁</span> Finalizadas</div>
+      <div class="ni" onclick="go('s-lojistas-mgr')"><span class="nic">&#9646;</span> Lojistas</div>
+      <div class="sb-bot"><div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
+    </aside>
+    <div class="content">
+      <div class="ph">
+        <div><div class="pt">Empréstimos</div><div class="ps" id="an-emp-contador">Todas as análises</div></div>
+      </div>
+      <div style="position:relative;margin-bottom:1rem">
+        <input id="an-emp-busca" class="fi" placeholder="🔍 Buscar por nome ou CPF do cliente..." oninput="renderAnEmp()"/>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap">
+        <button id="an-ef-todos"   class="btn"       style="font-size:12px;padding:7px 14px" onclick="anFiltroEmp('')">Todas</button>
+        <button id="an-ef-analise" class="btn-ghost" style="font-size:12px;padding:7px 14px" onclick="anFiltroEmp('analise')">⏳ Em análise</button>
+        <button id="an-ef-aprov"   class="btn-ghost" style="font-size:12px;padding:7px 14px" onclick="anFiltroEmp('aprovado')">✅ Aprovadas</button>
+        <button id="an-ef-neg"     class="btn-ghost" style="font-size:12px;padding:7px 14px" onclick="anFiltroEmp('negado')">❌ Negadas</button>
+        <button id="an-ef-form"    class="btn-ghost" style="font-size:12px;padding:7px 14px" onclick="anFiltroEmp('formalizacao')">📝 Em formalização</button>
+        <button id="an-ef-fin"     class="btn-ghost" style="font-size:12px;padding:7px 14px" onclick="anFiltroEmp('finalizado')">🏁 Finalizadas</button>
+      </div>
+      <div id="an-emp-lista"></div>
+    </div>
+  </div>
+</div>
+
+<div class="scr" id="s-novas">
       <div class="ni" onclick="go('s-fila')"><span class="nic">&#8681;</span> Fila de análise <span class="n-badge" id="nb-fila-ns">0</span></div>
       <div class="ni" onclick="go('s-respostas-an')"><span class="nic">&#8617;</span> Respostas</div>
       <div class="ni" onclick="go('s-lojistas-mgr')"><span class="nic">&#9646;</span> Lojistas</div>
@@ -2924,6 +2954,74 @@ function abrirResumoAnalise(propId){
 }
 
 /* ===== FINALIZADAS ===== */
+/* ===== EMPRÉSTIMOS DO ANALISTA ===== */
+var _anEmpFiltro='';
+
+function anFiltroEmp(status){
+  _anEmpFiltro=status;
+  // Atualiza botões
+  ['todos','analise','aprov','neg','form','fin'].forEach(function(k){
+    var btn=document.getElementById('an-ef-'+k);
+    if(btn)btn.className='btn-ghost';
+  });
+  var mapa={'':{id:'an-ef-todos'},'analise':{id:'an-ef-analise'},'aprovado':{id:'an-ef-aprov'},'negado':{id:'an-ef-neg'},'formalizacao':{id:'an-ef-form'},'finalizado':{id:'an-ef-fin'}};
+  var ativo=mapa[status];
+  if(ativo){var b=document.getElementById(ativo.id);if(b)b.className='btn';}
+  renderAnEmp();
+}
+
+function renderAnEmp(){
+  // Pega todas as props de todos os lojistas
+  var todas=[];
+  DB.lojistas.forEach(function(l){(l.props||[]).forEach(function(p){todas.push(p);});});
+
+  var busca=(document.getElementById('an-emp-busca')||{}).value||'';
+  busca=busca.toLowerCase().trim();
+
+  var filtradas=todas.filter(function(p){
+    // Filtro busca
+    var matchBusca=!busca||
+      (p.nome&&p.nome.toLowerCase().indexOf(busca)>-1)||
+      (p.cpf&&p.cpf.replace(/\D/g,'').indexOf(busca.replace(/\D/g,''))>-1)||
+      (p.lj_nome&&p.lj_nome.toLowerCase().indexOf(busca)>-1);
+    // Filtro status
+    var st=_statusEmp(p);
+    var matchStatus=!_anEmpFiltro||st===_anEmpFiltro;
+    return matchBusca&&matchStatus;
+  }).reverse();
+
+  var contador=document.getElementById('an-emp-contador');
+  if(contador)contador.textContent=filtradas.length+' de '+todas.length+' análise(s)';
+
+  var lista=document.getElementById('an-emp-lista');if(!lista)return;
+  if(filtradas.length===0){
+    lista.innerHTML='<div style="text-align:center;padding:2.5rem;color:var(--mu);font-size:13px;background:#fff;border-radius:13px;border:1px solid var(--brd)">Nenhuma análise encontrada com esses filtros.</div>';
+    return;
+  }
+
+  lista.innerHTML=filtradas.map(function(p){
+    var ini=p.nome?p.nome.split(' ').slice(0,2).map(function(n){return n[0];}).join('').toUpperCase():'?';
+    var s=_statusEmp(p);
+    var corBorda=s==='analise'?'rgba(179,104,0,.2)':s==='negado'?'rgba(204,47,40,.2)':s==='formalizacao'?'rgba(10,132,255,.2)':s==='finalizado'?'rgba(15,110,86,.2)':'rgba(26,140,64,.2)';
+    return '<div class="card" style="margin-bottom:10px;border:2px solid '+corBorda+';cursor:pointer" onclick="abrirResumoAnalise('+p.id+')">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+      +'<div class="ci">'
+      +'<div class="av" style="background:var(--bpl);color:var(--bp)">'+ini+'</div>'
+      +'<div>'
+      +'<div class="cn">'+p.nome+'</div>'
+      +'<div class="cx">CPF: '+(p.cpf||'—')+' &bull; '+p.data+'</div>'
+      +'<div class="cx" style="color:var(--pu);font-size:11px">🏪 '+(p.lj_nome||'—')+'</div>'
+      +'</div></div>'
+      +'<div style="display:flex;align-items:center;gap:8px">'+_badgeEmp(p)+'<span style="font-size:11px;color:var(--mu)">Ver →</span></div>'
+      +'</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:var(--sec);border-radius:10px;padding:.75rem">'
+      +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Aparelho</div><div style="font-size:12px;font-weight:600">'+((p.marca?p.marca+' ':'')+p.modelo||'—')+'</div></div>'
+      +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Valor solicitado</div><div style="font-size:13px;font-weight:700;color:var(--bp)">'+(p.valor||'—')+'</div></div>'
+      +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Valor aprovado</div><div style="font-size:13px;font-weight:700;color:var(--gr)">'+(p.valorAprov&&p.valorAprov!=='Negado'?p.valorAprov:'—')+'</div></div>'
+      +'</div></div>';
+  }).join('');
+}
+
 function renderFinalizadas(){
   var lista=document.getElementById('fin-lista');if(!lista)return;
   var todasProps=[];
@@ -4373,6 +4471,7 @@ function go(id){
   if(id==='s-lojista'){renderLjDash();atualizarTopLojista();renderProdutos();}
   if(id==='s-lj-resultados'){goLj('lj-resultados');}
   if(id==='s-respostas-an')renderRespostasAn();
+  if(id==='s-an-emprestimos'){absorverPropostasPendentes();renderAnEmp();}
   if(id==='s-finalizadas')renderFinalizadas();
 }
 
