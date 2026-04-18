@@ -70,10 +70,10 @@ body{background:var(--bg);min-height:100vh;padding:1.25rem 1rem 3rem}
   <!-- FORMULÁRIO -->
   <div id="form-wrap">
     <div class="tabs">
-      <div class="tab on" onclick="ir(0)">1 · Dados</div>
-      <div class="tab" onclick="ir(1)">2 · Aparelho</div>
-      <div class="tab" onclick="ir(2)">3 · Documentos</div>
-      <div class="tab" onclick="ir(3)">4 · Confirmar</div>
+      <div class="tab on">1 · Dados</div>
+      <div class="tab">2 · Aparelho</div>
+      <div class="tab">3 · Documentos</div>
+      <div class="tab">4 · Confirmar</div>
     </div>
 
     <!-- ABA 1: DADOS -->
@@ -234,11 +234,17 @@ function ir(idx){
   var atual=0;
   document.querySelectorAll('.step').forEach(function(s,i){if(s.classList.contains('on'))atual=i;});
   if(idx>atual){
-    var ok=validarAba(atual);
-    if(!ok)return;
+    // Valida todas as abas intermediárias
+    for(var a=atual;a<idx;a++){
+      if(!validarAba(a))return;
+    }
   }
   document.querySelectorAll('.step').forEach(function(s,i){ s.classList.toggle('on', i===idx); });
-  document.querySelectorAll('.tab').forEach(function(t,i){ t.classList.toggle('on', i===idx); });
+  // Atualiza tabs visualmente sem permitir clique
+  document.querySelectorAll('.tab').forEach(function(t,i){
+    t.classList.toggle('on', i===idx);
+    t.style.cursor = i<=idx ? 'default' : 'default';
+  });
   if(idx===3) gerarResumo();
   window.scrollTo(0,0);
 }
@@ -249,7 +255,7 @@ function validarAba(idx){
       [!gv('nome').trim(),'Preencha o nome completo.'],
       [gv('nome').trim().split(' ').length<2,'Informe nome e sobrenome.'],
       [!gv('cpf').trim(),'Preencha o CPF.'],
-      [gv('cpf').replace(/\\D/g,'').length!==11,'CPF deve ter 11 dígitos.'],
+      [gv('cpf').replace(/[^0-9]/g,'').length!==11,'CPF deve ter 11 dígitos.'],
       [!gv('nasc'),'Informe a data de nascimento.'],
       [!gv('rg').trim(),'Preencha o RG.'],
       [!gv('tel').trim(),'Preencha o WhatsApp.'],
@@ -349,12 +355,12 @@ function enviar(){
   if(!gv('nome').trim()) return mostrarErro('Preencha o nome completo.',0);
   if(gv('nome').trim().split(' ').length<2) return mostrarErro('Informe nome e sobrenome completos.',0);
   if(!gv('cpf').trim()) return mostrarErro('Preencha o CPF.',0);
-  if(gv('cpf').replace(/\D/g,'').length!==11) return mostrarErro('CPF deve ter 11 dígitos.',0);
+  if(gv('cpf').replace(/[^0-9]/g,'').length!==11) return mostrarErro('CPF deve ter 11 dígitos.',0);
   if(!gv('nasc')) return mostrarErro('Informe a data de nascimento.',0);
   if(!vIdade()) return;
   if(!gv('rg').trim()) return mostrarErro('Preencha o RG.',0);
   if(!gv('tel').trim()) return mostrarErro('Preencha o WhatsApp.',0);
-  if(gv('tel').replace(/\D/g,'').length<10) return mostrarErro('WhatsApp inválido — mínimo 10 dígitos.',0);
+  if(gv('tel').replace(/[^0-9]/g,'').length<10) return mostrarErro('WhatsApp inválido — mínimo 10 dígitos.',0);
 
   // === ABA 2: FINANCEIRO ===
   if(!gv('renda').trim()) return mostrarErro('Preencha a renda mensal.',1);
