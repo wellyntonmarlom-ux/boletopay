@@ -2,8 +2,6 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-<meta http-equiv="Pragma" content="no-cache"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BOLETO PAY — Sistema de Crédito</title>
 <style>
@@ -551,16 +549,16 @@ carregarDB();
     <div class="content">
       <div class="ph"><div><div class="pt">Dashboard</div><div class="ps" id="dash-data"></div></div><button class="btn" onclick="go('s-fila')">&#8681; Ver fila</button></div>
       <div class="mg4">
-        <div class="mc" style="border-color:rgba(10,132,255,.3)"><div class="ml">Aprovado hoje</div><div class="mv" style="color:var(--bp)" id="d-aprov">R$ 0</div><div class="mt tu" id="d-aprov-t">Aguardando</div></div>
-        <div class="mc" style="border-color:rgba(26,140,64,.3)"><div class="ml">Taxa aprovação</div><div class="mv" style="color:var(--gr)" id="d-taxa">0%</div><div class="mt tu">Meta: 70%</div></div>
+        <div class="mc" style="border-color:rgba(10,132,255,.3)"><div class="ml">✅ Aprovado hoje</div><div class="mv" style="color:var(--bp)" id="d-aprov">R$ 0</div><div class="mt tu" id="d-aprov-t">Zera todo dia</div></div>
+        <div class="mc" style="border-color:rgba(26,140,64,.3)"><div class="ml">📅 Solicitações este mês</div><div class="mv" style="color:var(--gr)" id="d-sol-mes">0</div><div class="mt tu" id="d-sol-mes-t">Propostas recebidas</div></div>
         <div class="mc"><div class="ml">Na fila</div><div class="mv" style="color:var(--am)" id="d-fila">0</div><div class="mt" style="color:var(--am)">Para analisar</div></div>
-        <div class="mc"><div class="ml">Respostas pendentes</div><div class="mv" style="color:var(--am)" id="d-resp">0</div><div class="mt" style="color:var(--am)">Aguardando retorno</div></div>
+        <div class="mc"><div class="ml">Taxa aprovação</div><div class="mv" style="color:var(--gr)" id="d-taxa">0%</div><div class="mt tu">Meta: 70%</div></div>
       </div>
       <div class="mg4">
-        <div class="mc"><div class="ml">Total propostas</div><div class="mv" id="d-tot">0</div><div class="mt tu">Todos os lojistas</div></div>
+        <div class="mc"><div class="ml">Total propostas</div><div class="mv" id="d-tot">0</div><div class="mt tu">Todos os tempos</div></div>
         <div class="mc"><div class="ml">Lojistas ativos</div><div class="mv" id="d-lj">0</div><div class="mt tu">Cadastrados</div></div>
         <div class="mc"><div class="ml">Analistas ativos</div><div class="mv" id="d-an">0</div><div class="mt tu">Equipe</div></div>
-        <div class="mc"><div class="ml">Tempo médio</div><div class="mv">2,4 min</div><div class="mt tu">Resposta</div></div>
+        <div class="mc"><div class="ml">Respostas pendentes</div><div class="mv" style="color:var(--am)" id="d-resp">0</div><div class="mt" style="color:var(--am)">Aguardando retorno</div></div>
       </div>
       <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:12px;margin-bottom:1.5rem">
         <div class="card">
@@ -1972,9 +1970,7 @@ function baixarFormulario(){
     'ab(0);'
   ].join('\n');
 
-  var html='<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/>
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-<meta http-equiv="Pragma" content="no-cache"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>'
+  var html='<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>'
     +'<title>Formulário de Crédito — '+nome+'</title>'
     +'<style>'+css+'</style></head><body><div class="wrap">'
     // Header
@@ -2659,19 +2655,26 @@ function renderDash(){
   var taxa=todasProps.length>0?Math.round(aprovadas.length/todasProps.length*100):0;
   var dTaxa=document.getElementById('d-taxa');if(dTaxa)dTaxa.textContent=taxa+'%';
 
-  // Valor aprovado total
-  var totalAprov=aprovadas.reduce(function(s,p){var v=parseFloat((p.valorAprov||p.valor||'').replace(/[^\d,.]/g,'').replace(',','.'));return s+(isNaN(v)?0:v);},0);
-  var dAprov=document.getElementById('d-aprov');
-  if(dAprov)dAprov.textContent=totalAprov>0?'R$ '+totalAprov.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}):'R$ 0';
-
-  // Valor HOJE — usa dia/mês atual dinâmico
+  // HOJE — valor aprovado no dia atual (zera todo dia)
   var diaHoje=String(agora.getDate()).padStart(2,'0');
   var mesHoje=String(agora.getMonth()+1).padStart(2,'0');
-  var hojeStr=diaHoje+'/'+mesHoje; // formato dd/mm
-  var aprovHoje=aprovadas.filter(function(p){return p.data&&p.data.startsWith(hojeStr)});
+  var anoHoje=agora.getFullYear().toString();
+  var hojeStr=diaHoje+'/'+mesHoje; // bate com formato dd/mm da p.data
+  var aprovHoje=aprovadas.filter(function(p){return p.data&&p.data.indexOf(hojeStr)===0;});
   var valHoje=aprovHoje.reduce(function(s,p){var v=parseFloat((p.valorAprov||p.valor||'').replace(/[^\d,.]/g,'').replace(',','.'));return s+(isNaN(v)?0:v);},0);
+  var dAprov=document.getElementById('d-aprov');
+  if(dAprov)dAprov.textContent=valHoje>0?'R$ '+valHoje.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}):'R$ 0';
   var dAprovT=document.getElementById('d-aprov-t');
-  if(dAprovT)dAprovT.textContent=valHoje>0?'R$ '+valHoje.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0})+' hoje':'Aguardando';
+  if(dAprovT)dAprovT.textContent=aprovHoje.length>0?aprovHoje.length+' aprovação(ões) hoje':'Nenhuma aprovação hoje';
+
+  // MÊS — solicitações recebidas no mês atual (fica o mês todo)
+  var mesStr='/'+mesHoje+'/'+anoHoje;
+  var solMes=todasProps.filter(function(p){return p.data&&p.data.indexOf(mesStr)>0;});
+  var dSolMes=document.getElementById('d-sol-mes');
+  if(dSolMes)dSolMes.textContent=solMes.length;
+  var dSolMesT=document.getElementById('d-sol-mes-t');
+  var nomeMes=agora.toLocaleDateString('pt-BR',{month:'long'});
+  if(dSolMesT)dSolMesT.textContent=solMes.length+' proposta(s) em '+nomeMes;
 
   // Lojistas com props
   var ljLista=document.getElementById('d-lj-lista');

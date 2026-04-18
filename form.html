@@ -2,11 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
-<meta http-equiv="Pragma" content="no-cache"/>
-<meta http-equiv="Expires" content="0"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Formulário de Crédito — BOLETO PAY v3</title>
+<title>Formulário de Crédito — BOLETO PAY</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 :root{--bp:#0A84FF;--gr:#1A8C40;--grl:#E8FFF0;--rd:#CC2F28;--rdl:#FFF0EF;--am:#B36800;--aml:#FFF8E8;--pu:#7C3AED;--pul:#F0EDFF;--brd:#E5E7EB;--mu:#6B7280;--sec:#F9FAFB;--bg:#F5F7FA;--txt:#0A0A0A}
@@ -73,10 +70,10 @@ body{background:var(--bg);min-height:100vh;padding:1.25rem 1rem 3rem}
   <!-- FORMULÁRIO -->
   <div id="form-wrap">
     <div class="tabs">
-      <div class="tab on">1 · Dados</div>
-      <div class="tab">2 · Aparelho</div>
-      <div class="tab">3 · Documentos</div>
-      <div class="tab">4 · Confirmar</div>
+      <div class="tab on" onclick="ir(0)">1 · Dados</div>
+      <div class="tab" onclick="ir(1)">2 · Aparelho</div>
+      <div class="tab" onclick="ir(2)">3 · Documentos</div>
+      <div class="tab" onclick="ir(3)">4 · Confirmar</div>
     </div>
 
     <!-- ABA 1: DADOS -->
@@ -233,54 +230,10 @@ window.addEventListener('load', function(){
 
 // ===== NAVEGAÇÃO =====
 function ir(idx){
-  // Valida aba atual antes de avançar
-  var atual=0;
-  document.querySelectorAll('.step').forEach(function(s,i){if(s.classList.contains('on'))atual=i;});
-  if(idx>atual){
-    // Valida todas as abas intermediárias
-    for(var a=atual;a<idx;a++){
-      if(!validarAba(a))return;
-    }
-  }
   document.querySelectorAll('.step').forEach(function(s,i){ s.classList.toggle('on', i===idx); });
-  // Atualiza tabs visualmente sem permitir clique
-  document.querySelectorAll('.tab').forEach(function(t,i){
-    t.classList.toggle('on', i===idx);
-    t.style.cursor = i<=idx ? 'default' : 'default';
-  });
+  document.querySelectorAll('.tab').forEach(function(t,i){ t.classList.toggle('on', i===idx); });
   if(idx===3) gerarResumo();
   window.scrollTo(0,0);
-}
-
-function validarAba(idx){
-  var msgs={
-    0:[
-      [!gv('nome').trim(),'Preencha o nome completo.'],
-      [gv('nome').trim().split(' ').length<2,'Informe nome e sobrenome.'],
-      [!gv('cpf').trim(),'Preencha o CPF.'],
-      [gv('cpf').replace(/[^0-9]/g,'').length!==11,'CPF deve ter 11 dígitos.'],
-      [!gv('nasc'),'Informe a data de nascimento.'],
-      [!gv('rg').trim(),'Preencha o RG.'],
-      [!gv('tel').trim(),'Preencha o WhatsApp.'],
-    ],
-    1:[
-      [!gv('renda').trim(),'Preencha a renda mensal.'],
-      [!gv('prof').trim(),'Preencha a profissão.'],
-    ],
-    2:[
-      [!gv('modelo').trim(),'Informe o modelo do aparelho.'],
-      [!gv('valor').trim(),'Informe o valor do aparelho.'],
-    ]
-  };
-  var lista=msgs[idx];
-  if(!lista)return true;
-  for(var i=0;i<lista.length;i++){
-    if(lista[i][0]){
-      alert('⚠️ '+lista[i][1]);
-      return false;
-    }
-  }
-  return true;
 }
 
 // ===== TIPO DE APARELHO =====
@@ -346,53 +299,44 @@ function enviar(){
   var err = document.getElementById('err-form');
   err.style.display='none';
 
-  function mostrarErro(msg, abaIdx){
+  function errar(msg, aba){
     err.textContent='⚠️ '+msg;
     err.style.display='block';
-    if(abaIdx!==undefined) ir(abaIdx);
+    if(aba!==undefined) ir(aba);
     window.scrollTo(0,0);
-    return false;
   }
 
-  // === ABA 1: DADOS PESSOAIS ===
-  if(!gv('nome').trim()) return mostrarErro('Preencha o nome completo.',0);
-  if(gv('nome').trim().split(' ').length<2) return mostrarErro('Informe nome e sobrenome completos.',0);
-  if(!gv('cpf').trim()) return mostrarErro('Preencha o CPF.',0);
-  if(gv('cpf').replace(/[^0-9]/g,'').length!==11) return mostrarErro('CPF deve ter 11 dígitos.',0);
-  if(!gv('nasc')) return mostrarErro('Informe a data de nascimento.',0);
+  // ABA 1 — Dados pessoais
+  if(!gv('nome').trim()){return errar('Preencha o nome completo.',0);}
+  if(gv('nome').trim().split(' ').filter(function(x){return x;}).length<2){return errar('Informe nome E sobrenome.',0);}
+  if(!gv('cpf').trim()){return errar('Preencha o CPF.',0);}
+  if(gv('cpf').replace(/[^0-9]/g,'').length!==11){return errar('CPF inválido — precisa ter 11 dígitos.',0);}
+  if(!gv('nasc')){return errar('Informe a data de nascimento.',0);}
   if(!vIdade()) return;
-  if(!gv('rg').trim()) return mostrarErro('Preencha o RG.',0);
-  if(!gv('tel').trim()) return mostrarErro('Preencha o WhatsApp.',0);
-  if(gv('tel').replace(/[^0-9]/g,'').length<10) return mostrarErro('WhatsApp inválido — mínimo 10 dígitos.',0);
+  if(!gv('rg').trim()){return errar('Preencha o RG.',0);}
+  if(!gv('tel').trim()){return errar('Preencha o WhatsApp.',0);}
+  if(gv('tel').replace(/[^0-9]/g,'').length<10){return errar('WhatsApp inválido.',0);}
 
-  // === ABA 2: FINANCEIRO ===
-  if(!gv('renda').trim()) return mostrarErro('Preencha a renda mensal.',1);
-  if(isNaN(parseFloat(gv('renda').replace(',','.')))) return mostrarErro('Renda inválida — use apenas números.',1);
-  if(!gv('prof').trim()) return mostrarErro('Preencha a profissão.',1);
+  // ABA 2 — Aparelho
+  if(!gv('modelo').trim()){return errar('Informe o modelo do aparelho.',1);}
+  if(!gv('valor').trim()){return errar('Informe o valor do aparelho.',1);}
 
-  // === ABA 3: APARELHO ===
-  if(!gv('modelo').trim()) return mostrarErro('Informe o modelo do aparelho.',2);
-  if(!gv('valor').trim()) return mostrarErro('Informe o valor do aparelho.',2);
-  if(isNaN(parseFloat(gv('valor').replace(',','.')))) return mostrarErro('Valor inválido — use apenas números.',2);
+  // ABA 3 — Documentos
+  if(!docs[1]||!docs[1].done){return errar('Anexe a foto do RG/CNH Frente — obrigatório.',2);}
+  if(!docs[2]||!docs[2].done){return errar('Anexe a foto do RG/CNH Verso — obrigatório.',2);}
+  if(!docs[3]||!docs[3].done){return errar('Anexe o comprovante de renda — obrigatório.',2);}
 
-  // === ABA 4: DOCUMENTOS ===
-  if(!docs[1]||!docs[1].done) return mostrarErro('Anexe a foto do RG/CNH (Frente).',3);
-  if(!docs[2]||!docs[2].done) return mostrarErro('Anexe a foto do RG/CNH (Verso).',3);
-  if(!docs[3]||!docs[3].done) return mostrarErro('Anexe o comprovante de renda.',3);
+  // ABA 4 — Financeiro
+  if(!gv('renda').trim()){return errar('Preencha a renda mensal.',0);}
 
-  // === LGPD ===
-  if(!document.getElementById('lgpd').checked){
-    err.textContent='⚠️ Marque a autorização LGPD para continuar.';
-    err.style.display='block';
-    ir(3);
-    return;
-  }
+  if(!document.getElementById('lgpd').checked){err.textContent='⚠️ Marque a autorização LGPD.';err.style.display='block';ir(3);return;}
 
   var btn = document.getElementById('btn-enviar');
   btn.textContent='⏳ Enviando...'; btn.disabled=true;
 
   var agora = new Date().toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
 
+  // Prepara documentos (sem b64 se for muito grande — guarda referência)
   var docsEnvio = {};
   [1,2,3,4].forEach(function(n){
     if(docs[n]&&docs[n].done){
@@ -435,43 +379,42 @@ function enviar(){
     resposta: null
   };
 
+  // Salva direto no Firebase
   salvarNoFirebase(prop);
 }
 
 function salvarNoFirebase(prop){
   var btn = document.getElementById('btn-enviar');
-  btn.textContent='⏳ Enviando...';btn.disabled=true;
-
-  // Busca só a lista de lojistas (muito menor que o banco todo)
-  fetch(FB_URL+'/'+DB_KEY+'/lojistas.json')
-    .then(function(r){return r.json();})
-    .then(function(lojistas){
-      if(!lojistas) throw new Error('Banco não encontrado');
-      // Normaliza para array
-      var arr=Array.isArray(lojistas)?lojistas:Object.values(lojistas);
-      // Encontra índice do lojista
-      var ljIdx=arr.findIndex(function(l){return l&&l.id===prop.lj_id;});
-      if(ljIdx<0) throw new Error('Loja não encontrada');
-      // Conta props atuais
-      var props=arr[ljIdx].props;
-      var numProps=props?(Array.isArray(props)?props.length:Object.keys(props).length):0;
-      // Salva só a nova proposta no índice correto — operação pequena e rápida
-      return fetch(FB_URL+'/'+DB_KEY+'/lojistas/'+ljIdx+'/props/'+numProps+'.json',{
+  // Primeiro lê o DB atual
+  fetch(FB_URL+'/'+DB_KEY+'.json')
+    .then(function(r){ return r.json(); })
+    .then(function(db){
+      if(!db||!db.lojistas){
+        throw new Error('Banco não encontrado');
+      }
+      // Encontra o lojista e adiciona a proposta
+      var ljIdx = db.lojistas.findIndex(function(l){ return l.id===prop.lj_id; });
+      if(ljIdx<0){ throw new Error('Loja não encontrada'); }
+      if(!db.lojistas[ljIdx].props) db.lojistas[ljIdx].props=[];
+      db.lojistas[ljIdx].props.push(prop);
+      // Salva o DB atualizado
+      return fetch(FB_URL+'/'+DB_KEY+'.json', {
         method:'PUT',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(prop)
+        body: JSON.stringify(db)
       });
     })
     .then(function(r){
-      if(!r.ok) throw new Error('Erro '+r.status);
+      if(!r.ok) throw new Error('Erro ao salvar');
+      // Sucesso!
       document.getElementById('form-wrap').style.display='none';
       document.getElementById('tela-ok').style.display='block';
       window.scrollTo(0,0);
     })
     .catch(function(e){
       console.error(e);
-      var err=document.getElementById('err-form');
-      err.textContent='❌ Erro ao enviar. Verifique sua conexão e tente novamente.';
+      var err = document.getElementById('err-form');
+      err.textContent = '❌ Erro ao enviar. Verifique sua conexão e tente novamente.';
       err.style.display='block';
       btn.textContent='✅ Enviar solicitação';
       btn.disabled=false;
