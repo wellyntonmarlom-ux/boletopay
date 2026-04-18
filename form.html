@@ -230,10 +230,48 @@ window.addEventListener('load', function(){
 
 // ===== NAVEGAÇÃO =====
 function ir(idx){
+  // Valida aba atual antes de avançar
+  var atual=0;
+  document.querySelectorAll('.step').forEach(function(s,i){if(s.classList.contains('on'))atual=i;});
+  if(idx>atual){
+    var ok=validarAba(atual);
+    if(!ok)return;
+  }
   document.querySelectorAll('.step').forEach(function(s,i){ s.classList.toggle('on', i===idx); });
   document.querySelectorAll('.tab').forEach(function(t,i){ t.classList.toggle('on', i===idx); });
   if(idx===3) gerarResumo();
   window.scrollTo(0,0);
+}
+
+function validarAba(idx){
+  var msgs={
+    0:[
+      [!gv('nome').trim(),'Preencha o nome completo.'],
+      [gv('nome').trim().split(' ').length<2,'Informe nome e sobrenome.'],
+      [!gv('cpf').trim(),'Preencha o CPF.'],
+      [gv('cpf').replace(/\\D/g,'').length!==11,'CPF deve ter 11 dígitos.'],
+      [!gv('nasc'),'Informe a data de nascimento.'],
+      [!gv('rg').trim(),'Preencha o RG.'],
+      [!gv('tel').trim(),'Preencha o WhatsApp.'],
+    ],
+    1:[
+      [!gv('renda').trim(),'Preencha a renda mensal.'],
+      [!gv('prof').trim(),'Preencha a profissão.'],
+    ],
+    2:[
+      [!gv('modelo').trim(),'Informe o modelo do aparelho.'],
+      [!gv('valor').trim(),'Informe o valor do aparelho.'],
+    ]
+  };
+  var lista=msgs[idx];
+  if(!lista)return true;
+  for(var i=0;i<lista.length;i++){
+    if(lista[i][0]){
+      alert('⚠️ '+lista[i][1]);
+      return false;
+    }
+  }
+  return true;
 }
 
 // ===== TIPO DE APARELHO =====
@@ -299,19 +337,53 @@ function enviar(){
   var err = document.getElementById('err-form');
   err.style.display='none';
 
-  if(!gv('nome').trim()){err.textContent='Preencha o nome completo.';err.style.display='block';return;}
-  if(!gv('cpf').trim()){err.textContent='Preencha o CPF.';err.style.display='block';return;}
-  if(!gv('tel').trim()){err.textContent='Preencha o WhatsApp.';err.style.display='block';return;}
-  if(!gv('renda').trim()){err.textContent='Preencha a renda mensal.';err.style.display='block';return;}
+  function mostrarErro(msg, abaIdx){
+    err.textContent='⚠️ '+msg;
+    err.style.display='block';
+    if(abaIdx!==undefined) ir(abaIdx);
+    window.scrollTo(0,0);
+    return false;
+  }
+
+  // === ABA 1: DADOS PESSOAIS ===
+  if(!gv('nome').trim()) return mostrarErro('Preencha o nome completo.',0);
+  if(gv('nome').trim().split(' ').length<2) return mostrarErro('Informe nome e sobrenome completos.',0);
+  if(!gv('cpf').trim()) return mostrarErro('Preencha o CPF.',0);
+  if(gv('cpf').replace(/\D/g,'').length!==11) return mostrarErro('CPF deve ter 11 dígitos.',0);
+  if(!gv('nasc')) return mostrarErro('Informe a data de nascimento.',0);
   if(!vIdade()) return;
-  if(!document.getElementById('lgpd').checked){err.textContent='Marque a autorização LGPD.';err.style.display='block';return;}
+  if(!gv('rg').trim()) return mostrarErro('Preencha o RG.',0);
+  if(!gv('tel').trim()) return mostrarErro('Preencha o WhatsApp.',0);
+  if(gv('tel').replace(/\D/g,'').length<10) return mostrarErro('WhatsApp inválido — mínimo 10 dígitos.',0);
+
+  // === ABA 2: FINANCEIRO ===
+  if(!gv('renda').trim()) return mostrarErro('Preencha a renda mensal.',1);
+  if(isNaN(parseFloat(gv('renda').replace(',','.')))) return mostrarErro('Renda inválida — use apenas números.',1);
+  if(!gv('prof').trim()) return mostrarErro('Preencha a profissão.',1);
+
+  // === ABA 3: APARELHO ===
+  if(!gv('modelo').trim()) return mostrarErro('Informe o modelo do aparelho.',2);
+  if(!gv('valor').trim()) return mostrarErro('Informe o valor do aparelho.',2);
+  if(isNaN(parseFloat(gv('valor').replace(',','.')))) return mostrarErro('Valor inválido — use apenas números.',2);
+
+  // === ABA 4: DOCUMENTOS ===
+  if(!docs[1]||!docs[1].done) return mostrarErro('Anexe a foto do RG/CNH (Frente).',3);
+  if(!docs[2]||!docs[2].done) return mostrarErro('Anexe a foto do RG/CNH (Verso).',3);
+  if(!docs[3]||!docs[3].done) return mostrarErro('Anexe o comprovante de renda.',3);
+
+  // === LGPD ===
+  if(!document.getElementById('lgpd').checked){
+    err.textContent='⚠️ Marque a autorização LGPD para continuar.';
+    err.style.display='block';
+    ir(3);
+    return;
+  }
 
   var btn = document.getElementById('btn-enviar');
   btn.textContent='⏳ Enviando...'; btn.disabled=true;
 
   var agora = new Date().toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
 
-  // Prepara documentos (sem b64 se for muito grande — guarda referência)
   var docsEnvio = {};
   [1,2,3,4].forEach(function(n){
     if(docs[n]&&docs[n].done){
@@ -354,7 +426,6 @@ function enviar(){
     resposta: null
   };
 
-  // Salva direto no Firebase
   salvarNoFirebase(prop);
 }
 
