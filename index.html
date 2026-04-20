@@ -224,21 +224,28 @@ function _fbLer(callback){
 
 function _fbEscrever(dados){
   if(!_fbURL)return;
-  // Remove base64 antes de enviar (imagens ficam no localStorage)
-  var limpo = JSON.parse(JSON.stringify(dados));
-  // Mantém b64 para analistas de outros dispositivos visualizarem os documentos
-  fetch(_fbEndpoint(), {
+  var base=_fbURL.replace(/\/+$/,'');
+  // Salva analistas
+  fetch(base+'/'+DB_KEY+'/analistas.json',{
     method:'PUT',
     headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(limpo)
-  }).catch(function(e){console.warn('FB write error:',e);});
+    body:JSON.stringify(dados.analistas||[])
+  }).catch(function(e){console.warn('FB analistas error:',e);});
+  // Salva cada lojista individualmente — nunca substitui tudo de uma vez
+  (dados.lojistas||[]).forEach(function(lj,i){
+    fetch(base+'/'+DB_KEY+'/lojistas/'+i+'.json',{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(lj)
+    }).catch(function(e){console.warn('FB lojista '+i+' error:',e);});
+  });
 }
 
 /* ---- SALVAR ---- */
 function salvarDB(){
   // Salva local como backup completo
   try{localStorage.setItem('boletopay_db_v1', JSON.stringify(DB));}catch(e){}
-  // Firebase: envia direto (imagens já comprimidas no upload)
+  // Firebase: salva por partes — nunca apaga tudo
   if(_fbConectado) _fbEscrever(DB);
   _ultimoDBHash = _hashDB();
 }
