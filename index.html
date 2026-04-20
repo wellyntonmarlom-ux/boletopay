@@ -226,13 +226,7 @@ function _fbEscrever(dados){
   if(!_fbURL)return;
   // Remove base64 antes de enviar (imagens ficam no localStorage)
   var limpo = JSON.parse(JSON.stringify(dados));
-  limpo.lojistas.forEach(function(lj){
-    lj.props.forEach(function(p){
-      [1,2,3,4].forEach(function(n){
-        var d=p.docs&&p.docs[n];if(d)d.b64=null;
-      });
-    });
-  });
+  // Mantém b64 para analistas de outros dispositivos visualizarem os documentos
   fetch(_fbEndpoint(), {
     method:'PUT',
     headers:{'Content-Type':'application/json'},
@@ -3995,36 +3989,39 @@ function abrirAnalise(id){
       html+='<div style="font-size:13px;font-weight:600;color:'+(ok?'var(--gr)':'var(--am)')+'">'+nomes[n]+'</div>';
       if(ok&&d.name)html+='<div style="font-size:11px;color:var(--mu);margin-top:5px">'+d.name+'</div>';
       if(!ok)html+='<div style="font-size:11px;color:var(--mu);margin-top:5px">Não enviado</div>';
-      if(ok&&d.isPdf&&d.imgKey){
-        html+='<div id="di-'+found.id+'-'+n+'" style="margin-top:8px;min-height:60px;background:var(--sec);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--mu)">...</div>';
-      }
-      if(ok&&!d.isPdf&&d.imgKey)html+='<div id="di-'+found.id+'-'+n+'" style="margin-top:8px;min-height:60px;background:var(--sec);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--mu)">...</div>';
+      if(ok)html+='<div id="di-'+found.id+'-'+n+'" style="margin-top:8px"></div>';
       html+='</div>';
     });
     docsGrid.innerHTML=html;
-    // Carrega docs do localStorage após render
+    // Renderiza cada documento
     [1,2,3,4].forEach(function(n){
       var d=found.docs&&found.docs[n];
-      if(!d||!d.done||!d.imgKey)return;
+      if(!d||!d.done)return;
       var slot=document.getElementById('di-'+found.id+'-'+n);
       if(!slot)return;
-      try{
-        var src=localStorage.getItem(d.imgKey)||d.imgSrc||null;
-        if(!src){slot.innerHTML='<span style="color:var(--mu);font-size:11px">Documento não encontrado</span>';return;}
-        d.imgSrc=src;
-        if(d.isPdf){
-          var embedId='emb-'+found.id+'-'+n;
-          slot.innerHTML='<embed id="'+embedId+'" src="'+src+'" type="application/pdf" style="width:100%;height:200px;border:none;border-radius:8px 8px 0 0"/><button style="width:100%;padding:7px;background:var(--grl);border:none;border-top:1px solid var(--gr);color:var(--gr);font-size:11px;font-weight:600;cursor:pointer;border-radius:0 0 8px 8px">📄 Abrir PDF em tela cheia</button>';
-          var btn=slot.querySelector('button');
-          btn._src=src;btn._nome=d.name||nomes[n];
-          btn.onclick=function(){verDoc(this._src,this._nome,true);};
-        } else {
-          slot.innerHTML='<img src="'+src+'" style="width:100%;max-height:220px;object-fit:contain;border-radius:8px;cursor:pointer" title="Clique para ampliar em tela cheia"/>';
-          var img=slot.querySelector('img');
-          img._src=src;img._nome=nomes[n];
-          img.onclick=function(){verDoc(this._src,this._nome,false);};
-        }
-      }catch(e){slot.innerHTML='<span style="color:var(--rd);font-size:11px">Erro ao carregar</span>';}
+      // Tenta b64 direto, depois localStorage, depois imgSrc
+      var src=d.b64||null;
+      if(!src&&d.imgKey){try{src=localStorage.getItem(d.imgKey);}catch(e){}}
+      if(!src&&d.imgSrc)src=d.imgSrc;
+      if(!src){
+        slot.innerHTML='<div style="background:var(--sec);border-radius:8px;padding:10px;text-align:center;font-size:11px;color:var(--mu)">⚠️ Imagem não disponível neste dispositivo</div>';
+        return;
+      }
+      var isPdf=d.isPdf||(d.type&&d.type==='application/pdf')||(d.name&&d.name.toLowerCase().endsWith('.pdf'));
+      if(isPdf){
+        slot.innerHTML='<embed src="'+src+'" type="application/pdf" style="width:100%;height:200px;border:none;border-radius:8px 8px 0 0"/>'
+          +'<button style="width:100%;padding:7px;background:var(--grl);border:none;border-top:1px solid var(--gr);color:var(--gr);font-size:12px;font-weight:600;cursor:pointer;border-radius:0 0 8px 8px">📄 Ver PDF completo</button>';
+        var btn=slot.querySelector('button');
+        if(btn){btn._src=src;btn._nome=d.name||nomes[n];btn.onclick=function(){verDoc(this._src,this._nome,true);};}
+      } else {
+        slot.innerHTML='<img src="'+src+'" style="width:100%;max-height:220px;object-fit:contain;border-radius:8px;cursor:pointer;border:1px solid var(--brd)" title="Clique para ampliar"/>'
+          +'<div style="display:flex;gap:6px;margin-top:6px">'
+          +'<button style="flex:1;padding:6px;background:var(--bpl);border:none;border-radius:7px;color:var(--bp);font-size:11px;font-weight:600;cursor:pointer" onclick="verDoc(\''+src+'\',\''+nomes[n]+'\',false)">🔍 Ampliar</button>'
+          +'<a href="'+src+'" download="'+(d.name||nomes[n])+'" style="flex:1;padding:6px;background:var(--grl);border:1px solid var(--gr);border-radius:7px;color:var(--gr);font-size:11px;font-weight:600;cursor:pointer;text-align:center;text-decoration:none">⬇️ Salvar</a>'
+          +'</div>';
+        var img=slot.querySelector('img');
+        if(img){img._src=src;img._nome=nomes[n];img.onclick=function(){verDoc(this._src,this._nome,false);};}
+      }
     });
   }
 
