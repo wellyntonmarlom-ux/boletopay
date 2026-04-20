@@ -265,28 +265,41 @@ function carregarDB(){
 
   if(_fbURL){
     _fbLer(function(data){
-      if(data && data.analistas && data.lojistas){
-        DB = data;
-        DB.lojistas.forEach(function(lj){if(!lj.props)lj.props=[];});
-        _fbConectado = true;
-        _mostrarModo(true);
-        _ultimoDBHash = _hashDB();
-        absorverPropostasPendentes();
-        // Salva local como cache
-        try{localStorage.setItem('boletopay_db_v1', JSON.stringify(DB));}catch(e){}
-      } else if(data === null){
+      if(data){
+        // Normaliza arrays (Firebase converte arrays em objetos)
+        if(data.analistas) data.analistas=_toArray(data.analistas);
+        if(data.lojistas){
+          data.lojistas=_toArray(data.lojistas);
+          data.lojistas.forEach(function(lj){
+            if(!lj)return;
+            if(!lj.props)lj.props=[];
+            lj.props=_toArray(lj.props);
+            lj.props.forEach(function(p){if(p)_normalizarProp(p);});
+          });
+        }
+        if(data.analistas && data.lojistas){
+          DB=data;
+          _fbConectado=true;
+          _mostrarModo(true);
+          _ultimoDBHash=_hashDB();
+          absorverPropostasPendentes();
+          try{localStorage.setItem('boletopay_db_v1',JSON.stringify(DB));}catch(e){}
+        } else {
+          _usarLocal();
+        }
+      } else {
         // Banco vazio — inicializa com padrão
-        DB = JSON.parse(JSON.stringify(DB_DEFAULT));
-        _fbConectado = true;
+        DB=JSON.parse(JSON.stringify(DB_DEFAULT));
+        _fbConectado=true;
         _mostrarModo(true);
         salvarDB();
-      } else {
-        _usarLocal();
       }
+      restaurarSessao();
       _iniciarPolling();
     });
   } else {
     _usarLocal();
+    restaurarSessao();
     _iniciarPolling();
   }
 }
