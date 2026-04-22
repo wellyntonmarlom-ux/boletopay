@@ -285,14 +285,25 @@ function carregarDB(){
           absorverPropostasPendentes();
           try{localStorage.setItem('boletopay_db_v1',JSON.stringify(DB));}catch(e){}
         } else {
+          // Dados incompletos — usa local SEM salvar no Firebase
           _usarLocal();
         }
       } else {
-        // Banco vazio — inicializa com padrão
-        DB=JSON.parse(JSON.stringify(DB_DEFAULT));
-        _fbConectado=true;
-        _mostrarModo(true);
-        salvarDB();
+        // Firebase vazio — verifica se tem dados locais primeiro
+        var temLocal=false;
+        try{var raw=localStorage.getItem('boletopay_db_v1');if(raw){var lc=JSON.parse(raw);if(lc&&lc.analistas&&lc.lojistas&&(lc.analistas.length>0||lc.lojistas.length>0)){temLocal=true;DB=lc;}}}catch(e){}
+        if(!temLocal){
+          // Só inicializa vazio se não tiver nada em lugar nenhum
+          DB=JSON.parse(JSON.stringify(DB_DEFAULT));
+          _fbConectado=true;
+          _mostrarModo(true);
+          salvarDB();
+        } else {
+          _fbConectado=true;
+          _mostrarModo(true);
+          // Tem dados locais — sobe para o Firebase
+          salvarDB();
+        }
       }
       restaurarSessao();
       _iniciarPolling();
