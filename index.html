@@ -180,8 +180,7 @@ var DB_DEFAULT = {
     {id:3,nome:'Carlos Lima',email:'carlos@boletopay.com.br',senha:'carlos123',role:'analista',ativo:true}
   ],
   lojistas:[
-    {id:101,nome:'Eletro 360',email:'financeiro@eletro360.com.br',senha:'eletro123',cidade:'Cascavel - PR',ramo:'celulares',resp:'Marcos Rocha',logo:null,ativo:true,props:[]},
-    {id:102,nome:'MobiSpeed',email:'contato@mobispeed.com.br',senha:'mobi123',cidade:'Foz do Iguaçu - PR',ramo:'mobilidade',resp:'Felipe Prado',logo:null,ativo:true,props:[]}
+    {id:1776311043362,nome:'MELEVACELL',email:'melevacell',senha:'123456',cidade:'CASCAVEL PARANA',ramo:'celulares',resp:'WELLYNTON MARLON',logo:null,ativo:true,props:[]}
   ]
 };
 
@@ -253,57 +252,60 @@ function salvarDB(){
 
 /* ---- CARREGAR ---- */
 function carregarDB(){
-  // URL padrão já embutida — tenta localStorage depois
-  var urlSalva = '';
-  try{ urlSalva = localStorage.getItem('bp_fb_url') || ''; }catch(e){}
-  // Se não tiver URL salva, usa a padrão embutida
-  if(!urlSalva && _fbURL) {
-    try{ localStorage.setItem('bp_fb_url', _fbURL); }catch(e){}
-  } else if(urlSalva) {
-    _fbURL = urlSalva;
-  }
+  var urlSalva='';
+  try{urlSalva=localStorage.getItem('bp_fb_url')||'';}catch(e){}
+  if(!urlSalva&&_fbURL){try{localStorage.setItem('bp_fb_url',_fbURL);}catch(e){}
+  }else if(urlSalva){_fbURL=urlSalva;}
 
   if(_fbURL){
     _fbLer(function(data){
-      if(data){
-        // Normaliza arrays (Firebase converte arrays em objetos)
-        if(data.analistas) data.analistas=_toArray(data.analistas);
+      if(data&&(data.analistas||data.lojistas)){
+        // Normaliza tudo
+        if(data.analistas)data.analistas=_toArray(data.analistas);
+        else data.analistas=DB_DEFAULT.analistas;
         if(data.lojistas){
           data.lojistas=_toArray(data.lojistas);
+          data.lojistas=data.lojistas.filter(function(lj){return lj;});
           data.lojistas.forEach(function(lj){
-            if(!lj)return;
             if(!lj.props)lj.props=[];
-            lj.props=_toArray(lj.props);
-            lj.props.forEach(function(p){if(p)_normalizarProp(p);});
+            else{lj.props=_toArray(lj.props);lj.props=lj.props.filter(function(p){return p;});}
+            lj.props.forEach(function(p){_normalizarProp(p);});
           });
-        }
-        if(data.analistas && data.lojistas){
-          DB=data;
-          _fbConectado=true;
-          _mostrarModo(true);
-          _ultimoDBHash=_hashDB();
-          absorverPropostasPendentes();
-          try{localStorage.setItem('boletopay_db_v1',JSON.stringify(DB));}catch(e){}
         } else {
-          // Dados incompletos — usa local SEM salvar no Firebase
-          _usarLocal();
+          data.lojistas=[];
         }
+        DB=data;
+        _fbConectado=true;
+        _mostrarModo(true);
+        _ultimoDBHash=_hashDB();
+        absorverPropostasPendentes();
+        try{localStorage.setItem('boletopay_db_v1',JSON.stringify(DB));}catch(e){}
       } else {
-        // Firebase vazio — verifica se tem dados locais primeiro
+        // Firebase vazio ou sem dados — usa localStorage se tiver
         var temLocal=false;
-        try{var raw=localStorage.getItem('boletopay_db_v1');if(raw){var lc=JSON.parse(raw);if(lc&&lc.analistas&&lc.lojistas&&(lc.analistas.length>0||lc.lojistas.length>0)){temLocal=true;DB=lc;}}}catch(e){}
-        if(!temLocal){
-          // Só inicializa vazio se não tiver nada em lugar nenhum
-          DB=JSON.parse(JSON.stringify(DB_DEFAULT));
-          _fbConectado=true;
-          _mostrarModo(true);
-          salvarDB();
-        } else {
-          _fbConectado=true;
-          _mostrarModo(true);
-          // Tem dados locais — sobe para o Firebase
-          salvarDB();
+        try{
+          var raw=localStorage.getItem('boletopay_db_v1');
+          if(raw){
+            var lc=JSON.parse(raw);
+            if(lc&&lc.analistas&&lc.lojistas){
+              DB=lc;
+              DB.lojistas.forEach(function(lj){
+                if(!lj.props)lj.props=[];
+                lj.props.forEach(function(p){_normalizarProp(p);});
+              });
+              temLocal=true;
+            }
+          }
+        }catch(e){}
+        _fbConectado=true;
+        _mostrarModo(true);
+        // SÓ sobe para o Firebase se tiver dados locais reais
+        // NUNCA sobe dados padrão automaticamente
+        if(temLocal){
+          _fbEscrever(DB);
         }
+        // Se não tem nada, fica com DB_DEFAULT apenas na memória
+        // sem salvar no Firebase
       }
       restaurarSessao();
       _iniciarPolling();
