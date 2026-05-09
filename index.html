@@ -1235,38 +1235,11 @@ carregarDB();
     </div><!-- /lj-body -->
 
     <!-- MODAL LINK -->
-    <div id="link-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;align-items:center;justify-content:center;padding:1rem">
-      <div style="background:#fff;border-radius:16px;padding:1.5rem;max-width:480px;width:100%;max-height:90vh;overflow-y:auto">
+    <div id="link-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center;padding:1rem">
+      <div style="background:var(--card);border:1px solid var(--brd);border-radius:16px;padding:1.5rem;max-width:480px;width:100%;max-height:90vh;overflow-y:auto">
         <div style="font-size:15px;font-weight:700;color:var(--bp);margin-bottom:1rem">📋 Enviar formulário ao cliente</div>
         <div id="link-modal-tipos"></div>
-
-        <!-- Cliente na loja -->
-        <div style="background:#fff;border:2px solid var(--gr);border-radius:12px;padding:1rem;margin-bottom:10px">
-          <div style="font-size:13px;font-weight:700;color:var(--gr);margin-bottom:4px">🏪 Cliente na loja — abrir agora</div>
-          <div style="font-size:12px;color:var(--mu);margin-bottom:10px">O cliente preenche aqui mesmo no computador da loja.</div>
-          <button class="btn gr" style="width:100%;justify-content:center;padding:12px;font-size:14px" onclick="abrirFormCliente()">📱 Abrir formulário agora</button>
-        </div>
-
-        <!-- Cliente remoto -->
-        <div style="background:#fff;border:2px solid var(--pu);border-radius:12px;padding:1rem;margin-bottom:10px">
-          <div style="font-size:13px;font-weight:700;color:var(--pu);margin-bottom:6px">📲 Cliente remoto — link para WhatsApp</div>
-
-          <!-- Link visível para copiar -->
-          <div id="link-gerado-box" style="background:var(--sec);border-radius:8px;padding:10px;margin-bottom:10px">
-            <div style="font-size:11px;color:var(--mu);margin-bottom:6px;font-weight:600">🔗 Link do cliente:</div>
-            <div id="link-gerado-txt" onclick="copiarLinkManual()" style="font-size:12px;font-family:monospace;color:var(--bp);word-break:break-all;cursor:pointer;padding:6px;background:#fff;border-radius:6px;border:1px solid var(--brd)" title="Clique para copiar">Clique em Gerar para ver o link</div>
-            <button onclick="copiarLinkManual()" style="margin-top:6px;width:100%;padding:7px;background:var(--bp);color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600">📋 Copiar link</button>
-          </div>
-
-          <!-- Botões de ação -->
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <button onclick="gerarEMostrarLink()" style="width:100%;padding:11px;background:var(--pu);color:#fff;border:none;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600">🔗 Gerar link</button>
-            <a id="btn-wa-link" href="#" target="_blank" rel="noopener" style="display:block;width:100%;box-sizing:border-box;padding:11px;background:#25D366;color:#fff;border-radius:9px;font-size:13px;font-weight:600;text-align:center;text-decoration:none">💬 Abrir WhatsApp</a>
-          </div>
-          <div style="font-size:11px;color:var(--mu);margin-top:8px;text-align:center">Se o WhatsApp não abrir automaticamente, copie o link e cole na conversa do cliente.</div>
-        </div>
-
-        <button onclick="fecharModalLink()" style="width:100%;padding:10px;background:var(--sec);border:1px solid var(--brd);border-radius:9px;cursor:pointer;font-size:13px;color:var(--mu)">Fechar</button>
+        <button onclick="fecharModalLink()" style="width:100%;padding:10px;background:var(--sec);border:1px solid var(--brd);border-radius:9px;cursor:pointer;font-size:13px;color:var(--mu);margin-top:8px">Fechar</button>
       </div>
     </div>
 
@@ -3168,11 +3141,6 @@ function goLj(aba){
   window.scrollTo(0,0);
 }
 
-function mostrarLink(){
-  if(!meLj)return;
-  var modal=document.getElementById('link-modal');
-  if(modal){modal.style.display='flex';}
-}
 function fecharModalLink(){
   var modal=document.getElementById('link-modal');
   if(modal){modal.style.display='none';}
