@@ -915,7 +915,7 @@ carregarDB();
       <div class="sb-bot"><div class="ni" onclick="sair()" style="color:var(--rd)"><span class="nic">&#8592;</span> Sair</div></div>
     </aside>
     <div class="content">
-      <div class="ph"><div><div class="pt">Gestão de lojistas</div><div class="ps">Lojas de celulares e mobilidade elétrica</div></div><button class="btn" onclick="go('s-novo-lj')">+ Novo lojista</button></div>
+      <div class="ph"><div><div class="pt">Gestão de lojistas</div><div class="ps">Parceiros cadastrados</div></div><button class="btn" onclick="go('s-novo-lj')">+ Novo lojista</button></div>
       <div class="tbl" id="lj-mgr-tbl">
         <div class="th" style="grid-template-columns:2fr 1fr 1fr 1fr 80px"><span>Lojista</span><span>Ramo</span><span>Status</span><span>Propostas</span><span>Ação</span></div>
       </div>
@@ -942,10 +942,7 @@ carregarDB();
           <div><label class="fl">CNPJ</label><input class="fi" id="nl-cnpj" placeholder="00.000.000/0001-00"/></div>
           <div><label class="fl">Cidade / UF *</label><input class="fi" id="nl-cidade" placeholder="Cascavel - PR"/></div>
           <div><label class="fl">Ramo de atividade *</label>
-            <select class="fsel" id="nl-ramo">
-              <option value="celulares">Loja de celulares</option>
-              <option value="mobilidade">Mobilidade elétrica</option>
-            </select>
+            <input class="fi" id="nl-ramo" placeholder="Ex: Loja de carros, Pet Shop, Imobiliária..."/>
           </div>
           <div><label class="fl">Responsável</label><input class="fi" id="nl-resp" placeholder="Nome completo"/></div>
           <div><label class="fl">WhatsApp</label><input class="fi" id="nl-tel" placeholder="(00) 99999-9999"/></div>
@@ -1007,10 +1004,7 @@ carregarDB();
             <div><label class="fl">CNPJ</label><input class="fi" id="el-cnpj" placeholder="00.000.000/0001-00"/></div>
             <div><label class="fl">Cidade / UF</label><input class="fi" id="el-cidade" placeholder="Cascavel - PR"/></div>
             <div><label class="fl">Ramo de atividade</label>
-              <select class="fsel" id="el-ramo">
-                <option value="celulares">Loja de celulares</option>
-                <option value="mobilidade">Mobilidade elétrica</option>
-              </select>
+              <input class="fi" id="el-ramo" placeholder="Ex: Loja de carros, Pet Shop, Imobiliária..."/>
             </div>
             <div><label class="fl">Responsável</label><input class="fi" id="el-resp" placeholder="Nome completo"/></div>
             <div><label class="fl">WhatsApp</label><input class="fi" id="el-tel" placeholder="(00) 99999-9999"/></div>
@@ -4402,8 +4396,7 @@ function abrirEdicaoLj(id){
   var sv=function(elId,v){var el=document.getElementById(elId);if(el)el.value=v||'';};
   sv('el-nome',lj.nome);sv('el-cnpj',lj.cnpj||'');sv('el-cidade',lj.cidade);
   sv('el-resp',lj.resp);sv('el-tel',lj.tel||'');sv('el-email',lj.email);sv('el-senha','');
-  var ramoSel=document.getElementById('el-ramo');
-  if(ramoSel){for(var i=0;i<ramoSel.options.length;i++){ramoSel.options[i].selected=(ramoSel.options[i].value===lj.ramo);}}
+  var ramoEl=document.getElementById('el-ramo');if(ramoEl)ramoEl.value=lj.ramo||'';
   var sub=document.getElementById('edit-lj-subtit');if(sub)sub.textContent='Editando: '+lj.nome;
   var emailAtual=document.getElementById('edit-email-atual');if(emailAtual)emailAtual.textContent=lj.email;
   var senhaAtual=document.getElementById('edit-senha-atual');if(senhaAtual)senhaAtual.textContent=lj.senha;
@@ -4455,7 +4448,7 @@ function salvarEdicaoLj(){
   var modulos=[];['clt','celular'].forEach(function(m){var el=document.getElementById('el-mod-'+m);if(el&&el.checked)modulos.push(m);});
   if(modulos.length===0){alert('Selecione pelo menos 1 tipo de crédito.');return;}
   lj.modulos=modulos;
-  var ramoSel=document.getElementById('el-ramo');if(ramoSel)lj.ramo=ramoSel.value;
+  var ramoEl=document.getElementById('el-ramo');if(ramoEl)lj.ramo=ramoEl.value.trim();
   if(senha)lj.senha=senha;
   salvarDB();
   alert('Parceiro "'+lj.nome+'" atualizado!\n\nCredenciais atuais:\nE-mail: '+lj.email+'\nSenha: '+lj.senha);
@@ -4467,7 +4460,7 @@ function criarLj(){
   var email=document.getElementById('nl-email').value.trim();
   var senha=document.getElementById('nl-senha').value.trim();
   var cidade=document.getElementById('nl-cidade').value.trim();
-  var ramo=document.getElementById('nl-ramo').value;
+  var ramo=document.getElementById('nl-ramo')?document.getElementById('nl-ramo').value.trim():'';
   var resp=document.getElementById('nl-resp').value.trim()||'—';
   if(!nome||!email||!senha){alert('Nome, e-mail e senha são obrigatórios.');return;}
   if(senha.length<6){alert('Senha deve ter no mínimo 6 caracteres.');return;}
