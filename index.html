@@ -1831,8 +1831,8 @@ function salvarConfig(){
 /* ========== LINK / FORMULÁRIO CLIENTE ========== */
 function mostrarLink(){
   if(!meLj)return;
-  var base='https://wellyntonmarlom-ux.github.io/boletopay';
-  if(window.location.hostname!=='wellyntonmarlom-ux.github.io'){
+  var base='https://boletopaybrasil.github.io/boletopay';
+  if(window.location.hostname!=='boletopaybrasil.github.io'){
     base=window.location.href.split('/').slice(0,-1).join('/').replace(/\/index\.html$/,'');
   }
   var mods=meLj.modulos&&meLj.modulos.length>0?meLj.modulos:['celular'];
