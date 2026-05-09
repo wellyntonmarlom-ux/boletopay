@@ -972,18 +972,11 @@ carregarDB();
         <div class="al al-bl" style="margin-bottom:1.25rem;font-size:13px;color:#0C447C">
           O lojista acessa o portal com e-mail e senha. Comunique as credenciais após cadastro.
         </div>
-        <!-- MÓDULOS PERMITIDOS -->
         <div class="ctit" style="margin-top:.375rem">Módulos permitidos *</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:1.25rem">
-          <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid var(--brd);border-radius:10px;cursor:pointer;font-size:13px;transition:.15s" onclick="toggleModuloStyle(this)">
-            <input type="checkbox" id="nl-mod-celular" value="celular" style="accent-color:var(--bp);width:16px;height:16px"/> 📱 Celulares
-          </label>
-          <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid var(--brd);border-radius:10px;cursor:pointer;font-size:13px;transition:.15s" onclick="toggleModuloStyle(this)">
-            <input type="checkbox" id="nl-mod-moto" value="moto" style="accent-color:var(--bp);width:16px;height:16px"/> ⚡ Mobilidade
-          </label>
-          <label style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid var(--brd);border-radius:10px;cursor:pointer;font-size:13px;transition:.15s" onclick="toggleModuloStyle(this)">
-            <input type="checkbox" id="nl-mod-pessoal" value="pessoal" style="accent-color:var(--bp);width:16px;height:16px"/> 💳 Crédito Pessoal
-          </label>
+          <label id="nl-lbl-celular" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid var(--brd);border-radius:10px;cursor:pointer;font-size:13px"><input type="checkbox" id="nl-mod-celular" value="celular" style="accent-color:var(--bp);width:15px;height:15px"/> 📱 Celulares</label>
+          <label id="nl-lbl-moto" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid var(--brd);border-radius:10px;cursor:pointer;font-size:13px"><input type="checkbox" id="nl-mod-moto" value="moto" style="accent-color:var(--bp);width:15px;height:15px"/> ⚡ Mobilidade</label>
+          <label id="nl-lbl-pessoal" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid var(--brd);border-radius:10px;cursor:pointer;font-size:13px"><input type="checkbox" id="nl-mod-pessoal" value="pessoal" style="accent-color:var(--bp);width:15px;height:15px"/> 💳 Crédito Pessoal</label>
         </div>
         <div style="display:flex;gap:10px;justify-content:flex-end">
           <button class="btn-ghost" onclick="go('s-lojistas-mgr')">Cancelar</button>
@@ -1048,25 +1041,17 @@ carregarDB();
           </div>
           <!-- TOGGLE VER SENHA -->
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:.5rem">
-            <input type="checkbox" id="el-ver-senha" style="accent-color:var(--bp);width:15px;height:15px" onchange="toggleVerSenha()"/>
+            <input type="checkbox" id="el-ver-senha"  style="accent-color:var(--bp);width:15px;height:15px" onchange="toggleVerSenha()"/>
             <label for="el-ver-senha" style="font-size:12px;color:var(--mu);cursor:pointer">Mostrar senha atual ao salvar</label>
           </div>
         </div>
 
-        <!-- MÓDULOS PERMITIDOS -->
         <div class="card" style="margin-bottom:14px">
           <div class="ctit">Módulos permitidos</div>
-          <div style="font-size:12px;color:var(--mu);margin-bottom:1rem">Selecione quais funcionalidades este lojista pode acessar no portal.</div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-            <label id="lbl-mod-celular" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid var(--brd);border-radius:10px;cursor:pointer;font-size:13px;transition:.15s" onclick="toggleModuloStyle(this)">
-              <input type="checkbox" id="el-mod-celular" value="celular" style="accent-color:var(--bp);width:16px;height:16px"/> 📱 Celulares
-            </label>
-            <label id="lbl-mod-moto" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid var(--brd);border-radius:10px;cursor:pointer;font-size:13px;transition:.15s" onclick="toggleModuloStyle(this)">
-              <input type="checkbox" id="el-mod-moto" value="moto" style="accent-color:var(--bp);width:16px;height:16px"/> ⚡ Mobilidade
-            </label>
-            <label id="lbl-mod-pessoal" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid var(--brd);border-radius:10px;cursor:pointer;font-size:13px;transition:.15s" onclick="toggleModuloStyle(this)">
-              <input type="checkbox" id="el-mod-pessoal" value="pessoal" style="accent-color:var(--bp);width:16px;height:16px"/> 💳 Crédito Pessoal
-            </label>
+            <label id="el-lbl-celular" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid var(--brd);border-radius:10px;cursor:pointer;font-size:13px"><input type="checkbox" id="el-mod-celular" value="celular" style="accent-color:var(--bp);width:15px;height:15px"/> 📱 Celulares</label>
+            <label id="el-lbl-moto" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid var(--brd);border-radius:10px;cursor:pointer;font-size:13px"><input type="checkbox" id="el-mod-moto" value="moto" style="accent-color:var(--bp);width:15px;height:15px"/> ⚡ Mobilidade</label>
+            <label id="el-lbl-pessoal" style="display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px solid var(--brd);border-radius:10px;cursor:pointer;font-size:13px"><input type="checkbox" id="el-mod-pessoal" value="pessoal" style="accent-color:var(--bp);width:15px;height:15px"/> 💳 Crédito Pessoal</label>
           </div>
         </div>
 
@@ -1254,10 +1239,37 @@ carregarDB();
 
     <!-- MODAL LINK -->
     <div id="link-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;align-items:center;justify-content:center;padding:1rem">
-      <div style="background:var(--card,#0D1B2A);border:1px solid var(--brd);border-radius:16px;padding:1.5rem;max-width:480px;width:100%;max-height:90vh;overflow-y:auto">
+      <div style="background:#fff;border-radius:16px;padding:1.5rem;max-width:480px;width:100%;max-height:90vh;overflow-y:auto">
         <div style="font-size:15px;font-weight:700;color:var(--bp);margin-bottom:1rem">📋 Enviar formulário ao cliente</div>
-        <div id="link-modal-modulos"></div>
-        <button onclick="fecharModalLink()" style="width:100%;padding:10px;background:var(--sec);border:1px solid var(--brd);border-radius:9px;cursor:pointer;font-size:13px;color:var(--mu);margin-top:8px">Fechar</button>
+        <div id="link-modal-tipos"></div>
+
+        <!-- Cliente na loja -->
+        <div style="background:#fff;border:2px solid var(--gr);border-radius:12px;padding:1rem;margin-bottom:10px">
+          <div style="font-size:13px;font-weight:700;color:var(--gr);margin-bottom:4px">🏪 Cliente na loja — abrir agora</div>
+          <div style="font-size:12px;color:var(--mu);margin-bottom:10px">O cliente preenche aqui mesmo no computador da loja.</div>
+          <button class="btn gr" style="width:100%;justify-content:center;padding:12px;font-size:14px" onclick="abrirFormCliente()">📱 Abrir formulário agora</button>
+        </div>
+
+        <!-- Cliente remoto -->
+        <div style="background:#fff;border:2px solid var(--pu);border-radius:12px;padding:1rem;margin-bottom:10px">
+          <div style="font-size:13px;font-weight:700;color:var(--pu);margin-bottom:6px">📲 Cliente remoto — link para WhatsApp</div>
+
+          <!-- Link visível para copiar -->
+          <div id="link-gerado-box" style="background:var(--sec);border-radius:8px;padding:10px;margin-bottom:10px">
+            <div style="font-size:11px;color:var(--mu);margin-bottom:6px;font-weight:600">🔗 Link do cliente:</div>
+            <div id="link-gerado-txt" onclick="copiarLinkManual()" style="font-size:12px;font-family:monospace;color:var(--bp);word-break:break-all;cursor:pointer;padding:6px;background:#fff;border-radius:6px;border:1px solid var(--brd)" title="Clique para copiar">Clique em Gerar para ver o link</div>
+            <button onclick="copiarLinkManual()" style="margin-top:6px;width:100%;padding:7px;background:var(--bp);color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-weight:600">📋 Copiar link</button>
+          </div>
+
+          <!-- Botões de ação -->
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button onclick="gerarEMostrarLink()" style="width:100%;padding:11px;background:var(--pu);color:#fff;border:none;border-radius:9px;cursor:pointer;font-size:13px;font-weight:600">🔗 Gerar link</button>
+            <a id="btn-wa-link" href="#" target="_blank" rel="noopener" style="display:block;width:100%;box-sizing:border-box;padding:11px;background:#25D366;color:#fff;border-radius:9px;font-size:13px;font-weight:600;text-align:center;text-decoration:none">💬 Abrir WhatsApp</a>
+          </div>
+          <div style="font-size:11px;color:var(--mu);margin-top:8px;text-align:center">Se o WhatsApp não abrir automaticamente, copie o link e cole na conversa do cliente.</div>
+        </div>
+
+        <button onclick="fecharModalLink()" style="width:100%;padding:10px;background:var(--sec);border:1px solid var(--brd);border-radius:9px;cursor:pointer;font-size:13px;color:var(--mu)">Fechar</button>
       </div>
     </div>
 
@@ -1824,42 +1836,1347 @@ function mostrarLink(){
     base=window.location.href.split('/').slice(0,-1).join('/').replace(/\/index\.html$/,'');
   }
   var mods=meLj.modulos&&meLj.modulos.length>0?meLj.modulos:['celular'];
-  var cfg={
-    celular:{label:'📱 Celulares / Eletrônicos',desc:'Formulário com dados do aparelho',file:'form.html',cor:'#00D4FF'},
-    moto:{label:'⚡ Mobilidade elétrica',desc:'Formulário para motos e veículos',file:'form.html',cor:'#00E676'},
-    pessoal:{label:'💳 Crédito pessoal',desc:'Formulário sem dados de aparelho',file:'form-pessoal.html',cor:'#A855F7'}
+  var cfgs={
+    celular:{label:'📱 Celulares',file:'form.html'},
+    moto:{label:'⚡ Mobilidade',file:'form.html'},
+    pessoal:{label:'💳 Crédito Pessoal',file:'form-pessoal.html'}
   };
-  var html='';
-  mods.forEach(function(m){
-    var c=cfg[m];if(!c)return;
-    var link=base+'/'+c.file+'?loja='+meLj.id+'&nome='+encodeURIComponent(meLj.nome);
-    var waMsg='Olá! Preencha seus dados para análise de crédito:\n\n'+link;
-    var waUrl='https://wa.me/?text='+encodeURIComponent(waMsg);
-    html+='<div style="border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1rem;margin-bottom:10px;background:rgba(255,255,255,.03)">'
-      +'<div style="font-size:13px;font-weight:700;color:'+c.cor+';margin-bottom:4px">'+c.label+'</div>'
-      +'<div style="font-size:12px;color:rgba(240,244,248,.5);margin-bottom:10px">'+c.desc+'</div>'
-      +'<div id="ltxt-'+m+'" style="background:rgba(255,255,255,.05);border-radius:8px;padding:8px;margin-bottom:8px;font-size:11px;font-family:monospace;color:#00D4FF;word-break:break-all">'+link+'</div>'
-      +'<div style="display:flex;gap:8px">'
-      +'<button id="lbtn-copy-'+m+'" style="flex:1;padding:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;cursor:pointer;font-size:12px;color:#F0F4F8">📋 Copiar</button>'
-      +'<a id="lbtn-wa-'+m+'" href="'+waUrl+'" target="_blank" rel="noopener" style="flex:1;padding:8px;background:#25D366;color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-align:center;text-decoration:none">💬 WhatsApp</a>'
-      +'</div></div>';
-  });
-  var container=document.getElementById('link-modal-modulos');
-  if(container)container.innerHTML=html;
-  // Adiciona eventos de copiar
-  mods.forEach(function(m){
-    var c=cfg[m];if(!c)return;
-    var link=base+'/'+c.file+'?loja='+meLj.id+'&nome='+encodeURIComponent(meLj.nome);
-    var btn=document.getElementById('lbtn-copy-'+m);
-    if(btn){btn.onclick=function(){
-      if(navigator.clipboard&&navigator.clipboard.writeText){
-        navigator.clipboard.writeText(link).then(function(){alert('✅ Link copiado!');}).catch(function(){prompt('Copie:',link);});
-      } else {prompt('Copie:',link);}
-    };}
-  });
+  var _links={};
+  var box=document.getElementById('link-modal-tipos');
+  if(box){
+    var html='';
+    mods.forEach(function(m){
+      var c=cfgs[m];if(!c)return;
+      var link=base+'/'+c.file+'?loja='+meLj.id+'&nome='+encodeURIComponent(meLj.nome);
+      _links[m]=link;
+      var wamsg='Olá! Preencha seus dados para análise de crédito:\n\n'+link;
+      var waurl='https://wa.me/?text='+encodeURIComponent(wamsg);
+      html+='<div style="border:1px solid var(--brd);border-radius:10px;padding:.875rem;margin-bottom:10px;background:var(--sec)">'
+        +'<div style="font-size:13px;font-weight:700;margin-bottom:6px">'+c.label+'</div>'
+        +'<div style="font-size:11px;font-family:monospace;color:var(--bp);word-break:break-all;padding:6px;border-radius:6px;margin-bottom:8px;background:rgba(0,0,0,.1)">'+link+'</div>'
+        +'<div style="display:flex;gap:8px">'
+        +'<button id="btn-cp-'+m+'" style="flex:1;padding:8px;background:var(--sec);border:1px solid var(--brd);border-radius:8px;cursor:pointer;font-size:12px;color:var(--txt)">📋 Copiar</button>'
+        +'<a href="'+waurl+'" target="_blank" rel="noopener" style="flex:1;padding:8px;background:#25D366;color:#fff;border-radius:8px;font-size:12px;font-weight:600;text-align:center;text-decoration:none">💬 WhatsApp</a>'
+        +'</div></div>';
+    });
+    box.innerHTML=html;
+    // Adiciona eventos de copiar após render
+    mods.forEach(function(m){
+      var btn=document.getElementById('btn-cp-'+m);
+      var link=_links[m];
+      if(btn&&link){btn.onclick=function(){
+        if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(link).then(function(){alert('✅ Link copiado!');}).catch(function(){prompt('Copie:',link);});}
+        else{prompt('Copie:',link);}
+      };}
+    });
+  }
   var modal=document.getElementById('link-modal');if(modal)modal.style.display='flex';
 }
+function abrirFormCliente(){document.getElementById('link-modal').style.display='none';prepararFormCliente();go('s-form-cliente');}
 
+function _getBaseURL(){
+  // Pega a URL base do site atual
+  return window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '/');
+}
+
+function gerarLinkCliente(){
+  if(!meLj)return;
+  var base = window.location.href.split('/').slice(0,-1).join('/');
+  if(base.indexOf('github.io')>-1 || base.indexOf('netlify')>-1){
+    // Remove index.html se estiver no final
+    base = base.replace(/\/index\.html$/,'');
+  }
+  var link = base + '/form.html?loja=' + meLj.id + '&nome=' + encodeURIComponent(meLj.nome);
+  var box = document.getElementById('link-gerado-box');
+  var txt = document.getElementById('link-gerado-txt');
+  if(box) box.style.display='block';
+  if(txt) txt.textContent = link;
+  window._linkClienteGerado = link;
+}
+
+function copiarLink(){
+  var link = window._linkClienteGerado || (document.getElementById('link-gerado-txt')||{}).textContent || '';
+  if(!link){alert('Gere o link primeiro.');return;}
+  // Tenta clipboard API primeiro
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(link).then(function(){
+      alert('✅ Link copiado!\n\nCole no WhatsApp para o cliente:\n'+link);
+    }).catch(function(){
+      _copiarFallback(link);
+    });
+  } else {
+    _copiarFallback(link);
+  }
+}
+function _copiarFallback(link){
+  // Fallback para browsers antigos e mobile
+  var ta=document.createElement('textarea');
+  ta.value=link;
+  ta.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px';
+  document.body.appendChild(ta);
+  ta.focus();ta.select();
+  try{
+    document.execCommand('copy');
+    alert('✅ Link copiado!\n\nCole no WhatsApp para o cliente:\n'+link);
+  }catch(e){
+    // Se tudo falhar, mostra o link para copiar manualmente
+    prompt('Copie o link abaixo (Ctrl+C ou segure para copiar):', link);
+  }
+  document.body.removeChild(ta);
+}
+
+function gerarEMostrarLink(){
+  if(!meLj){alert('Faça login como lojista primeiro.');return;}
+  var base=window.location.href.split('/').slice(0,-1).join('/').replace(/\/index\.html$/,'');
+  var link=base+'/form.html?loja='+meLj.id+'&nome='+encodeURIComponent(meLj.nome);
+  window._linkClienteGerado=link;
+  var txt=document.getElementById('link-gerado-txt');
+  if(txt)txt.textContent=link;
+  var msg='Olá! Preencha seus dados para análise de crédito:\n\n'+link;
+  var waUrl='https://wa.me/?text='+encodeURIComponent(msg);
+  var waBtn=document.getElementById('btn-wa-link');
+  if(waBtn)waBtn.href=waUrl;
+}
+
+function copiarLinkManual(){
+  var link=window._linkClienteGerado;
+  if(!link){gerarEMostrarLink();link=window._linkClienteGerado;}
+  if(!link)return;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(link).then(function(){
+      alert('✅ Link copiado!\n\nAgora cole no WhatsApp do cliente.');
+    }).catch(function(){_fallbackCopy(link);});
+  }else{_fallbackCopy(link);}
+}
+
+function _fallbackCopy(link){
+  var ta=document.createElement('textarea');
+  ta.value=link;ta.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px';
+  document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand('copy');alert('✅ Link copiado!\n\nAgora cole no WhatsApp do cliente.');}
+  catch(e){prompt('Segure e copie o link:',link);}
+  document.body.removeChild(ta);
+}
+
+function prepararWA(el){return true;}
+function abrirWhatsApp(){gerarEMostrarLink();}
+function enviarLinkWhatsApp(){gerarEMostrarLink();}
+
+// Verificar se veio de link de cliente e abrir formulário automaticamente
+function checarLinkCliente(){
+  var params = new URLSearchParams(window.location.search);
+  if(params.get('form') === '1'){
+    var lojaId = parseInt(params.get('loja'));
+    var lojaNome = decodeURIComponent(params.get('nome') || '');
+    if(lojaId){
+      // Aguarda DB carregar e abre formulário
+      var tentativas = 0;
+      var intervalo = setInterval(function(){
+        tentativas++;
+        var lj = DB.lojistas.find(function(l){return l.id===lojaId;});
+        if(lj || tentativas > 20){
+          clearInterval(intervalo);
+          if(lj){ meLj=lj; } else {
+            // Cria objeto mínimo para o formulário funcionar
+            meLj = {id:lojaId, nome:lojaNome, props:[]};
+          }
+          // Esconde tudo e abre só o formulário
+          document.querySelectorAll('.scr').forEach(function(s){s.classList.remove('on');});
+          prepararFormCliente();
+          var fc = document.getElementById('s-form-cliente');
+          if(fc) fc.classList.add('on');
+          window.scrollTo(0,0);
+        }
+      }, 300);
+    }
+  }
+}
+
+function baixarFormulario(){
+  if(!meLj)return;
+  var id=meLj.id;
+  var nome=meLj.nome;
+  var ini=nome[0].toUpperCase();
+
+  var css=[
+    '*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,sans-serif}',
+    ':root{--pu:#7C3AED;--gr:#1A8C40;--grl:#E8FFF0;--rd:#CC2F28;--brd:#E5E7EB;--mu:#6B7280;--sec:#F9FAFB;--bg:#F5F7FA;--bp:#0A84FF}',
+    'body{background:var(--bg);min-height:100vh;padding:1.5rem 1rem}',
+    '.wrap{max-width:620px;margin:0 auto}',
+    '.fi{width:100%;padding:11px 13px;border:1.5px solid var(--brd);border-radius:10px;font-size:14px;background:#fff;outline:none}',
+    '.fsel{width:100%;padding:11px 13px;border:1.5px solid var(--brd);border-radius:10px;font-size:14px;background:#fff;outline:none}',
+    '.fl{font-size:12px;color:var(--mu);display:block;margin-bottom:5px;font-weight:500}',
+    '.card{background:#fff;border-radius:14px;border:1px solid var(--brd);padding:1.375rem;margin-bottom:1rem}',
+    '.ctit{font-size:10px;font-weight:700;color:var(--pu);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.875rem;padding-bottom:7px;border-bottom:2px solid #EDE9FE}',
+    '.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:11px}',
+    '.gf{grid-column:1/-1}',
+    '.btn{display:block;width:100%;padding:13px;border:none;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer;color:#fff;background:var(--pu);margin-top:8px}',
+    '.btn.g{background:var(--gr)}.btn.z{background:#25D366}',
+    '.ap{border:2px solid var(--brd);border-radius:12px;padding:1rem;cursor:pointer;text-align:center}',
+    '.ap.sel{border-color:var(--pu);background:#EDE9FE}',
+    '.uz{border:2px dashed var(--brd);border-radius:13px;padding:1.25rem;text-align:center;cursor:pointer;background:var(--sec);position:relative;overflow:hidden}',
+    '.uz.done{border-color:var(--gr);background:var(--grl);border-style:solid}',
+    '.uz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}',
+    '.step{display:none}',
+    '.tabs{display:flex;border-bottom:1px solid var(--brd);margin-bottom:1.5rem;overflow-x:auto}',
+    '.tab{padding:10px 14px;font-size:12px;font-weight:500;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}',
+    '.err{font-size:11px;color:var(--rd);margin-top:4px;display:none}.err.on{display:block}',
+    '@media(max-width:560px){.g2{grid-template-columns:1fr}}'
+  ].join('');
+
+  var js=[
+    'var ap=0,dx={};',
+    'var LJ_ID='+id+',LJ_NOME='+JSON.stringify(nome)+';',
+    'function ab(i){',
+    '  document.querySelectorAll(".step").forEach(function(s,j){s.style.display=j===i?"block":"none";});',
+    '  document.querySelectorAll(".tab").forEach(function(t,j){',
+    '    t.style.color=j===i?"#7C3AED":"#6B7280";',
+    '    t.style.fontWeight=j===i?"600":"500";',
+    '    t.style.borderBottom=j===i?"2px solid #7C3AED":"2px solid transparent";',
+    '  });',
+    '  window.scrollTo(0,0);',
+    '}',
+    'function sa(n){ap=n;var a=document.getElementById("apc");var b=document.getElementById("apm");if(a)a.classList.toggle("sel",n===0);if(b)b.classList.toggle("sel",n===1);}',
+    'function ud(inp,n){var f=inp.files[0];if(!f)return;document.getElementById("z"+n).classList.add("done");document.getElementById("ic"+n).textContent="✓";document.getElementById("tt"+n).textContent=f.name;dx[n]={name:f.name,type:f.type,done:true,b64:null};var r=new FileReader();r.onload=function(e){dx[n].b64=e.target.result;if(f.type.startsWith("image/")){var img=document.getElementById("im"+n+"_");if(img){img.src=e.target.result;img.style.display="block";}}};r.readAsDataURL(f);}',
+    'function vi(){var n=document.getElementById("nasc"),e=document.getElementById("eidade");if(!n||!n.value){return true;}var d=new Date(n.value),h=new Date();var age=h.getFullYear()-d.getFullYear();var dm=h.getMonth()-d.getMonth();if(dm<0||(dm===0&&h.getDate()<d.getDate()))age--;if(age<21){if(e)e.classList.add("on");return false;}if(e)e.classList.remove("on");return true;}',
+    'function gv(id){var e=document.getElementById(id);return e?e.value:"";}',
+    'function env(){',
+    '  var err=document.getElementById("er");err.style.display="none";',
+    '  if(!document.getElementById("lgpd").checked){err.textContent="Marque a autorização LGPD.";err.style.display="block";return;}',
+    '  if(!vi())return;',
+    '  if(!gv("nome").trim()){err.textContent="Preencha o nome completo.";err.style.display="block";return;}',
+    '  var agora=new Date().toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});',
+    '  var di={};',
+    '  [1,2,3,4].forEach(function(n){if(dx[n]&&dx[n].done){di[n]={name:dx[n].name,type:dx[n].type,done:true,isPdf:dx[n].type==="application/pdf",b64:dx[n].b64};}else{di[n]={done:false};}});',
+    '  var prop={id:Date.now(),lj_id:LJ_ID,lj_nome:LJ_NOME,nome:gv("nome"),cpf:gv("cpf"),nasc:gv("nasc"),rg:gv("rg"),email:gv("em"),mae:gv("mae"),tel:gv("tel"),cep:gv("cep"),end:gv("end"),renda:"R$ "+gv("renda"),prof:gv("prof"),vinc:gv("vinc"),tempo:gv("tempo"),neg:gv("neg"),tipo:ap===0?"Celular":"Mobilidade",marca:gv("marca"),modelo:gv("modelo"),imei1:gv("im1"),imei2:gv("im2"),cor:gv("cor"),valor:"R$ "+gv("valor"),obs_ap:gv("obs"),docs:di,data:agora,resultado:null,lido:false,resposta:null};',
+    '  try{',
+    '    var cod="BP:"+btoa(unescape(encodeURIComponent(JSON.stringify(prop))));',
+    '    document.getElementById("cod").textContent=cod;',
+    '    document.getElementById("fw").style.display="none";',
+    '    document.getElementById("ok").style.display="block";',
+    '    window.scrollTo(0,0);',
+    '  }catch(e){err.textContent="Erro: "+e.message;err.style.display="block";}',
+    '}',
+    'function cp(){var t=document.getElementById("cod").textContent;if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){alert("Código copiado! Envie pelo WhatsApp para "+LJ_NOME+".");});}else{var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand("copy");document.body.removeChild(ta);alert("Código copiado!");}}',
+    'function wz(){var t=document.getElementById("cod").textContent;window.open("https://wa.me/?text="+encodeURIComponent("Segue meu código para "+LJ_NOME+":\\n\\n"+t),"_blank");}',
+    'ab(0);'
+  ].join('\n');
+
+  var html='<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>'
+    +'<title>Formulário de Crédito — '+nome+'</title>'
+    +'<style>'+css+'</style></head><body><div class="wrap">'
+    // Header
+    +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:2rem">'
+    +'<div style="width:48px;height:48px;border-radius:13px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#7C3AED">'+ini+'</div>'
+    +'<div><div style="font-size:18px;font-weight:700">'+nome+'</div>'
+    +'<div style="font-size:12px;color:#6B7280">Solicitação de análise de crédito</div></div></div>'
+    // Tela sucesso
+    +'<div id="ok" style="display:none;text-align:center;padding:3rem 1rem">'
+    +'<div style="width:72px;height:72px;border-radius:50%;background:#E8FFF0;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:32px">✓</div>'
+    +'<h2 style="font-size:20px;font-weight:700;margin-bottom:.75rem;color:#1A8C40">Formulário preenchido!</h2>'
+    +'<p style="font-size:14px;color:#6B7280;line-height:1.7;margin-bottom:1.5rem">Copie o código abaixo e envie pelo WhatsApp para <strong>'+nome+'</strong></p>'
+    +'<div id="cod" style="background:#fff;border:2px solid #7C3AED;border-radius:12px;padding:1rem;font-family:monospace;font-size:10px;word-break:break-all;text-align:left;max-height:180px;overflow-y:auto;margin-bottom:12px"></div>'
+    +'<button class="btn" onclick="cp()">📋 Copiar código</button>'
+    +'<button class="btn z" onclick="wz()" style="margin-top:8px">💬 Enviar pelo WhatsApp</button>'
+    +'</div>'
+    // Formulário
+    +'<div id="fw">'
+    +'<div class="tabs">'
+    +'<div class="tab" onclick="ab(0)">1 · Dados pessoais</div>'
+    +'<div class="tab" onclick="ab(1)">2 · Aparelho</div>'
+    +'<div class="tab" onclick="ab(2)">3 · Documentos</div>'
+    +'<div class="tab" onclick="ab(3)">4 · Enviar</div>'
+    +'</div>'
+    // Aba 0
+    +'<div class="step" id="p0"><div class="card"><div class="ctit">Dados pessoais</div>'
+    +'<div class="g2">'
+    +'<div class="gf"><label class="fl">Nome completo *</label><input class="fi" id="nome" placeholder="Nome e sobrenome"/></div>'
+    +'<div><label class="fl">CPF *</label><input class="fi" id="cpf" placeholder="000.000.000-00"/></div>'
+    +'<div><label class="fl">Nascimento * <span style="font-size:10px;color:#CC2F28">(mín. 21 anos)</span></label><input class="fi" id="nasc" type="date" onchange="vi()"/><div class="err" id="eidade">Mínimo 21 anos.</div></div>'
+    +'<div><label class="fl">RG</label><input class="fi" id="rg" placeholder="00.000.000-0"/></div>'
+    +'<div><label class="fl">E-mail</label><input class="fi" id="em" type="email" placeholder="email@exemplo.com"/></div>'
+    +'<div><label class="fl">Nome da mãe</label><input class="fi" id="mae" placeholder="Nome da mãe"/></div>'
+    +'<div><label class="fl">WhatsApp *</label><input class="fi" id="tel" placeholder="(00) 99999-9999"/></div>'
+    +'<div><label class="fl">CEP</label><input class="fi" id="cep" placeholder="00000-000"/></div>'
+    +'<div class="gf"><label class="fl">Endereço completo</label><input class="fi" id="end" placeholder="Rua, número, bairro, cidade - UF"/></div>'
+    +'</div>'
+    +'<div class="ctit">Dados financeiros</div>'
+    +'<div class="g2">'
+    +'<div><label class="fl">Renda mensal (R$) *</label><input class="fi" id="renda" placeholder="Ex: 3.200"/></div>'
+    +'<div><label class="fl">Profissão</label><input class="fi" id="prof" placeholder="Ex: Vendedor"/></div>'
+    +'<div><label class="fl">Vínculo empregatício</label><select class="fsel" id="vinc"><option>CLT registrado</option><option>Autônomo</option><option>MEI/PJ</option><option>Servidor público</option><option>Aposentado</option></select></div>'
+    +'<div><label class="fl">Tempo no trabalho</label><select class="fsel" id="tempo"><option>Menos de 6 meses</option><option>6 meses a 1 ano</option><option>1 a 2 anos</option><option>2 a 5 anos</option><option>Mais de 5 anos</option></select></div>'
+    +'<div class="gf"><label class="fl">Está negativado?</label><select class="fsel" id="neg"><option>Não, nome limpo</option><option>Sim</option><option>Não sei</option></select></div>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:flex-end"><button class="btn" style="width:auto;padding:10px 24px" onclick="ab(1)">Próximo: aparelho →</button></div>'
+    +'</div></div>'
+    // Aba 1
+    +'<div class="step" id="p1"><div class="card"><div class="ctit">Aparelho desejado</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem">'
+    +'<div class="ap sel" id="apc" onclick="sa(0)"><div style="font-size:28px;margin-bottom:6px">📱</div><div style="font-size:13px;font-weight:600">Celular</div><div style="font-size:11px;color:#6B7280">Samsung, iPhone...</div></div>'
+    +'<div class="ap" id="apm" onclick="sa(1)"><div style="font-size:28px;margin-bottom:6px">⚡</div><div style="font-size:13px;font-weight:600">Mobilidade elétrica</div><div style="font-size:11px;color:#6B7280">Patinete, bicicleta...</div></div>'
+    +'</div>'
+    +'<div class="g2">'
+    +'<div><label class="fl">Marca</label><input class="fi" id="marca" placeholder="Ex: Samsung"/></div>'
+    +'<div><label class="fl">Modelo completo *</label><input class="fi" id="modelo" placeholder="Ex: Galaxy A35 5G 128GB"/></div>'
+    +'<div><label class="fl">Cor</label><input class="fi" id="cor" placeholder="Ex: Preto"/></div>'
+    +'<div><label class="fl">Valor (R$) *</label><input class="fi" id="valor" placeholder="Ex: 2.800"/></div>'
+    +'<div><label class="fl">IMEI 1 * (disque *#06#)</label><input class="fi" id="im1" placeholder="15 dígitos" style="font-family:monospace"/></div>'
+    +'<div><label class="fl">IMEI 2 (dual SIM)</label><input class="fi" id="im2" placeholder="Opcional" style="font-family:monospace"/></div>'
+    +'<div class="gf"><label class="fl">Observação (ex: quero iPhone 17 Pro mas recebi proposta de iPhone 13)</label><textarea class="fi" id="obs" rows="3" style="resize:none;line-height:1.5" placeholder="Observações sobre o aparelho..."></textarea></div>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:space-between">'
+    +'<button class="btn" style="width:auto;padding:10px 20px;background:#6B7280" onclick="ab(0)">← Anterior</button>'
+    +'<button class="btn" style="width:auto;padding:10px 24px" onclick="ab(2)">Próximo: documentos →</button>'
+    +'</div></div></div>'
+    // Aba 2
+    +'<div class="step" id="p2"><div class="card"><div class="ctit">Seus documentos</div>'
+    +'<p style="font-size:13px;color:#6B7280;margin-bottom:1.25rem">Tire fotos nítidas. Aceitos: JPG, PNG, PDF.</p>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.25rem">'
+    +'<div><p style="font-size:13px;font-weight:600;margin-bottom:8px">CNH/RG — Frente *</p><div class="uz" id="z1"><input type="file" accept="image/*,application/pdf" onchange="ud(this,1)"/><div id="ic1" style="font-size:26px;margin-bottom:6px">📷</div><div id="tt1" style="font-size:12px;font-weight:600">Clique para anexar</div><img id="im1_" style="display:none;width:100%;max-height:100px;object-fit:cover;border-radius:8px;margin-top:8px"/></div></div>'
+    +'<div><p style="font-size:13px;font-weight:600;margin-bottom:8px">CNH/RG — Verso *</p><div class="uz" id="z2"><input type="file" accept="image/*,application/pdf" onchange="ud(this,2)"/><div id="ic2" style="font-size:26px;margin-bottom:6px">📷</div><div id="tt2" style="font-size:12px;font-weight:600">Clique para anexar</div><img id="im2_" style="display:none;width:100%;max-height:100px;object-fit:cover;border-radius:8px;margin-top:8px"/></div></div>'
+    +'<div><p style="font-size:13px;font-weight:600;margin-bottom:8px">Comprovante de renda *</p><div class="uz" id="z3"><input type="file" accept="image/*,application/pdf" onchange="ud(this,3)"/><div id="ic3" style="font-size:26px;margin-bottom:6px">📄</div><div id="tt3" style="font-size:12px;font-weight:600">Clique para anexar</div><img id="im3_" style="display:none;width:100%;max-height:100px;object-fit:cover;border-radius:8px;margin-top:8px"/></div></div>'
+    +'<div><p style="font-size:13px;font-weight:600;margin-bottom:8px">Comprovante de residência</p><div class="uz" id="z4"><input type="file" accept="image/*,application/pdf" onchange="ud(this,4)"/><div id="ic4" style="font-size:26px;margin-bottom:6px">🏠</div><div id="tt4" style="font-size:12px;font-weight:600">Clique para anexar</div><img id="im4_" style="display:none;width:100%;max-height:100px;object-fit:cover;border-radius:8px;margin-top:8px"/></div></div>'
+    +'</div>'
+    +'<div style="display:flex;justify-content:space-between">'
+    +'<button class="btn" style="width:auto;padding:10px 20px;background:#6B7280" onclick="ab(1)">← Anterior</button>'
+    +'<button class="btn" style="width:auto;padding:10px 24px" onclick="ab(3)">Próximo: confirmar →</button>'
+    +'</div></div></div>'
+    // Aba 3
+    +'<div class="step" id="p3"><div class="card"><div class="ctit">Confirmar e enviar</div>'
+    +'<div style="display:flex;gap:10px;align-items:flex-start;background:#E8F4FF;border-radius:12px;padding:.875rem;margin-bottom:1.25rem">'
+    +'<input type="checkbox" id="lgpd" style="margin-top:2px;accent-color:#7C3AED;width:16px;height:16px;flex-shrink:0"/>'
+    +'<label for="lgpd" style="font-size:12px;color:#0C447C;line-height:1.6;cursor:pointer"><strong>Autorizo a consulta de crédito</strong> nos órgãos de proteção (SPC, Serasa, SCR) e o tratamento dos meus dados conforme a <strong>LGPD — Lei 13.709/2018</strong>.</label>'
+    +'</div>'
+    +'<div id="er" style="display:none;background:#FFF0EF;border-radius:10px;padding:.875rem;margin-bottom:1rem;font-size:13px;color:#CC2F28;font-weight:600"></div>'
+    +'<div style="display:flex;justify-content:space-between">'
+    +'<button class="btn" style="width:auto;padding:10px 20px;background:#6B7280" onclick="ab(2)">← Anterior</button>'
+    +'<button class="btn" style="width:auto;padding:10px 28px" onclick="env()">Gerar código →</button>'
+    +'</div></div></div>'
+    +'</div></div>'
+    +'<script>'+js+'<\/script>'
+    +'</body></html>';
+
+  // Download direto via Blob
+  var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='formulario_credito_'+nome.replace(/\s+/g,'_').toLowerCase()+'.html';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},1000);
+  document.getElementById('link-modal').style.display='none';
+  setTimeout(function(){
+    alert('✅ Formulário "'+a.download+'" baixado!\n\nEnvie ao cliente pelo WhatsApp.\nQuando ele preencher e te mandar o código BP:...\nvocê cola no campo "Importar código" e a proposta entra na fila.');
+  },600);
+}
+
+function importarCodigo(){
+  var txtEl=document.getElementById('codigo-cliente');
+  var txt=(txtEl?txtEl.value.trim():'');
+  if(!txt){alert('Cole o código recebido do cliente primeiro.');return;}
+  if(!txt.startsWith('BP:')){alert('Código inválido. Deve começar com BP:');return;}
+  try{
+    var json=decodeURIComponent(escape(atob(txt.slice(3))));
+    var prop=JSON.parse(json);
+    if(!prop.id||!prop.nome){alert('Código inválido.');return;}
+    var lj=DB.lojistas.find(function(l){return l.id===prop.lj_id;});
+    if(!lj){
+      // Tenta qualquer lojista ativo se ID não bater
+      lj=DB.lojistas.find(function(l){return l.ativo;});
+      if(lj)prop.lj_id=lj.id;
+    }
+    if(!lj){alert('Nenhuma loja ativa encontrada.');return;}
+    var existe=lj.props.find(function(p){return p.id===prop.id;});
+    if(existe){alert('Esta proposta já foi importada.');return;}
+    [1,2,3,4].forEach(function(n){
+      var d=prop.docs&&prop.docs[n];
+      if(d&&d.done&&d.b64){
+        var key='bp_doc_prop_'+prop.id+'_'+n;
+        try{localStorage.setItem(key,d.b64);}catch(e){}
+        d.imgKey=key;d.b64=null;
+      }
+    });
+    lj.props.push(prop);salvarDB();
+    if(txtEl)txtEl.value='';
+    document.getElementById('link-modal').style.display='none';
+    alert('✅ Proposta de '+prop.nome+' importada!\nJá aparece na fila de análise.');
+    go('s-fila');
+  }catch(e){alert('Código inválido ou corrompido.\nPeça ao cliente para copiar e enviar novamente.');}
+}
+
+// Compatibilidade
+function gerarLinkFinal(){}function salvarEGerarLink(){}function gerarECopiarLink(){}
+function copiarLink(){}function copiarLinkGerado(){}function enviarLinkWhats(){}
+function fallbackCopiar(t){}function enviarWhatsInstrucoes(){}function enviarWhats(){}function abrirFormWhats(){}
+
+function prepararFormCliente(){
+  if(!meLj)return;
+  var letra=document.getElementById('fc-logo-letra');
+  var img=document.getElementById('fc-logo-img');
+  var nome=document.getElementById('fc-loja-nome');
+  if(nome)nome.textContent=meLj.nome;
+  if(meLj.logo){
+    if(img){img.src=meLj.logo;img.style.display='block';}
+    if(letra)letra.style.display='none';
+  } else {
+    if(letra){letra.textContent=meLj.nome[0];letra.style.display='';}
+    if(img)img.style.display='none';
+  }
+  resetFormCliente();
+  // Resetar tabs para aba 1
+  var fcScr=document.getElementById('s-form-cliente');
+  if(fcScr){
+    fcScr.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('on',i===0)});
+    fcScr.querySelectorAll('.tp').forEach(function(p){p.classList.remove('on')});
+    var p1=document.getElementById('fc-p1');if(p1)p1.classList.add('on');
+  }
+}
+
+// Navega entre abas do formulário do cliente
+function inits(tabEl, painelId){
+  var fcScr=document.getElementById('s-form-cliente');
+  if(!fcScr)return;
+  fcScr.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
+  fcScr.querySelectorAll('.tp').forEach(function(p){p.classList.remove('on');});
+  if(tabEl)tabEl.classList.add('on');
+  var painel=document.getElementById(painelId);
+  if(painel)painel.classList.add('on');
+  window.scrollTo(0,0);
+}
+
+// Avança para próxima aba do formulário
+function avanca(painelId, tabIdx, scrId){
+  var fcScr=document.getElementById(scrId||'s-form-cliente');
+  if(!fcScr)return;
+  fcScr.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('on',i===tabIdx);});
+  fcScr.querySelectorAll('.tp').forEach(function(p){p.classList.remove('on');});
+  var painel=document.getElementById(painelId);
+  if(painel)painel.classList.add('on');
+  window.scrollTo(0,0);
+}
+
+// Detecta hash na URL e abre formulário do cliente
+function checarURLParam(){
+  var hash=window.location.hash||'';
+  if(!hash||hash.length<5)return;
+
+  var lojaId=null;
+  var lojaNome='Loja Parceira';
+
+  var m1=hash.match(/loja=(\d+)/);
+  var m2=hash.match(/nome=([^&]+)/);
+  if(m1)lojaId=parseInt(m1[1]);
+  if(m2){try{lojaNome=decodeURIComponent(m2[1]);}catch(e){lojaNome=m2[1];}}
+  if(!lojaId){
+    var m3=hash.match(/form-cliente-loja-(\d+)/);
+    if(m3)lojaId=parseInt(m3[1]);
+  }
+  if(!lojaId)return;
+
+  // Busca loja no DB local ou cria objeto remoto
+  var ljLocal=null;
+  try{ljLocal=DB.lojistas.find(function(l){return l.id===lojaId&&l.ativo;});}catch(e){}
+  meLj=ljLocal||{id:lojaId,nome:lojaNome,email:'',senha:'',ativo:true,props:[],logo:null,_remoto:true};
+
+  // Força exibição do formulário — esconde TUDO com display:none e mostra só o form
+  var style=document.getElementById('_scr_override');
+  if(!style){
+    style=document.createElement('style');
+    style.id='_scr_override';
+    document.head.appendChild(style);
+  }
+  style.textContent='.scr{display:none!important}#s-form-cliente{display:block!important;min-height:100vh}';
+
+  // Preenche dados da loja no formulário
+  var nomeEl=document.getElementById('fc-loja-nome');
+  if(nomeEl)nomeEl.textContent=meLj.nome;
+  var letraEl=document.getElementById('fc-logo-letra');
+  if(letraEl)letraEl.textContent=(meLj.nome[0]||'L').toUpperCase();
+  var imgEl=document.getElementById('fc-logo-img');
+  if(imgEl&&meLj.logo){imgEl.src=meLj.logo;imgEl.style.display='block';if(letraEl)letraEl.style.display='none';}
+
+  // Reseta tabs para aba 1
+  var fcScr=document.getElementById('s-form-cliente');
+  if(fcScr){
+    fcScr.querySelectorAll('.tab').forEach(function(t,i){t.classList.toggle('on',i===0);});
+    fcScr.querySelectorAll('.tp').forEach(function(p,i){p.classList.toggle('on',i===0);});
+  }
+
+  resetFormCliente();
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',function(){checarURLParam();});
+
+/* ========== VALIDAÇÃO IDADE ========== */
+function validaIdade(){
+  var nascEl=document.getElementById('fc-nasc');
+  var errEl=document.getElementById('err-idade');
+  if(!nascEl||!nascEl.value){if(errEl)errEl.classList.remove('on');return true;}
+  var nasc=new Date(nascEl.value);
+  var hoje=new Date();
+  var age=hoje.getFullYear()-nasc.getFullYear();
+  var m=hoje.getMonth()-nasc.getMonth();
+  if(m<0||(m===0&&hoje.getDate()<nasc.getDate()))age--;
+  if(age<21){nascEl.classList.add('err');if(errEl)errEl.classList.add('on');return false;}
+  nascEl.classList.remove('err');if(errEl)errEl.classList.remove('on');return true;
+}
+
+function calcIdade(){
+  var nasc=document.getElementById('fc-nasc');
+  if(!nasc||!nasc.value)return'—';
+  var d=new Date(nasc.value);var h=new Date();
+  var age=h.getFullYear()-d.getFullYear();
+  var m=h.getMonth()-d.getMonth();
+  if(m<0||(m===0&&h.getDate()<d.getDate()))age--;
+  return age+' anos';
+}
+
+/* ========== APARELHO ========== */
+function selApar(tipo){
+  apSel=tipo;
+  var ids=['cel','mob'];
+  ids.forEach(function(id){
+    var el=document.getElementById('ap-'+id);
+    if(el)el.classList.toggle('sel',id===tipo);
+  });
+}
+
+/* ========== CONFIRMAR FORM ========== */
+function preencherConfirm(){
+  var gv=function(id){var el=document.getElementById(id);return el?el.value:''};
+  var sv=function(id,v){var el=document.getElementById(id);if(el)el.textContent=v||'—'};
+  sv('cf-nome',gv('fc-nome'));sv('cf-cpf',gv('fc-cpf'));sv('cf-idade',calcIdade());
+  sv('cf-renda',gv('fc-renda')?'R$ '+gv('fc-renda'):'—');
+  sv('cf-tipo',apSel==='cel'?'Celular / Smartphone':'Mobilidade elétrica');
+  sv('cf-modelo',gv('fc-modelo'));sv('cf-imei',gv('fc-imei1'));
+  sv('cf-valor',gv('fc-valor')?'R$ '+gv('fc-valor'):'—');
+  var nomes={1:'Doc frente',2:'Doc verso',3:'Renda',4:'Residência'};
+  var html='';
+  [1,2,3,4].forEach(function(n){
+    var ok=uploadsData[n]&&uploadsData[n].done;
+    html+='<span class="bdg '+(ok?'b-gr':'b-rd')+'">'+nomes[n]+' '+(ok?'&#10003;':'&#10007;')+'</span>';
+  });
+  var cf=document.getElementById('cf-docs');if(cf)cf.innerHTML=html;
+}
+
+/* ========== ENVIAR FORM CLIENTE ========== */
+function enviarFormCliente(){
+  var lgpd=document.getElementById('fc-lgpd');
+  if(!lgpd||!lgpd.checked){alert('Marque a autorização LGPD para continuar.');return;}
+  if(!validaIdade())return;
+  var gv=function(id){var el=document.getElementById(id);return el?el.value:''};
+  var nome=gv('fc-nome').trim()||'Cliente';
+  var cpf=gv('fc-cpf').trim()||'—';
+  var nasc=gv('fc-nasc');
+  var modelo=gv('fc-modelo').trim()||'—';
+  var imei1=gv('fc-imei1').trim()||'—';
+  var imei2=gv('fc-imei2').trim()||'';
+  var serial=gv('fc-serial').trim()||'';
+  var valor=gv('fc-valor').trim()||'—';
+  var renda=gv('fc-renda').trim()||'—';
+  var vinc=gv('fc-vinc');
+  var tempo=gv('fc-tempo');
+  var neg=gv('fc-neg');
+  var obs=gv('fc-obs-ap').trim();
+  var cond=gv('fc-cond');
+  var agora=new Date().toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+  var docsEnviados={};
+  [1,2,3,4].forEach(function(n){
+    var d=uploadsData[n];
+    if(d&&d.done){
+      // Cria chave permanente para esta proposta
+      var permKey='bp_doc_prop_'+Date.now()+'_'+n;
+      if(d.imgKey){
+        try{
+          var src=localStorage.getItem(d.imgKey)||d.imgSrc||null;
+          if(src){
+            localStorage.setItem(permKey,src);
+            try{localStorage.removeItem(d.imgKey);}catch(e){}
+          }
+          d.imgKey=permKey;
+        }catch(e2){}
+      } else if(d.imgSrc){
+        try{localStorage.setItem(permKey,d.imgSrc);d.imgKey=permKey;}catch(e3){}
+      }
+      docsEnviados[n]={name:d.name,type:d.type,done:true,isPdf:d.isPdf||false,imgKey:d.imgKey||null};
+    } else {
+      docsEnviados[n]={done:false};
+    }
+  });
+  var prop={
+    id:Date.now(),lj_id:meLj?meLj.id:0,lj_nome:meLj?meLj.nome:'—',
+    nome:nome,cpf:cpf,nasc:nasc,rg:gv('fc-rg'),email:gv('fc-email'),mae:gv('fc-mae'),
+    tel:gv('fc-tel'),cep:gv('fc-cep'),end:gv('fc-end'),
+    renda:'R$ '+renda,prof:gv('fc-prof'),vinc:vinc,tempo:tempo,neg:neg,
+    tipo:apSel==='cel'?'Celular':'Mobilidade',marca:gv('fc-marca'),modelo:modelo,
+    imei1:imei1,imei2:imei2,serial:serial,cor:gv('fc-cor'),valor:'R$ '+valor,cond:cond,obs_ap:obs,
+    docs:docsEnviados,data:agora,resultado:null,lido:false,resposta:null
+  };
+
+  if(meLj&&meLj._remoto){
+    // Cliente abriu via link em outro browser — salva proposta numa chave compartilhada
+    // O analista/lojista ao abrir o sistema vai encontrar essas propostas pendentes
+    try{
+      var pendKey='bp_props_pendentes_loja_'+meLj.id;
+      var pendentes=[];
+      try{var raw=localStorage.getItem(pendKey);if(raw)pendentes=JSON.parse(raw);}catch(e){}
+      pendentes.push(prop);
+      localStorage.setItem(pendKey,JSON.stringify(pendentes));
+    }catch(e){console.warn('Erro ao salvar proposta remota',e);}
+  } else if(meLj){
+    // Mesmo browser — salva direto no DB do lojista
+    var ljNoDb=DB.lojistas.find(function(l){return l.id===meLj.id;});
+    if(ljNoDb){ljNoDb.props.push(prop);}
+    else{meLj.props.push(prop);}
+    salvarDB();
+  }
+
+  resetFormCliente();
+  go('s-lojista');
+  // Atualiza fila e dashboard do analista em segundo plano
+  absorverPropostasPendentes();
+  renderFila();
+  renderDash();
+  renderNovas();
+  setTimeout(function(){alert('✅ Proposta enviada com sucesso!\nJá aparece na lista de propostas e na fila do analista.');},300);
+}
+
+function resetFormCliente(){
+  ['fc-nome','fc-cpf','fc-nasc','fc-rg','fc-email','fc-mae','fc-tel','fc-cep','fc-end',
+   'fc-renda','fc-prof','fc-marca','fc-modelo','fc-cor','fc-valor','fc-imei1','fc-imei2','fc-serial','fc-obs-ap'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  uploadsData={};
+  [1,2,3,4].forEach(function(n){
+    var uz=document.getElementById('uz-'+n);if(uz)uz.classList.remove('done');
+    var ui=document.getElementById('ui-'+n);if(ui)ui.textContent=n<=2?'📷':'📄';
+    var ut=document.getElementById('ut-'+n);if(ut){ut.textContent='Clique para anexar foto';ut.style.color='';}
+    var un=document.getElementById('un-'+n);if(un)un.textContent='';
+    var uimg=document.getElementById('uimg-'+n);if(uimg){uimg.src='';uimg.style.display='none';}
+  });
+  var lgpd=document.getElementById('fc-lgpd');if(lgpd)lgpd.checked=false;
+  apSel='cel';selApar('cel');
+}
+
+/* ========== RENDER LOJISTA ========== */
+function renderLjDash(){
+  if(!meLj)return;
+  var props=meLj.props;
+  var totEl=document.getElementById('lj-tot');if(totEl)totEl.textContent=props.length;
+  var resEl=document.getElementById('lj-res');if(resEl)resEl.textContent=props.filter(function(p){return p.resultado}).length;
+  var pendEl=document.getElementById('lj-pend');if(pendEl)pendEl.textContent=props.filter(function(p){return!p.resultado}).length;
+  var novos=props.filter(function(p){return p.resultado&&!p.lido});
+  var ndot=document.getElementById('ndot');if(ndot)ndot.style.display=novos.length>0?'block':'none';
+
+  // Valor liberado hoje
+  var hoje=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+  var aprovHoje=props.filter(function(p){return p.resultado&&p.resultado!=='Negado'&&p.resultado!=='Em análise'&&p.data&&p.data.indexOf(hoje)===0});
+  var valHoje=aprovHoje.reduce(function(s,p){var v=parseFloat((p.valorAprov||p.valor||'').replace(/[^\d,.]/g,'').replace(',','.'));return s+(isNaN(v)?0:v);},0);
+  var elHoje=document.getElementById('lj-val-hoje');if(elHoje)elHoje.textContent='R$ '+valHoje.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+
+  // Valor liberado no mês
+  var mesAtual=new Date().toLocaleDateString('pt-BR',{month:'2-digit',year:'numeric'}).split('/');
+  var mesStr='/'+mesAtual[0]+'/'+mesAtual[1]; // ex: /04/2026
+  var aprovMes=props.filter(function(p){return p.resultado&&p.resultado!=='Negado'&&p.resultado!=='Em análise'&&p.data&&p.data.indexOf(mesStr)>0});
+  var valMes=aprovMes.reduce(function(s,p){var v=parseFloat((p.valorAprov||p.valor||'').replace(/[^\d,.]/g,'').replace(',','.'));return s+(isNaN(v)?0:v);},0);
+  var elMes=document.getElementById('lj-val-mes');if(elMes)elMes.textContent='R$ '+valMes.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+
+  // Ticket médio
+  var comValor=props.filter(function(p){var v=parseFloat((p.valor||'').replace(/[^\d,.]/g,'').replace(',','.'));return !isNaN(v)&&v>0;});
+  var totalValor=comValor.reduce(function(s,p){var v=parseFloat((p.valor||'').replace(/[^\d,.]/g,'').replace(',','.'));return s+(isNaN(v)?0:v);},0);
+  var ticket=comValor.length>0?Math.round(totalValor/comValor.length):0;
+  var elTicket=document.getElementById('lj-ticket');if(elTicket)elTicket.textContent='R$ '+ticket.toLocaleString('pt-BR');
+
+  // Gráfico de marcas
+  var marcas={};
+  props.forEach(function(p){var m=(p.marca||p.modelo||'Outros').split(' ')[0];marcas[m]=(marcas[m]||0)+1;});
+  var marcasOrdenadas=Object.keys(marcas).sort(function(a,b){return marcas[b]-marcas[a]}).slice(0,6);
+  var max=marcasOrdenadas.length>0?marcas[marcasOrdenadas[0]]:1;
+  var cores=['#0A84FF','#7C3AED','#1A8C40','#B36800','#CC2F28','#0F6E56'];
+  var gmEl=document.getElementById('lj-grafico-marcas');
+  if(gmEl){
+    if(marcasOrdenadas.length===0){gmEl.innerHTML='<div style="color:var(--mu);font-size:13px">Nenhuma proposta ainda.</div>';}
+    else{
+      gmEl.innerHTML=marcasOrdenadas.map(function(m,i){
+        var pct=Math.round(marcas[m]/max*100);
+        var cor=cores[i%cores.length];
+        return '<div style="margin-bottom:10px">'
+          +'<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">'
+          +'<span style="font-weight:600">'+m+'</span>'
+          +'<span style="color:var(--mu)">'+marcas[m]+' ('+Math.round(marcas[m]/props.length*100)+'%)</span>'
+          +'</div>'
+          +'<div style="background:var(--sec);border-radius:6px;height:10px;overflow:hidden">'
+          +'<div style="width:'+pct+'%;height:100%;background:'+cor+';border-radius:6px;transition:.5s"></div>'
+          +'</div>'
+          +'</div>';
+      }).join('');
+    }
+  }
+
+  // Gráfico de resultados
+  var totP=props.length||1;
+  var aprov=props.filter(function(p){return p.resultado&&p.resultado!=='Negado'&&p.resultado!=='Em análise'}).length;
+  var neg=props.filter(function(p){return p.resultado==='Negado'}).length;
+  var pend=props.filter(function(p){return!p.resultado}).length;
+  var grEl=document.getElementById('lj-grafico-resultados');
+  if(grEl){
+    grEl.innerHTML=[
+      ['Aprovadas',aprov,'var(--gr)'],
+      ['Negadas',neg,'var(--rd)'],
+      ['Aguardando',pend,'var(--am)']
+    ].map(function(r){
+      var pct=Math.round(r[1]/totP*100);
+      return '<div style="margin-bottom:10px">'
+        +'<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">'
+        +'<span style="font-weight:600">'+r[0]+'</span>'
+        +'<span style="color:'+r[2]+';font-weight:700">'+r[1]+' ('+pct+'%)</span>'
+        +'</div>'
+        +'<div style="background:var(--sec);border-radius:6px;height:10px;overflow:hidden">'
+        +'<div style="width:'+pct+'%;height:100%;background:'+r[2]+';border-radius:6px;transition:.5s"></div>'
+        +'</div>'
+        +'</div>';
+    }).join('');
+  }
+
+  // Tabela
+  // Badge de novas notificações
+  var novosRes=props.filter(function(p){return p.resultado&&!p.lido;});
+  var nbLjRes=document.getElementById('nb-lj-res');
+  if(nbLjRes){
+    nbLjRes.textContent=novosRes.length;
+    nbLjRes.style.display=novosRes.length>0?'inline-flex':'none';
+  }
+  var ndot=document.getElementById('ndot');if(ndot)ndot.style.display=novosRes.length>0?'block':'none';
+}
+
+/* ========== RENDER RESULTADOS LOJISTA ========== */
+function renderResultados(){
+  if(!meLj)return;
+  // Sempre busca do DB atualizado
+  var ljAtual=DB.lojistas.find(function(l){return l.id===meLj.id;});
+  if(ljAtual)meLj=ljAtual;
+  // Mostra propostas com resultado OU com múltiplas propostas enviadas
+  var props=meLj.props.filter(function(p){return p.resultado||(p.propostas&&p.propostas.length>0);});
+  props.forEach(function(p){p.lido=true;});
+  var ndot=document.getElementById('ndot');if(ndot)ndot.style.display='none';
+  var list=document.getElementById('lj-res-list');
+  var empty=document.getElementById('lj-res-empty');
+  if(!list)return;
+  if(props.length===0){list.innerHTML='';if(empty)empty.style.display='block';return;}
+  if(empty)empty.style.display='none';
+  list.innerHTML=props.slice().reverse().map(function(p){
+    var ini=p.nome.split(' ').slice(0,2).map(function(n){return n[0]}).join('').toUpperCase();
+    var respondeu=p.resposta!=null;
+    var resHtml=respondeu?renderRespostaFeita(p):renderEscolha(p);
+    // Se tem múltiplas propostas, mostra resumo diferente
+    var temMulti=p.propostas&&p.propostas.length>1;
+    var resumoBox=temMulti
+      ?'<div style="background:var(--grl);border-radius:10px;padding:.875rem;margin-bottom:14px"><div style="font-size:12px;font-weight:700;color:var(--gr);margin-bottom:8px">📋 '+(p.propostas.length)+' opções enviadas pelo analista:</div>'
+        +p.propostas.map(function(pr,i){var cores=['var(--gr)','var(--bp)','var(--pu)'];return '<div style="font-size:12px;margin-bottom:4px;color:'+cores[i]+'"><strong>Opção '+(i+1)+':</strong> <span style="background:'+cores[i]+'20;padding:1px 6px;border-radius:4px;font-size:11px">'+pr.modal+'</span> &bull; '+pr.valor+' &bull; '+pr.parcelas+' &bull; '+pr.banco+'</div>';}).join('')
+        +'</div>'
+      :'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:var(--sec);border-radius:10px;padding:.875rem;margin-bottom:14px">'
+        +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Modalidade</div><div style="font-size:13px;font-weight:700">'+(p.modal||'—')+'</div></div>'
+        +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Valor aprovado</div><div style="font-size:15px;font-weight:700;color:var(--gr)">'+(p.valorAprov||'—')+'</div></div>'
+        +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Parcelamento</div><div style="font-size:13px;font-weight:700">'+(p.parcelas||'—')+'</div></div>'
+        +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Banco</div><div style="font-size:13px;font-weight:700">'+(p.banco||'—')+'</div></div>'
+        +'</div>';
+    var bordaCor=p.resultado==='Negado'?'rgba(204,47,40,.2)':'rgba(26,140,64,.2)';
+    return '<div class="card" style="margin-bottom:14px;border:2px solid '+bordaCor+'" id="rc-'+p.id+'">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
+      +'<div class="ci"><div class="av" style="background:var(--grl);color:var(--gr);width:36px;height:36px">'+ini+'</div>'
+      +'<div><div class="cn">'+p.nome+'</div><div class="cx">Resultado em '+p.data+'</div></div></div>'
+      +'<div style="display:flex;gap:8px">'+(respondeu?'':'<span class="ntag">NOVO</span>')
+      +(p.resultado==='Negado'?'<span class="bdg b-rd">'+p.resultado+'</span>':temMulti?'<span class="bdg b-bp">'+p.propostas.length+' opções</span>':'<span class="bdg b-gr">'+(p.resultado||'')+'</span>')
+      +'</div></div>'
+      +resumoBox
+      +(p.obs_res?'<div style="background:var(--bpl);border-radius:10px;padding:.75rem 1rem;margin-bottom:14px;font-size:13px;color:#0C447C"><strong>📋 Observação:</strong> '+p.obs_res+'</div>':'')
+      +resHtml+'</div>';
+  }).join('');
+  salvarDB(); // salva lido=true
+}
+
+function renderEscolha(p){
+  // Negado
+  if(p.resultado==='Negado'){
+    return '<div style="border-top:1px solid var(--brd);padding-top:14px">'
+      +'<div style="background:var(--rdl);border-radius:10px;padding:.875rem 1rem;font-size:13px;color:var(--rd)">'
+      +'<strong>❌ Proposta negada pela política de crédito.</strong><br>'
+      +'<span style="font-size:12px;color:var(--mu);margin-top:4px;display:block">'+(p.obs_res||'Infelizmente não foi possível aprovar esta proposta.')+'</span></div>'
+      +'<div style="display:flex;gap:10px;margin-top:10px">'
+      +'<button class="btn rd" style="flex:1;justify-content:center;font-size:12px" onclick="responderRes(\''+p.id+'\',\'nova-simulacao\')">🔄 Solicitar nova análise</button></div>'
+      +'<div id="ns-form-'+p.id+'" style="display:none;margin-top:1rem;background:var(--aml);border-radius:12px;padding:1.125rem">'
+      +'<textarea class="fi" id="ns-msg-'+p.id+'" rows="3" style="resize:none;line-height:1.5;background:#fff;margin-bottom:10px" placeholder="Descreva o que o cliente quer tentar..."></textarea>'
+      +'<div style="display:flex;gap:10px"><button class="btn-ghost" onclick="document.getElementById(\'ns-form-'+p.id+'\').style.display=\'none\'">Cancelar</button>'
+      +'<button class="btn am" style="flex:1;justify-content:center" onclick="enviarNovaSim(\''+p.id+'\')">Enviar →</button></div></div></div>';
+  }
+
+  var props=p.propostas&&p.propostas.length>0?_toArray(p.propostas):null;
+  var cores=['var(--gr)','var(--bp)','var(--pu)'];
+  var fundos=['var(--grl)','var(--bpl)','var(--pul)'];
+
+  if(props&&props.length>0){
+    var titulo=props.length>1?'O analista enviou '+props.length+' propostas. Clique na que o cliente preferir:':'Clique para confirmar a proposta:';
+    return '<div id="ec-'+p.id+'" style="border-top:1px solid var(--brd);padding-top:14px">'
+      +'<p style="font-size:13px;font-weight:600;margin-bottom:12px">'+titulo+'</p>'
+      +'<div style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px">'
+      +props.map(function(pr,i){
+        var cor=cores[i]||cores[0];var fundo=fundos[i]||fundos[0];
+        return '<div id="opt-'+p.id+'-'+i+'" style="background:'+fundo+';border:2px solid '+cor+'30;border-radius:12px;padding:1rem;cursor:pointer;transition:.15s" onclick="escolherProposta(\''+p.id+'\','+i+')">'
+          +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+          +'<div>'
+          +'<div style="font-size:13px;font-weight:700;color:'+cor+'">📋 Proposta '+(i+1)+'</div>'
+          +'<div style="font-size:11px;background:'+cor+'20;color:'+cor+';padding:2px 8px;border-radius:4px;display:inline-block;margin-top:3px">'+pr.modal+'</div>'
+          +'</div>'
+          +'<div style="width:22px;height:22px;border-radius:50%;border:2px solid '+cor+';display:flex;align-items:center;justify-content:center" id="radio-'+p.id+'-'+i+'"></div>'
+          +'</div>'
+          +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">'
+          +'<div><div style="font-size:10px;color:var(--mu)">Valor</div><div style="font-size:15px;font-weight:700;color:'+cor+'">'+pr.valor+'</div></div>'
+          +'<div><div style="font-size:10px;color:var(--mu)">Parcelas</div><div style="font-size:13px;font-weight:700">'+pr.parcelas+'</div></div>'
+          +'<div><div style="font-size:10px;color:var(--mu)">Banco</div><div style="font-size:12px;font-weight:600">'+pr.banco+'</div></div>'
+          +'</div></div>';
+      }).join('')
+      +'</div>'
+      +'<button id="btn-confirmar-'+p.id+'" class="btn gr" style="width:100%;justify-content:center;display:none;font-size:14px;font-weight:700;padding:13px" onclick="confirmarPropostaEscolhida(\''+p.id+'\')">✅ Confirmar proposta escolhida</button>'
+      +'<button class="btn-ghost" style="width:100%;margin-top:8px;font-size:12px" onclick="responderRes(\''+p.id+'\',\'nova-simulacao\')">🔄 Pedir nova simulação</button>'
+      +'<div id="ns-form-'+p.id+'" style="display:none;margin-top:1rem;background:var(--aml);border-radius:12px;padding:1.125rem">'
+      +'<textarea class="fi" id="ns-msg-'+p.id+'" rows="2" style="resize:none;background:#fff;margin-bottom:10px" placeholder="Descreva o que o cliente quer..."></textarea>'
+      +'<div style="display:flex;gap:10px"><button class="btn-ghost" onclick="document.getElementById(\'ns-form-'+p.id+'\').style.display=\'none\'">Cancelar</button>'
+      +'<button class="btn am" style="flex:1;justify-content:center" onclick="enviarNovaSim(\''+p.id+'\')">Enviar →</button></div></div>'
+      +'</div>';
+  }
+
+  // Proposta única
+  return '<div id="ec-'+p.id+'" style="border-top:1px solid var(--brd);padding-top:14px"><p style="font-size:13px;font-weight:600;margin-bottom:1rem">O cliente aceitou este resultado?</p><div class="rc-grid"><div class="rc-c" onclick="responderRes(\''+p.id+'\',\'aceitar\')"><div style="font-size:22px;margin-bottom:6px">✓</div><div style="font-size:13px;font-weight:600;color:var(--gr)">Sim — cliente aceitou</div></div><div class="rc-c" onclick="responderRes(\''+p.id+'\',\'nova-simulacao\')"><div style="font-size:22px;margin-bottom:6px">↩</div><div style="font-size:13px;font-weight:600;color:var(--am)">Pedir nova simulação</div></div></div><div id="ns-form-'+p.id+'" style="display:none;margin-top:1rem;background:var(--aml);border-radius:12px;padding:1.125rem"><textarea class="fi" id="ns-msg-'+p.id+'" rows="3" style="resize:none;line-height:1.5;background:#fff;margin-bottom:10px"></textarea><div style="display:flex;gap:10px"><button class="btn-ghost" onclick="document.getElementById(\'ns-form-'+p.id+'\').style.display=\'none\'">Cancelar</button><button class="btn am" style="flex:1;justify-content:center" onclick="enviarNovaSim(\''+p.id+'\')">Enviar →</button></div></div></div>';
+}
+
+function escolherProposta(propId,idx){
+  var p=encontrarProp(propId);if(!p||!p.propostas)return;
+  var props=_toArray(p.propostas);
+  var cores=['var(--gr)','var(--bp)','var(--pu)'];
+  props.forEach(function(pr,i){
+    var opt=document.getElementById('opt-'+propId+'-'+i);
+    var radio=document.getElementById('radio-'+propId+'-'+i);
+    if(opt)opt.style.opacity=i===idx?'1':'0.6';
+    if(radio)radio.innerHTML=i===idx?'<div style="width:12px;height:12px;border-radius:50%;background:'+(cores[i]||cores[0])+'"></div>':'';
+  });
+  p.propostaEscolhida=idx;
+  var btn=document.getElementById('btn-confirmar-'+propId);
+  if(btn)btn.style.display='flex';
+}
+
+function confirmarPropostaEscolhida(propId){
+  var p=encontrarProp(propId);if(!p)return;
+  var idx=p.propostaEscolhida;
+  if(idx===null||idx===undefined){alert('Selecione uma das propostas primeiro.');return;}
+  var props=_toArray(p.propostas);
+  var escolhida=props[idx];if(!escolhida)return;
+  p.valorAprov=escolhida.valor;p.parcelas=escolhida.parcelas;p.banco=escolhida.banco;p.modal=escolhida.modal;
+  p.resposta='aceitar';
+  salvarDB();_atualizarTelasVisiveis();
+  var ec=document.getElementById('ec-'+propId);
+  if(ec)ec.innerHTML='<div class="al al-gr" style="margin-top:14px"><strong style="color:var(--gr)">✅ Proposta '+(idx+1)+' confirmada!</strong><br><span style="font-size:12px">'+escolhida.valor+' &bull; '+escolhida.parcelas+' &bull; '+escolhida.banco+'</span></div>';
+  alert('✅ Proposta '+(idx+1)+' confirmada! Crédito em formalização.');
+}
+
+function renderRespostaFeita(p){
+  if(p.resposta==='aceitar')
+    return '<div class="al al-gr"><strong style="color:var(--gr)">&#10003; Cliente aceitou o crédito.</strong> Crédito confirmado!</div>';
+  if(p.resposta==='nova-simulacao')
+    return '<div class="al al-am"><strong style="color:var(--am)">&#8617; Pedido de nova simulação enviado à BOLETO PAY.</strong><br><span style="font-size:12px">Mensagem: '+p.msg_ns+'</span></div>';
+  return '';
+}
+
+function responderRes(propId,opcao){
+  var ec=document.getElementById('ec-'+propId);
+  var btns=ec?ec.querySelectorAll('.rc-c'):[];
+  if(opcao==='aceitar'){
+    btns.forEach(function(b){b.classList.remove('sel-gr','sel-am')});
+    if(btns[0])btns[0].classList.add('sel-gr');
+    var prop=encontrarProp(propId);
+    if(prop){prop.resposta='aceitar';salvarDB();_atualizarTelasVisiveis();}
+    if(ec)ec.innerHTML='<div class="al al-gr" style="margin-top:14px"><strong style="color:var(--gr)">&#10003; Confirmado! Cliente aceitou o crédito.</strong></div>';
+  } else {
+    btns.forEach(function(b){b.classList.remove('sel-gr','sel-am')});
+    if(btns[1])btns[1].classList.add('sel-am');
+    var nsf=document.getElementById('ns-form-'+propId);
+    if(nsf)nsf.style.display='block';
+  }
+}
+
+function enviarNovaSim(propId){
+  var msgEl=document.getElementById('ns-msg-'+propId);
+  var msg=msgEl?msgEl.value.trim():'';
+  if(!msg){alert('Descreva o que o cliente deseja para a nova simulação.');return;}
+  var prop=encontrarProp(propId);
+  if(prop){prop.resposta='nova-simulacao';prop.msg_ns=msg;salvarDB();_atualizarTelasVisiveis();}
+  var ec=document.getElementById('ec-'+propId);
+  if(ec)ec.innerHTML='<div class="al al-am" style="margin-top:14px"><strong style="color:var(--am)">&#8617; Pedido enviado à BOLETO PAY.</strong><br><span style="font-size:12px">Mensagem: '+msg+'</span></div>';
+  alert('Pedido de nova simulação enviado!');
+}
+
+function encontrarProp(id){
+  for(var i=0;i<DB.lojistas.length;i++){
+    var found=DB.lojistas[i].props.find(function(p){return String(p.id)===String(id)});
+    if(found)return found;
+  }
+  return null;
+}
+
+/* ========== DASHBOARD ANALISTA ========== */
+function renderDash(){
+  // Atualiza data sempre com o dia atual
+  var agora=new Date();
+  var dataHoje=agora.toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'});
+  var dashData=document.getElementById('dash-data');
+  if(dashData)dashData.textContent=dataHoje;
+
+  var todasProps=[];
+  DB.lojistas.forEach(function(l){l.props.forEach(function(p){todasProps.push(p);});});
+  var naFila=todasProps.filter(function(p){return!p.resultado});
+  var respostas=todasProps.filter(function(p){return p.resposta==='nova-simulacao'&&p.resultado});
+  var nb=document.getElementById('nb-fila');if(nb)nb.textContent=naFila.length;
+  var nr=document.getElementById('nb-resp');if(nr)nr.textContent=respostas.length;
+  var dFila=document.getElementById('d-fila');if(dFila)dFila.textContent=naFila.length;
+  var dResp=document.getElementById('d-resp');if(dResp)dResp.textContent=respostas.length;
+  var dTot=document.getElementById('d-tot');if(dTot)dTot.textContent=todasProps.length;
+  var dLj=document.getElementById('d-lj');if(dLj)dLj.textContent=DB.lojistas.filter(function(l){return l.ativo}).length;
+  var dAn=document.getElementById('d-an');if(dAn)dAn.textContent=DB.analistas.filter(function(a){return a.ativo}).length;
+  var aprovadas=todasProps.filter(function(p){return p.resultado&&p.resultado!=='Negado'&&p.resultado!=='Em análise'});
+  var taxa=todasProps.length>0?Math.round(aprovadas.length/todasProps.length*100):0;
+  var dTaxa=document.getElementById('d-taxa');if(dTaxa)dTaxa.textContent=taxa+'%';
+
+  // HOJE — valor aprovado no dia atual (zera todo dia)
+  var diaHoje=String(agora.getDate()).padStart(2,'0');
+  var mesHoje=String(agora.getMonth()+1).padStart(2,'0');
+  var anoHoje=agora.getFullYear().toString();
+  var hojeStr=diaHoje+'/'+mesHoje; // bate com formato dd/mm da p.data
+  var aprovHoje=aprovadas.filter(function(p){return p.data&&p.data.indexOf(hojeStr)===0;});
+  var valHoje=aprovHoje.reduce(function(s,p){var v=parseFloat((p.valorAprov||p.valor||'').replace(/[^\d,.]/g,'').replace(',','.'));return s+(isNaN(v)?0:v);},0);
+  var dAprov=document.getElementById('d-aprov');
+  if(dAprov)dAprov.textContent=valHoje>0?'R$ '+valHoje.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0}):'R$ 0';
+  var dAprovT=document.getElementById('d-aprov-t');
+  if(dAprovT)dAprovT.textContent=aprovHoje.length>0?aprovHoje.length+' aprovação(ões) hoje':'Nenhuma aprovação hoje';
+
+  // MÊS — solicitações recebidas no mês atual (fica o mês todo)
+  var mesStr='/'+mesHoje+'/'+anoHoje;
+  var solMes=todasProps.filter(function(p){return p.data&&p.data.indexOf(mesStr)>0;});
+  var dSolMes=document.getElementById('d-sol-mes');
+  if(dSolMes)dSolMes.textContent=solMes.length;
+  var dSolMesT=document.getElementById('d-sol-mes-t');
+  var nomeMes=agora.toLocaleDateString('pt-BR',{month:'long'});
+  if(dSolMesT)dSolMesT.textContent=solMes.length+' proposta(s) em '+nomeMes;
+
+  // TEMPO MÉDIO DE RESPOSTA
+  // Calcula com base nas props que têm data de envio e data de resposta
+  // Como não temos campo data_resposta, calculamos pelo histórico de movimentações
+  // Estimativa: propostas respondidas têm p.resultado preenchido
+  // Usamos a diferença entre p.data (envio) e p.data_res (resposta) se existir
+  var tempos=[];
+  todasProps.forEach(function(p){
+    if(p.resultado&&p.data&&p.data_res){
+      // Tenta parsear as datas no formato dd/mm HH:MM
+      try{
+        var parseData=function(str){
+          var parts=str.split(' ');
+          var d=parts[0].split('/');
+          var t=parts[1]?parts[1].split(':'):[0,0];
+          var now=new Date();
+          return new Date(now.getFullYear(),parseInt(d[1])-1,parseInt(d[0]),parseInt(t[0]),parseInt(t[1]));
+        };
+        var ini=parseData(p.data);
+        var fim=parseData(p.data_res);
+        var diff=fim-ini;
+        if(diff>0&&diff<1000*60*60*24*7) tempos.push(diff); // ignora >7 dias (erro)
+      }catch(e){}
+    }
+  });
+  var dTempo=document.getElementById('d-tempo');
+  if(dTempo){
+    if(tempos.length>0){
+      var media=tempos.reduce(function(s,t){return s+t;},0)/tempos.length;
+      var mins=Math.round(media/60000);
+      if(mins<60) dTempo.textContent=mins+' min';
+      else if(mins<1440) dTempo.textContent=Math.round(mins/60)+'h '+Math.round(mins%60)+'min';
+      else dTempo.textContent=Math.round(mins/1440)+'d';
+    } else {
+      // Estimativa simples: conta props respondidas vs total
+      var respondidas=todasProps.filter(function(p){return p.resultado;}).length;
+      dTempo.textContent=respondidas>0?'< 24h':'—';
+    }
+  }
+
+  // Lojistas com props
+  var ljLista=document.getElementById('d-lj-lista');
+  if(ljLista){
+    var html=DB.lojistas.filter(function(l){return l.props.length>0}).map(function(l){
+      var aprovL=l.props.filter(function(p){return p.resultado&&p.resultado!=='Negado'&&p.resultado!=='Em análise'}).length;
+      return '<div class="dr"><span class="dk">'+l.nome+'</span><span class="dv" style="color:var(--pu)">'+l.props.length+' prop. / '+aprovL+' aprov.</span></div>';
+    }).join('');
+    ljLista.innerHTML=html||'<div style="color:var(--mu);font-size:13px;padding:.5rem 0">Nenhum lojista com propostas</div>';
+  }
+
+  // Gráfico de marcas — analista (todas as lojas)
+  var marcas={};
+  todasProps.forEach(function(p){var m=(p.marca||p.modelo||'Outros').trim().split(' ')[0];if(m)marcas[m]=(marcas[m]||0)+1;});
+  var marcasOrdenadas=Object.keys(marcas).sort(function(a,b){return marcas[b]-marcas[a]}).slice(0,6);
+  var maxM=marcasOrdenadas.length>0?marcas[marcasOrdenadas[0]]:1;
+  var coresM=['#0A84FF','#7C3AED','#1A8C40','#B36800','#CC2F28','#0F6E56'];
+  var gmEl=document.getElementById('an-grafico-marcas');
+  if(gmEl){
+    if(marcasOrdenadas.length===0){gmEl.innerHTML='<div style="color:var(--mu);font-size:13px">Nenhuma proposta ainda.</div>';}
+    else{
+      gmEl.innerHTML=marcasOrdenadas.map(function(m,i){
+        var pct=Math.round(marcas[m]/maxM*100);
+        var cor=coresM[i%coresM.length];
+        return '<div style="margin-bottom:10px">'
+          +'<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">'
+          +'<span style="font-weight:600">'+m+'</span>'
+          +'<span style="color:var(--mu)">'+marcas[m]+' props</span>'
+          +'</div>'
+          +'<div style="background:var(--sec);border-radius:6px;height:10px;overflow:hidden">'
+          +'<div style="width:'+pct+'%;height:100%;background:'+cor+';border-radius:6px;transition:.5s"></div>'
+          +'</div></div>';
+      }).join('');
+    }
+  }
+
+  // Gráfico de valores — mês atual dinâmico
+  var mesStr='/'+mesHoje+'/'+agora.getFullYear();
+  var aprovMes=aprovadas.filter(function(p){return p.data&&p.data.indexOf(mesStr)>0});
+  var valMes=aprovMes.reduce(function(s,p){var v=parseFloat((p.valorAprov||p.valor||'').replace(/[^\d,.]/g,'').replace(',','.'));return s+(isNaN(v)?0:v);},0);
+  var comValor=todasProps.filter(function(p){var v=parseFloat((p.valor||'').replace(/[^\d,.]/g,'').replace(',','.'));return !isNaN(v)&&v>0;});
+  var totalValorTodos=comValor.reduce(function(s,p){var v=parseFloat((p.valor||'').replace(/[^\d,.]/g,'').replace(',','.'));return s+(isNaN(v)?0:v);},0);
+  var ticket=comValor.length>0?Math.round(totalValorTodos/comValor.length):0;
+  var gvEl=document.getElementById('an-grafico-valores');
+  if(gvEl){
+    gvEl.innerHTML=[
+      ['Liberado hoje','R$ '+valHoje.toLocaleString('pt-BR',{minimumFractionDigits:0}),'var(--gr)'],
+      ['Liberado no mês','R$ '+valMes.toLocaleString('pt-BR',{minimumFractionDigits:0}),'var(--bp)'],
+      ['Ticket médio','R$ '+ticket.toLocaleString('pt-BR',{minimumFractionDigits:0}),'var(--pu)'],
+      ['Total aprovado','R$ '+aprovadas.reduce(function(s,p){var v=parseFloat((p.valorAprov||'0').replace(/[^\d,.]/g,'').replace(',','.'));return s+(isNaN(v)?0:v);},0).toLocaleString('pt-BR',{minimumFractionDigits:0}),'var(--tl)']
+    ].map(function(r){
+      return '<div class="dr"><span class="dk" style="font-size:12px">'+r[0]+'</span><span class="dv" style="color:'+r[2]+';font-size:14px">'+r[1]+'</span></div>';
+    }).join('');
+  }
+
+  // Lista de props
+  var pList=document.getElementById('d-props-list');
+  if(pList){
+    if(todasProps.length===0){pList.innerHTML='<div style="padding:2rem;text-align:center;color:var(--mu);font-size:13px">Nenhuma proposta recebida ainda</div>';}
+    else{
+      var rows=todasProps.slice().reverse().map(function(p){
+        var ini=p.nome.split(' ').slice(0,2).map(function(n){return n[0]}).join('').toUpperCase();
+        var bdg=p.finalizado?'<span class="bdg b-tl">🏁 Finalizado</span>':
+          p.resultado?(p.resultado==='Negado'?'<span class="bdg b-rd">'+p.resultado+'</span>':
+          p.resultado==='Em análise'?'<span class="bdg b-am">'+p.resultado+'</span>':
+          '<span class="bdg b-gr">'+p.resultado+'</span>'):'<span class="bdg b-am">Aguardando</span>';
+        var sit=p.finalizado?'<span class="bdg b-tl">Pago</span>':
+          p.resposta==='aceitar'?'<span class="bdg b-gr">Aceito</span>':
+          p.resposta==='nova-simulacao'?'<span class="bdg b-am">Nova sim.</span>':'—';
+        return '<div class="tr" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr;cursor:pointer" onclick="abrirResumoAnalise('+p.id+')">'
+          +'<div class="ci"><div class="av" style="background:var(--bpl);color:var(--bp)">'+ini+'</div>'
+          +'<div><div class="cn" style="color:var(--pu)">'+p.lj_nome+'</div>'
+          +'<div class="cx" style="font-size:12px;color:var(--txt);font-weight:500">'+p.nome+'</div></div></div>'
+          +'<span style="font-size:11px">'+p.modelo+'</span><span>'+bdg+'</span>'
+          +'<span style="font-weight:600;color:'+(p.resultado&&p.resultado!=='Negado'&&p.resultado!=='Em análise'?'var(--gr)':'var(--mu)')+'">'+
+          (p.resultado&&p.resultado!=='Negado'&&p.resultado!=='Em análise'&&p.valorAprov?p.valorAprov:p.valor||'—')+'</span><span>'+sit+'</span></div>';
+      }).join('');
+      pList.innerHTML=rows;
+    }
+    // Atualiza badge finalizadas
+    var fins=todasProps.filter(function(p){return p.finalizado;});
+    var nbFin=document.getElementById('nb-fin');
+    if(nbFin){nbFin.textContent=fins.length;nbFin.style.display=fins.length>0?'inline-flex':'none';}
+  }
+}
+
+/* ===== MÚLTIPLAS PROPOSTAS ===== */
+function adicionarProp2(){
+  var b=document.getElementById('prop2-box');if(b)b.style.display='block';
+  var btn2=document.getElementById('btn-add-p2');if(btn2)btn2.style.display='none';
+  var btn3=document.getElementById('btn-add-p3');if(btn3)btn3.style.display='inline-flex';
+}
+function adicionarProp3(){
+  var b=document.getElementById('prop3-box');if(b)b.style.display='block';
+  var btn3=document.getElementById('btn-add-p3');if(btn3)btn3.style.display='none';
+}
+function removerProp2(){
+  var b=document.getElementById('prop2-box');if(b)b.style.display='none';
+  var b3=document.getElementById('prop3-box');if(b3)b3.style.display='none';
+  var btn2=document.getElementById('btn-add-p2');if(btn2)btn2.style.display='inline-flex';
+  var btn3=document.getElementById('btn-add-p3');if(btn3)btn3.style.display='none';
+  ['res-valor2','res-parc2','res-qtd2','res-valor3','res-parc3','res-qtd3'].forEach(function(id){
+    var e=document.getElementById(id);if(e)e.value='';
+  });
+}
+function removerProp3(){
+  var b=document.getElementById('prop3-box');if(b)b.style.display='none';
+  var btn3=document.getElementById('btn-add-p3');if(btn3)btn3.style.display='inline-flex';
+  ['res-valor3','res-parc3','res-qtd3'].forEach(function(id){
+    var e=document.getElementById(id);if(e)e.value='';
+  });
+}
+
+function _getProp(suf){
+  var gv=function(id){var e=document.getElementById(id);return e?e.value.trim():'';};
+  var qtd=gv('res-qtd'+suf).replace(/x$/i,'');
+  var parc=gv('res-parc'+suf);
+  return {
+    modal:gv('res-modal'+suf),
+    valor:gv('res-valor'+suf),
+    banco:gv('res-banco'+suf),
+    qtd:qtd?qtd+'x':'—',
+    parc:parc||'—'
+  };
+}
+
+
+function abrirResumoAnalise(propId){
+  var p=encontrarProp(propId);if(!p)return;
+  var ini=p.nome?p.nome.split(' ').slice(0,2).map(function(n){return n[0];}).join('').toUpperCase():'?';
+  var s=p.finalizado?'Finalizado':p.resultado||'Aguardando';
+  var corS=p.finalizado?'var(--tl)':p.resultado==='Negado'?'var(--rd)':p.resultado?'var(--gr)':'var(--am)';
+
+  var ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto';
+  var box=document.createElement('div');
+  box.style.cssText='background:#fff;border-radius:16px;width:100%;max-width:600px;margin:auto;overflow:hidden';
+
+  // Parcelamento escolhido
+  var escolhida=p.propostas&&p.propostaEscolhida!==undefined&&p.propostaEscolhida!==null?p.propostas[p.propostaEscolhida]:null;
+  var parcelamentoBox=escolhida
+    ?'<div style="background:var(--grl);border-radius:10px;padding:.875rem;margin-bottom:10px">'
+     +'<div style="font-size:11px;font-weight:700;color:var(--gr);text-transform:uppercase;margin-bottom:6px">✅ Parcelamento aceito pelo cliente</div>'
+     +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;font-size:12px">'
+     +'<div><div style="color:var(--mu);font-size:10px">Tipo</div><strong style="color:var(--gr)">'+escolhida.modal+'</strong></div>'
+     +'<div><div style="color:var(--mu);font-size:10px">Valor</div><strong style="color:var(--gr)">'+escolhida.valor+'</strong></div>'
+     +'<div><div style="color:var(--mu);font-size:10px">Parcelas</div><strong>'+escolhida.parcelas+'</strong></div>'
+     +'<div><div style="color:var(--mu);font-size:10px">Banco</div><strong>'+escolhida.banco+'</strong></div>'
+     +'</div></div>'
+    :p.resultado&&p.resultado!=='Negado'&&p.valorAprov
+    ?'<div style="background:var(--grl);border-radius:10px;padding:.875rem;margin-bottom:10px">'
+     +'<div style="font-size:11px;font-weight:700;color:var(--gr);text-transform:uppercase;margin-bottom:6px">Resultado enviado</div>'
+     +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:12px">'
+     +'<div><div style="color:var(--mu);font-size:10px">Valor</div><strong style="color:var(--gr)">'+(p.valorAprov||'—')+'</strong></div>'
+     +'<div><div style="color:var(--mu);font-size:10px">Parcelas</div><strong>'+(p.parcelas||'—')+'</strong></div>'
+     +'<div><div style="color:var(--mu);font-size:10px">Banco</div><strong>'+(p.banco||'—')+'</strong></div>'
+     +'</div></div>'
+    :p.resultado==='Negado'
+    ?'<div style="background:var(--rdl);border-radius:10px;padding:.875rem;margin-bottom:10px;font-size:13px;color:var(--rd)"><strong>❌ Negado pela política de crédito</strong>'+(p.obs_res?'<br><span style="font-size:12px">'+p.obs_res+'</span>':'')+'</div>'
+    :'';
+
+  box.innerHTML=
+    '<div style="background:var(--sec);padding:1.25rem 1.5rem;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between">'
+    +'<div class="ci"><div class="av" style="background:var(--bpl);color:var(--bp);width:40px;height:40px">'+ini+'</div>'
+    +'<div><div style="font-size:15px;font-weight:700">'+p.nome+'</div>'
+    +'<div style="font-size:12px;color:var(--mu)">'+p.lj_nome+' &bull; '+p.data+'</div></div></div>'
+    +'<div style="display:flex;gap:8px;align-items:center">'
+    +'<span style="font-size:12px;font-weight:700;color:'+corS+'">'+s+'</span>'
+    +(p.finalizado?'<span style="font-size:11px;color:var(--mu)">'+p.data_finalizacao+'</span>':'')
+    +'<button onclick="this.closest(\'[data-ov]\').remove()" style="background:var(--sec);border:1px solid var(--brd);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:12px">✕</button>'
+    +'</div></div>'
+
+    +'<div style="padding:1.25rem 1.5rem">'
+
+    // Status resumo
+    +parcelamentoBox
+
+    // Dados do cliente e aparelho em grid
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">'
+
+    +'<div style="background:var(--sec);border-radius:10px;padding:.875rem">'
+    +'<div style="font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;margin-bottom:8px">Dados pessoais</div>'
+    +[['Nome',p.nome],['CPF',p.cpf],['WhatsApp',p.tel||'—'],['Renda',p.renda],['Vínculo',p.vinc||'—'],['Negativado',p.neg||'—']].map(function(r){
+      return '<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid var(--brd)">'
+        +'<span style="color:var(--mu)">'+r[0]+'</span><span style="font-weight:600">'+r[1]+'</span></div>';
+    }).join('')
+    +'</div>'
+
+    +'<div style="background:var(--sec);border-radius:10px;padding:.875rem">'
+    +'<div style="font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;margin-bottom:8px">Aparelho</div>'
+    +[['Modelo',(p.marca?p.marca+' ':'')+p.modelo],['IMEI',p.imei1||'—'],['Valor',p.valor],['Tipo',p.tipo||'—'],['Cor',p.cor||'—']].map(function(r){
+      return '<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid var(--brd)">'
+        +'<span style="color:var(--mu)">'+r[0]+'</span><span style="font-weight:600">'+r[1]+'</span></div>';
+    }).join('')
+    +'</div></div>'
+
+    // Ações
+    +'<div style="display:flex;gap:10px">'
+    +(!p.resultado?'<button class="btn" style="flex:1;justify-content:center" onclick="this.closest(\'[data-ov]\').remove();abrirAnalise('+p.id+')">Analisar →</button>':'')
+    +(p.resposta==='aceitar'&&!p.finalizado?'<button class="btn gr" style="flex:1;justify-content:center" onclick="this.closest(\'[data-ov]\').remove();finalizarProposta('+p.id+')">🏁 Finalizar contrato</button>':'')
+    +(p.finalizado?'<div style="flex:1;text-align:center;font-size:13px;color:var(--tl);font-weight:600">🏁 Contrato finalizado em '+p.data_finalizacao+'</div>':'')
+    +'</div></div>';
+
+  box.setAttribute('data-ov','1');
+  ov.appendChild(box);
+  document.body.appendChild(ov);
+  ov.onclick=function(e){if(e.target===ov)document.body.removeChild(ov);};
+}
+
+/* ===== FINALIZADAS ===== */
+/* ===== EMPRÉSTIMOS DO ANALISTA ===== */
+var _anEmpFiltro='';
+
+function anFiltroEmp(status){
+  _anEmpFiltro=status;
+  // Atualiza botões
+  ['todos','analise','aprov','neg','form','fin'].forEach(function(k){
+    var btn=document.getElementById('an-ef-'+k);
+    if(btn)btn.className='btn-ghost';
+  });
+  var mapa={'':{id:'an-ef-todos'},'analise':{id:'an-ef-analise'},'aprovado':{id:'an-ef-aprov'},'negado':{id:'an-ef-neg'},'formalizacao':{id:'an-ef-form'},'finalizado':{id:'an-ef-fin'}};
+  var ativo=mapa[status];
+  if(ativo){var b=document.getElementById(ativo.id);if(b)b.className='btn';}
+  renderAnEmp();
+}
+
+function renderAnEmp(){
+  // Pega todas as props de todos os lojistas
+  var todas=[];
+  DB.lojistas.forEach(function(l){(l.props||[]).forEach(function(p){todas.push(p);});});
+
+  var busca=(document.getElementById('an-emp-busca')||{}).value||'';
+  busca=busca.toLowerCase().trim();
+
+  var filtradas=todas.filter(function(p){
+    // Filtro busca
+    var matchBusca=!busca||
+      (p.nome&&p.nome.toLowerCase().indexOf(busca)>-1)||
+      (p.cpf&&p.cpf.replace(/\D/g,'').indexOf(busca.replace(/\D/g,''))>-1)||
+      (p.lj_nome&&p.lj_nome.toLowerCase().indexOf(busca)>-1);
+    // Filtro status
+    var st=_statusEmp(p);
+    var matchStatus=!_anEmpFiltro||st===_anEmpFiltro;
+    return matchBusca&&matchStatus;
+  }).reverse();
+
+  var contador=document.getElementById('an-emp-contador');
+  if(contador)contador.textContent=filtradas.length+' de '+todas.length+' análise(s)';
+
+  var lista=document.getElementById('an-emp-lista');if(!lista)return;
+  if(filtradas.length===0){
+    lista.innerHTML='<div style="text-align:center;padding:2.5rem;color:var(--mu);font-size:13px;background:#fff;border-radius:13px;border:1px solid var(--brd)">Nenhuma análise encontrada com esses filtros.</div>';
+    return;
+  }
+
+  lista.innerHTML=filtradas.map(function(p){
+    var ini=p.nome?p.nome.split(' ').slice(0,2).map(function(n){return n[0];}).join('').toUpperCase():'?';
+    var s=_statusEmp(p);
+    var corBorda=s==='analise'?'rgba(179,104,0,.2)':s==='negado'?'rgba(204,47,40,.2)':s==='formalizacao'?'rgba(10,132,255,.2)':s==='finalizado'?'rgba(15,110,86,.2)':'rgba(26,140,64,.2)';
+    return '<div class="card" style="margin-bottom:10px;border:2px solid '+corBorda+';cursor:pointer" onclick="abrirResumoAnalise('+p.id+')">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+      +'<div class="ci">'
+      +'<div class="av" style="background:var(--bpl);color:var(--bp)">'+ini+'</div>'
+      +'<div>'
+      +'<div class="cn">'+p.nome+'</div>'
+      +'<div class="cx">CPF: '+(p.cpf||'—')+' &bull; '+p.data+'</div>'
+      +'<div class="cx" style="color:var(--pu);font-size:11px">🏪 '+(p.lj_nome||'—')+'</div>'
+      +'</div></div>'
+      +'<div style="display:flex;align-items:center;gap:8px">'+_badgeEmp(p)+'<span style="font-size:11px;color:var(--mu)">Ver →</span></div>'
+      +'</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;background:var(--sec);border-radius:10px;padding:.75rem">'
+      +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Aparelho</div><div style="font-size:12px;font-weight:600">'+((p.marca?p.marca+' ':'')+p.modelo||'—')+'</div></div>'
+      +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Valor solicitado</div><div style="font-size:13px;font-weight:700;color:var(--bp)">'+(p.valor||'—')+'</div></div>'
+      +'<div><div style="font-size:10px;color:var(--mu);margin-bottom:2px">Valor aprovado</div><div style="font-size:13px;font-weight:700;color:var(--gr)">'+(p.valorAprov&&p.valorAprov!=='Negado'?p.valorAprov:'—')+'</div></div>'
+      +'</div></div>';
+  }).join('');
+}
+
+function renderFinalizadas(){
+  var lista=document.getElementById('fin-lista');if(!lista)return;
+  var todasProps=[];
+  DB.lojistas.forEach(function(l){l.props.forEach(function(p){todasProps.push(p);});});
+  var fins=todasProps.filter(function(p){return p.finalizado;}).slice().reverse();
+
+  var sub=document.getElementById('fin-sub');
+  if(sub)sub.textContent=fins.length+' contrato(s) finalizado(s)';
+
+  // Badge na sidebar
+  var nbFin=document.getElementById('nb-fin');
+  if(nbFin){nbFin.textContent=fins.length;nbFin.style.display=fins.length>0?'inline-flex':'none';}
+
+  if(fins.length===0){
+    lista.innerHTML='<div style="text-align:center;padding:3rem;color:var(--mu);font-size:13px;background:#fff;border-radius:13px;border:1px solid var(--brd)">Nenhum contrato finalizado ainda.</div>';
+    return;
+  }
+
+  lista.innerHTML=fins.map(function(p){
+    var ini=p.nome?p.nome.split(' ').slice(0,2).map(function(n){return n[0];}).join('').toUpperCase():'?';
+    var escolhida=p.propostas&&p.propostaEscolhida!==undefined?p.propostas[p.propostaEscolhida]:null;
+    var val=escolhida?escolhida.valor:p.valorAprov;
+    var parc=escolhida?escolhida.parcelas:p.parcelas;
+    var banco=escolhida?escolhida.banco:p.banco;
+    var modal=escolhida?escolhida.modal:p.modal;
+    return '<div class="card" style="margin-bottom:12px;border:2px solid rgba(15,110,86,.25);cursor:pointer" onclick="abrirResumoAnalise('+p.id+')">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">'
+      +'<div class="ci"><div class="av" style="background:#E8FBF5;color:#0F6E56;width:38px;height:38px">'+ini+'</div>'
+      +'<div><div class="cn" style="color:var(--pu)">'+p.lj_nome+'</div>'
+      +'<div class="cx">'+p.nome+' &bull; Finalizado em '+p.data_finalizacao+'</div></div></div>'
+      +'<span class="bdg" style="background:#E8FBF5;color:#0F6E56">🏁 Finalizado</span>'
+      +'</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:#E8FBF5;border-radius:10px;padding:.75rem">'
+      +'<div><div style="font-size:10px;color:var(--mu)">Tipo de crédito</div><div style="font-size:12px;font-weight:700;color:#0F6E56">'+(modal||'—')+'</div></div>'
+      +'<div><div style="font-size:10px;color:var(--mu)">Valor liberado</div><div style="font-size:14px;font-weight:700;color:#0F6E56">'+(val||'—')+'</div></div>'
+      +'<div><div style="font-size:10px;color:var(--mu)">Parcelamento</div><div style="font-size:12px;font-weight:600">'+(parc||'—')+'</div></div>'
+      +'<div><div style="font-size:10px;color:var(--mu)">Banco</div><div style="font-size:12px;font-weight:600">'+(banco||'—')+'</div></div>'
+      +'</div>'
+      +'<div style="margin-top:8px;font-size:11px;color:var(--mu)">Aparelho: '+p.modelo+' &bull; IMEI: '+(p.imei1||'—')+' &bull; Clique para ver resumo completo</div>'
+      +'</div>';
+  }).join('');
+}
+
+
+function adicionarProp2(){
+  var b=document.getElementById('prop2-box');if(b)b.style.display='block';
+  var btn2=document.getElementById('btn-add-p2');if(btn2)btn2.style.display='none';
+  var btn3=document.getElementById('btn-add-p3');if(btn3)btn3.style.display='inline-flex';
+}
+function adicionarProp3(){
+  var b=document.getElementById('prop3-box');if(b)b.style.display='block';
+  var btn3=document.getElementById('btn-add-p3');if(btn3)btn3.style.display='none';
+}
+function removerProp2(){
+  var b=document.getElementById('prop2-box');if(b)b.style.display='none';
+  var b3=document.getElementById('prop3-box');if(b3)b3.style.display='none';
+  var btn2=document.getElementById('btn-add-p2');if(btn2)btn2.style.display='inline-flex';
+  var btn3=document.getElementById('btn-add-p3');if(btn3)btn3.style.display='none';
+  ['res-valor2','res-parc2'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+}
+function removerProp3(){
+  var b=document.getElementById('prop3-box');if(b)b.style.display='none';
+  var btn3=document.getElementById('btn-add-p3');if(btn3)btn3.style.display='inline-flex';
+  ['res-valor3','res-parc3'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+}
+function _getProp(n){
+  var gv=function(id){var e=document.getElementById(id);return e?e.value.trim():'';};
+  return {
+    modal:gv('res-modal'+n),valor:gv('res-valor'+n),
+    banco:gv('res-banco'+n),qtd:gv('res-qtd'+n),parc:gv('res-parc'+n)
+  };
+}
+
+
+function goLj(aba){
+  ['lj-dash','lj-emp','lj-resultados'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.style.display='none';
+  });
+  ['lj-ni-dash','lj-ni-emp','lj-ni-resultados'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.classList.remove('on');
+  });
+  var el=document.getElementById(aba);if(el)el.style.display='block';
+  var ni=document.getElementById('lj-ni-'+aba.replace('lj-',''));if(ni)ni.classList.add('on');
+  if(aba==='lj-emp')renderEmp();
+  if(aba==='lj-resultados')renderResultados();
+  window.scrollTo(0,0);
+}
+
+function mostrarLink(){
+  if(!meLj)return;
+  var modal=document.getElementById('link-modal');
+  if(modal){modal.style.display='flex';}
+}
 function fecharModalLink(){
   var modal=document.getElementById('link-modal');
   if(modal){modal.style.display='none';}
@@ -3108,14 +4425,9 @@ function abrirEdicaoLj(id){
   var toggleBtn=document.getElementById('el-toggle-btn');
   if(toggleBtn){toggleBtn.textContent=lj.ativo?'Desativar lojista':'Ativar lojista';toggleBtn.className='btn '+(lj.ativo?'rd':'gr');}
   var verCb=document.getElementById('el-ver-senha');if(verCb)verCb.checked=false;
-  // Módulos
-  var mods=lj.modulos||['celular','moto','pessoal'];
+  var mods=lj.modulos||['celular'];
   ['celular','moto','pessoal'].forEach(function(m){
-    var el=document.getElementById('el-mod-'+m);
-    var lbl=document.getElementById('lbl-mod-'+m);
-    var ativo=mods.indexOf(m)>-1;
-    if(el)el.checked=ativo;
-    if(lbl){lbl.style.borderColor=ativo?'var(--bp)':'var(--brd)';lbl.style.background=ativo?'var(--bpl)':'';lbl.style.color=ativo?'var(--bp)':'';}
+    var el=document.getElementById('el-mod-'+m);if(el)el.checked=mods.indexOf(m)>-1;
   });
   go('s-edit-lj');
 }
@@ -3144,31 +4456,21 @@ function salvarEdicaoLj(){
   var gv=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
   var nome=gv('el-nome');var email=gv('el-email');var senha=gv('el-senha');
   if(!nome||!email){alert('Nome e e-mail são obrigatórios.');return;}
+  // Checar e-mail duplicado (exceto o próprio)
   var dup=DB.lojistas.find(function(l){return l.id!==ljEditId&&l.email.toLowerCase()===email.toLowerCase();});
   if(dup){alert('Já existe outro lojista com este e-mail.');return;}
   if(senha&&senha.length<6){alert('A nova senha deve ter no mínimo 6 caracteres.');return;}
-  var modulos=[];
-  ['celular','moto','pessoal'].forEach(function(m){var el=document.getElementById('el-mod-'+m);if(el&&el.checked)modulos.push(m);});
-  if(modulos.length===0){alert('Selecione pelo menos 1 módulo.');return;}
-  lj.nome=nome;lj.email=email;lj.modulos=modulos;
+  lj.nome=nome;lj.email=email;
   lj.cnpj=gv('el-cnpj');lj.cidade=gv('el-cidade');
   lj.resp=gv('el-resp');lj.tel=gv('el-tel');
+  var modulos=[];['celular','moto','pessoal'].forEach(function(m){var el=document.getElementById('el-mod-'+m);if(el&&el.checked)modulos.push(m);});
+  if(modulos.length===0){alert('Selecione pelo menos 1 módulo.');return;}
+  lj.modulos=modulos;
   var ramoSel=document.getElementById('el-ramo');if(ramoSel)lj.ramo=ramoSel.value;
   if(senha)lj.senha=senha;
   salvarDB();
-  alert('Lojista "'+lj.nome+'" atualizado!\n\nMódulos: '+modulos.join(', ')+'\nE-mail: '+lj.email+'\nSenha: '+lj.senha);
+  alert('Lojista "'+lj.nome+'" atualizado!\n\nCredenciais atuais:\nE-mail: '+lj.email+'\nSenha: '+lj.senha);
   go('s-lojistas-mgr');
-}
-
-function toggleModuloStyle(lbl){
-  setTimeout(function(){
-    var inp=lbl.querySelector('input[type=checkbox]');
-    if(inp&&inp.checked){
-      lbl.style.borderColor='var(--bp)';lbl.style.background='var(--bpl)';lbl.style.color='var(--bp)';
-    } else {
-      lbl.style.borderColor='var(--brd)';lbl.style.background='';lbl.style.color='';
-    }
-  },0);
 }
 
 function criarLj(){
@@ -3181,19 +4483,14 @@ function criarLj(){
   if(!nome||!email||!senha){alert('Nome, e-mail e senha são obrigatórios.');return;}
   if(senha.length<6){alert('Senha deve ter no mínimo 6 caracteres.');return;}
   if(DB.lojistas.find(function(l){return l.email.toLowerCase()===email.toLowerCase()})){alert('Já existe um lojista com este e-mail.');return;}
-  // Módulos selecionados
   var modulos=[];
-  ['celular','moto','pessoal'].forEach(function(m){
-    var el=document.getElementById('nl-mod-'+m);
-    if(el&&el.checked)modulos.push(m);
-  });
+  ['celular','moto','pessoal'].forEach(function(m){var el=document.getElementById('nl-mod-'+m);if(el&&el.checked)modulos.push(m);});
   if(modulos.length===0){alert('Selecione pelo menos 1 módulo para o lojista.');return;}
   var novoLj={id:Date.now(),nome:nome,email:email,senha:senha,cidade:cidade||'—',ramo:ramo,resp:resp,logo:null,ativo:true,modulos:modulos,props:[]};
   DB.lojistas.push(novoLj);
   salvarDB();
   ['nl-nome','nl-cnpj','nl-cidade','nl-resp','nl-tel','nl-email','nl-senha'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
-  ['celular','moto','pessoal'].forEach(function(m){var el=document.getElementById('nl-mod-'+m);if(el)el.checked=false;});
-  alert('Lojista "'+nome+'" criado!\n\nMódulos: '+modulos.join(', ')+'\nE-mail: '+email+'\nSenha: '+senha);
+  alert('Lojista "'+nome+'" criado!\n\nCredenciais:\nE-mail: '+email+'\nSenha: '+senha+'\n\nJá pode fazer login no portal.');
   go('s-lojistas-mgr');
 }
 
