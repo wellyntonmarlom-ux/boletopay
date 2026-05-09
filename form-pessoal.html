@@ -413,8 +413,9 @@ function enviar(){
     .then(function(lojistas){
       if(!lojistas)throw new Error('Banco não encontrado');
       var arr=Array.isArray(lojistas)?lojistas:Object.values(lojistas);
-      var ljIdx=arr.findIndex(function(l){return l&&l.id===prop.lj_id;});
-      if(ljIdx<0)throw new Error('Loja não encontrada');
+      // Compara como string E como number para garantir
+      var ljIdx=arr.findIndex(function(l){return l&&(l.id===prop.lj_id||String(l.id)===String(prop.lj_id));});
+      if(ljIdx<0)throw new Error('Loja não encontrada. ID: '+prop.lj_id);
       var props=arr[ljIdx].props;
       var numProps=props?(Array.isArray(props)?props.length:Object.keys(props).length):0;
       return fetch(FB_URL+'/'+DB_KEY+'/lojistas/'+ljIdx+'/props/'+numProps+'.json',{
