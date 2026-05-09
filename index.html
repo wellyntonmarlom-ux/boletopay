@@ -141,6 +141,42 @@ textarea.fi{resize:none}
   .mg3{grid-template-columns:1fr}
   .ef2{grid-template-columns:1fr}
 }
+
+/* ===== CORREÇÃO DE CONTRASTE GLOBAL ===== */
+/* Elementos com fundo claro devem ter texto escuro */
+[style*="background:#fff"] { color: #0A0A0A !important; }
+[style*="background:white"] { color: #0A0A0A !important; }
+[style*="background:#F9FAFB"] { color: #0A0A0A !important; }
+[style*="background:#E8FFF0"] { color: #064E1E !important; }
+[style*="background:#E8F4FF"] { color: #0C447C !important; }
+[style*="background:#FFF0EF"] { color: #7A1A14 !important; }
+[style*="background:#FFF8E8"] { color: #6B3F00 !important; }
+[style*="background:#F0EDFF"] { color: #3B1F8C !important; }
+[style*="background:var(--grl)"] { color: #064E1E !important; }
+[style*="background:var(--bpl)"] { color: #0C447C !important; }
+[style*="background:var(--rdl)"] { color: #7A1A14 !important; }
+[style*="background:var(--aml)"] { color: #6B3F00 !important; }
+[style*="background:var(--pul)"] { color: #3B1F8C !important; }
+[style*="background:rgba(0,230,118,.08)"] { color: #064E1E !important; }
+[style*="background:rgba(0,212,255,.08)"] { color: #0C447C !important; }
+[style*="background:rgba(168,85,247,.08)"] { color: #3B1F8C !important; }
+[style*="background:rgba(255,68,68,.08)"] { color: #7A1A14 !important; }
+[style*="background:rgba(255,183,0,.08)"] { color: #6B3F00 !important; }
+/* Cards de proposta do lojista */
+.b-gr { color: #064E1E !important; }
+.b-rd { color: #7A1A14 !important; }
+.b-am { color: #6B3F00 !important; }
+.b-bl { color: #0C447C !important; }
+.b-pu { color: #3B1F8C !important; }
+.b-tl { color: #063D2E !important; }
+/* Badges e alertas */
+.al.al-gr { color: #064E1E !important; }
+.al.al-rd { color: #7A1A14 !important; }
+.al.al-am { color: #6B3F00 !important; }
+.al.al-bl { color: #0C447C !important; }
+/* Inputs e selects sempre legíveis */
+.fi { color: var(--txt) !important; }
+.fsel { color: var(--txt) !important; }
 </style>
 </head>
 <body>
